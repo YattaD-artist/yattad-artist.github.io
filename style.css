@@ -2,6 +2,13 @@
     text-align: center; /* Căn giữa nội dung */
     width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
 }
+
+h1, p {
+    display: block;
+    width: 100%;
+    text-align: center;
+
+}
 .circle-menu {
   display: flex; /* Xếp các mục theo hàng ngang */
   justify-content: center; /* Căn giữa */
