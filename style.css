@@ -1,32 +1,45 @@
-/* Căn giữa toàn bộ nội dung */
-.container {
-    display: flex;  
-    flex-direction: column;  /* Xếp các phần tử theo chiều dọc */
-    align-items: center;  /* Căn giữa theo chiều ngang */
-    justify-content: center; /* Căn giữa theo chiều dọc */
-    height: 100vh; /* Chiều cao 100% viewport */
+/* Định dạng toàn bộ trang */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* Dùng font Arial */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Chiều cao toàn màn hình */
     text-align: center;
+}
+
+/* Chứa nội dung chính */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 }
 
-/* Căn giữa tiêu đề và đoạn văn */
-h1, p {
-    display: block;
-    width: 100%;
-    text-align: center;
-    margin: 10px 0; /* Tạo khoảng cách giữa các phần tử */
+/* Tiêu đề chính */
+h1 {
+    font-size: 48px; /* Tăng kích thước chữ */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Định dạng đoạn văn */
+p {
+    font-size: 20px;
+    margin-bottom: 20px;
 }
 
 /* Định dạng menu */
 .circle-menu {
     display: flex;
-    justify-content: center; 
-    flex-wrap: wrap; /* Đảm bảo menu không bị tràn */
-    gap: 20px;
-    padding: 20px 0; /* Thêm khoảng cách trên/dưới */
+    justify-content: center;
+    gap: 30px; /* Tạo khoảng cách giữa các mục */
 }
 
-/* Định dạng liên kết trong menu */
+/* Định dạng liên kết */
 .circle-menu a {
     text-decoration: none;
     color: #007bff;
@@ -34,7 +47,7 @@ h1, p {
     padding: 10px 15px;
 }
 
-/* Hiệu ứng hover khi di chuột vào menu */
+/* Hiệu ứng hover */
 .circle-menu a:hover {
     color: #ff5733;
 }
