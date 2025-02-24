@@ -1,27 +1,40 @@
+/* Căn giữa toàn bộ nội dung */
 .container {
-    text-align: center; /* Căn giữa nội dung */
-    width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
+    display: flex;  
+    flex-direction: column;  /* Xếp các phần tử theo chiều dọc */
+    align-items: center;  /* Căn giữa theo chiều ngang */
+    justify-content: center; /* Căn giữa theo chiều dọc */
+    height: 100vh; /* Chiều cao 100% viewport */
+    text-align: center;
+    width: 100%;
 }
 
+/* Căn giữa tiêu đề và đoạn văn */
 h1, p {
     display: block;
     width: 100%;
     text-align: center;
-
+    margin: 10px 0; /* Tạo khoảng cách giữa các phần tử */
 }
+
+/* Định dạng menu */
 .circle-menu {
-  display: flex; /* Xếp các mục theo hàng ngang */
-  justify-content: center; /* Căn giữa */
-  gap: 20px; /* Tạo khoảng cách giữa các mục */
+    display: flex;
+    justify-content: center; 
+    flex-wrap: wrap; /* Đảm bảo menu không bị tràn */
+    gap: 20px;
+    padding: 20px 0; /* Thêm khoảng cách trên/dưới */
 }
 
+/* Định dạng liên kết trong menu */
 .circle-menu a {
-  text-decoration: none;
-  color: #007bff;
-  font-size: 18px;
-  padding: 10px 15px;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 18px;
+    padding: 10px 15px;
 }
 
+/* Hiệu ứng hover khi di chuột vào menu */
 .circle-menu a:hover {
-  color: #ff5733;
+    color: #ff5733;
 }
