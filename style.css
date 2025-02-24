@@ -12,11 +12,9 @@ body {
 
 /* Căn giữa toàn bộ nội dung */
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Đảm bảo nội dung luôn căn giữa */
+    text-align: center;
+    max-width: 1000px;
+    padding: 20px;
 }
 
 /* Định dạng tiêu đề */
