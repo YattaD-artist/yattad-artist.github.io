@@ -1,18 +1,16 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 20px;
-    text-align: center;
+.circle-menu {
+  display: flex; /* Xếp các mục theo hàng ngang */
+  justify-content: center; /* Căn giữa */
+  gap: 20px; /* Tạo khoảng cách giữa các mục */
 }
 
-nav a {
-    text-decoration: none;
-    color: #007bff;
-    margin: 10px;
-    font-size: 18px;
+.circle-menu a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 18px;
+  padding: 10px 15px;
 }
 
-nav a:hover {
-    color: #ff5733;
+.circle-menu a:hover {
+  color: #ff5733;
 }
