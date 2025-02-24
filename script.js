@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     menuItems.forEach(item => {
         const angle = Math.random() * Math.PI * 2; // Góc ngẫu nhiên (0 - 360 độ)
-        const radius = 120 + Math.random() * 150; // Khoảng cách từ tiêu đề (120px - 200px)
+        const radius = 120 + Math.random() * 150; // Khoảng cách từ tiêu đề (120px - 270px)
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
 
