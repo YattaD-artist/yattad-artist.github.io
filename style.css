@@ -21,14 +21,14 @@ body {
 h1 {
     font-size: 48px;
     font-weight: bold;
-    color: #da3615;
+    color: #32365c;
     margin-bottom: 10px;
 }
 
 /* Định dạng đoạn giới thiệu */
 p {
     font-size: 18px;
-    color: #c3a19a;
+    color: #5667c6;
     margin-bottom: 30px;
 }
 
@@ -42,10 +42,10 @@ p {
 .menu a {
     text-decoration: none;
     font-size: 18px;
-    color: #007bff;
+    color: #9cb4c6;
     transition: color 0.3s ease;
 }
 
 .menu a:hover {
-    color: #ff5733;
+    color: #33e4cb;
 }
