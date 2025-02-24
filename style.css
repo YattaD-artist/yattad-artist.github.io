@@ -1,40 +1,11 @@
-body {
+.circle-menu {
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    position: relative;
-}
-
-.container {
-    position: relative;
-}
-
-h1 {
-    font-size: 28px;
-    font-weight: bold;
-    margin: 0;
-}
-
-p {
-    margin-top: 5px;
-    font-size: 16px;
-    color: #555;
-}
-
-/* Định dạng menu */
-.circle-menu {
-    position: relative;
-    width: 300px;
-    height: 300px;
+    gap: 20px; /* Tạo khoảng cách giữa các mục */
+    margin-top: 20px;
 }
 
 .menu-item {
-    position: absolute;
     text-decoration: none;
     color: #007bff;
     font-weight: bold;
