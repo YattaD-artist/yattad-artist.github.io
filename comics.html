@@ -6,6 +6,21 @@
     <title>Truyện Tranh</title>
     <link rel="stylesheet" href="style.css">
 </head>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const menuItems = document.querySelectorAll(".menu-item");
+
+        menuItems.forEach(item => {
+            item.addEventListener("click", function () {
+                let subMenu = this.nextElementSibling;
+                if (subMenu) {
+                    subMenu.classList.toggle("active");
+                }
+            });
+        });
+    });
+</script>
+
 <body>
     <div class="container">
         <h1>Truyện Tranh</h1>
