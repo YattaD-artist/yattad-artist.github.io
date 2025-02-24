@@ -1,35 +1,45 @@
-/* Căn giữa nội dung */
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: 0;
     background-color: #f4f4f4;
     font-family: Arial, sans-serif;
     text-align: center;
+    position: relative;
 }
 
-/* Khung nội dung chính */
 .container {
     position: relative;
-    text-align: center;
 }
 
-/* Định dạng menu xung quanh */
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+}
+
+p {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #555;
+}
+
+/* Định dạng menu */
 .circle-menu {
     position: relative;
-    width: 300px;  /* Kích thước vòng tròn */
+    width: 300px;
     height: 300px;
-    margin: 20px auto;
 }
 
-/* Định dạng từng mục menu */
 .menu-item {
     position: absolute;
     text-decoration: none;
     color: #007bff;
     font-weight: bold;
-    transition: color 0.3s ease-in-out;
+    font-size: 16px;
+    transition: 0.3s;
 }
 
 .menu-item:hover {
