@@ -1,53 +1,50 @@
-/* Định dạng toàn bộ trang */
+/* Thiết lập toàn bộ trang */
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; /* Dùng font Arial */
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Chiều cao toàn màn hình */
-    text-align: center;
+    height: 100vh;
 }
 
-/* Chứa nội dung chính */
+/* Căn giữa toàn bộ nội dung */
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+    text-align: center;
+    max-width: 800px;
+    padding: 20px;
 }
 
-/* Tiêu đề chính */
+/* Định dạng tiêu đề */
 h1 {
-    font-size: 48px; /* Tăng kích thước chữ */
+    font-size: 48px;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-/* Định dạng đoạn văn */
+/* Định dạng đoạn giới thiệu */
 p {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 30px;
 }
 
 /* Định dạng menu */
-.circle-menu {
+.menu {
     display: flex;
     justify-content: center;
-    gap: 30px; /* Tạo khoảng cách giữa các mục */
+    gap: 30px;
 }
 
-/* Định dạng liên kết */
-.circle-menu a {
+.menu a {
     text-decoration: none;
-    color: #007bff;
     font-size: 18px;
-    padding: 10px 15px;
+    color: #007bff;
+    transition: color 0.3s ease;
 }
 
-/* Hiệu ứng hover */
-.circle-menu a:hover {
+.menu a:hover {
     color: #ff5733;
 }
