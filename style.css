@@ -1,3 +1,7 @@
+.container {
+    text-align: center; /* Căn giữa nội dung */
+    width: 100%; /* Đảm bảo phần tử chiếm toàn bộ chiều rộng */
+}
 .circle-menu {
   display: flex; /* Xếp các mục theo hàng ngang */
   justify-content: center; /* Căn giữa */
