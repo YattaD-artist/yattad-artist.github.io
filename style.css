@@ -22,3 +22,38 @@ nav a:hover {
     align-items: center;
     height: 100vh;
 }
+/* Căn giữa nội dung */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Chiều cao = 100% màn hình */
+    margin: 0;
+    background-color: #f4f4f4; /* Màu nền nhẹ */
+    font-family: Arial, sans-serif;
+}
+
+/* Chỉnh sửa khung nội dung */
+.container {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Thiết kế menu */
+nav {
+    margin-top: 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    color: #0056b3;
+}
