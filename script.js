@@ -1,17 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
     const menuItems = document.querySelectorAll(".menu-item");
-    const centerX = 150; // Tọa độ trung tâm (bán kính 150px)
-    const centerY = 150;
-    const radius = 120; // Bán kính vòng tròn
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2 + 50; // Đẩy xuống một chút
 
-    menuItems.forEach((item, index) => {
-        // Góc ngẫu nhiên từ 0 đến 360 độ
-        const angle = Math.random() * 2 * Math.PI;
-        
-        // Tính vị trí theo công thức đường tròn
+    menuItems.forEach(item => {
+        const angle = Math.random() * Math.PI * 2; // Góc ngẫu nhiên (0 - 360 độ)
+        const radius = 120 + Math.random() * 80; // Khoảng cách từ tiêu đề (120px - 200px)
         const x = centerX + radius * Math.cos(angle);
         const y = centerY + radius * Math.sin(angle);
-        
+
         item.style.left = `${x}px`;
         item.style.top = `${y}px`;
     });
