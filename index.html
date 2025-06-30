@@ -10,51 +10,9 @@
       margin: 0;
       padding: 0;
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 120%; /* tăng cỡ chữ toàn cục */
-      background-color: #f8f8ff;
+      font-size: 120%;
+      background-color: #111;
       overflow: hidden;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 48px;
-    }
-
-    h1 {
-      font-size: 2.8em;
-      margin: 0.2em 0 0;
-    }
-
-    p {
-      font-size: 1.4em;
-      color: #444;
-    }
-
-    .menu {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .menu a {
-      display: inline-block;
-      text-decoration: none;
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.85);
-      background-color: transparent;
-      border-bottom: 4px solid rgba(255, 255, 255, 0.6); /* pixel border */
-      padding: 8px 16px;
-      margin: 0 8px;
-      font-size: 1.3em;
-      transition: transform 0.2s ease, color 0.2s ease;
-      image-rendering: pixelated;
-    }
-
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #ffd700;
-      background-color: rgba(255, 255, 255, 0.1);
     }
 
     .background {
@@ -67,6 +25,48 @@
       background-size: 98px 98px;
       opacity: 0.3;
       z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 64px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      margin: 0.2em 0 0;
+      color: white;
+    }
+
+    p {
+      font-size: 1.4em;
+      color: #ddd;
+    }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.85);
+      border-bottom: 4px solid rgba(255, 255, 255, 0.6);
+      padding: 8px 16px;
+      margin: 0 8px;
+      font-size: 1.3em;
+      transition: transform 0.2s ease, color 0.2s ease;
+      image-rendering: pixelated;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #ffd700;
+      background-color: rgba(255, 255, 255, 0.1);
     }
 
     #character {
@@ -98,7 +98,7 @@
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
-  <!-- Âm thanh click -->
+  <!-- Âm thanh hover -->
   <audio id="hover-sound" src="assets/sfx/click.mp3" preload="auto"></audio>
 
   <script>
@@ -109,6 +109,108 @@
         hoverSound.play();
       });
     });
+
+    const character = document.getElementById("character");
+    const container = document.querySelector('.container');
+
+    const directions = ['down', 'up', 'left', 'right'];
+    const idleDirs = {
+      down: 'Idle',
+      up: 'IdleU',
+      left: 'IdleL',
+      right: 'IdleR'
+    };
+    const walkDirs = {
+      down: 'Walk',
+      up: 'WalkU',
+      left: 'WalkL',
+      right: 'WalkR'
+    };
+
+    let dir = 'down';
+    let state = 'idle'; // idle, walk
+    let frame = 0;
+    let frameInterval = 100; // ms per frame
+    let pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const step = 48;
+    let walkSteps = 0;
+    let walkProgress = 0;
+
+    const textRect = document.querySelector('.container').getBoundingClientRect();
+
+    function isWithinBounds(x, y) {
+      const margin = 10;
+      return (
+        x >= margin &&
+        y >= margin &&
+        x + 48 <= window.innerWidth - margin &&
+        y + 48 <= window.innerHeight - margin &&
+        !(x + 48 > textRect.left && x < textRect.right && y + 48 > textRect.top && y < textRect.bottom)
+      );
+    }
+
+    function chooseNewBehavior() {
+      const r = Math.random();
+      if (r < 0.2) {
+        state = 'idle';
+        setTimeout(chooseNewBehavior, 1000 + Math.random() * 3000);
+      } else {
+        state = 'walk';
+        dir = directions[Math.floor(Math.random() * 4)];
+        walkSteps = Math.floor(1 + Math.random() * 4);
+        walkProgress = 0;
+      }
+    }
+
+    function updateFrame() {
+      let animPrefix = (state === 'walk' ? walkDirs[dir] : idleDirs[dir]);
+      let animFrames = (state === 'walk' ? 16 : 16);
+      let frameStr = frame.toString().padStart(2, '0');
+      character.src = `assets/character/${state === 'walk' ? 'Walk' : 'Idle'}/${animPrefix}${frameStr}.png`;
+      frame = (frame + 1) % animFrames;
+    }
+
+    function updatePosition() {
+      if (state !== 'walk') return;
+      const movePerFrame = step / 16;
+      let dx = 0, dy = 0;
+
+      if (dir === 'up') dy = -movePerFrame;
+      if (dir === 'down') dy = movePerFrame;
+      if (dir === 'left') dx = -movePerFrame;
+      if (dir === 'right') dx = movePerFrame;
+
+      const newX = pos.x + dx;
+      const newY = pos.y + dy;
+
+      if (isWithinBounds(newX, newY)) {
+        pos.x = newX;
+        pos.y = newY;
+        walkProgress += movePerFrame;
+        if (walkProgress >= step) {
+          walkSteps--;
+          walkProgress = 0;
+          if (walkSteps <= 0) {
+            state = 'idle';
+            frame = 0;
+            setTimeout(chooseNewBehavior, 1500 + Math.random() * 3500);
+          }
+        }
+      } else {
+        state = 'idle';
+        setTimeout(chooseNewBehavior, 1500 + Math.random() * 3500);
+      }
+    }
+
+    function gameLoop() {
+      updateFrame();
+      updatePosition();
+      character.style.left = `${pos.x}px`;
+      character.style.top = `${pos.y}px`;
+    }
+
+    setInterval(gameLoop, frameInterval);
+    setTimeout(chooseNewBehavior, 1000);
   </script>
 </body>
 </html>
