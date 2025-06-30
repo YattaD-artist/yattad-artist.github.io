@@ -6,15 +6,17 @@
   <title>YattaD</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Hiệu ứng thẩm mỹ cho nhân vật */
+    /* Nhân vật pixel-art đổ bóng theo hình dạng thật */
     #character {
       image-rendering: pixelated;
       display: block;
       margin: 0 auto;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
     }
 
-    /* Hiệu ứng menu khi hover */
+    /* Menu điều hướng */
     .menu a {
       display: inline-block;
       text-decoration: none;
@@ -28,12 +30,37 @@
       transform: scale(1.2);
       color: #4e5ba6; /* màu nhấn khi hover */
     }
+
+    /* Tùy chọn font và màu nền */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f9ff;
+      color: #223;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 8px 0;
+      color: #2a2a4a;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+    }
+
+    .container {
+      padding: 24px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <header style="text-align: center;">
-      <!-- Nhân vật hiển thị 48x48 px -->
+    <header>
+      <!-- Nhân vật hoạt ảnh, hiển thị 48x48 px -->
       <img id="character" src="assets/character/Idle00.png" alt="Vydra" width="48" height="48" />
 
       <h1>YattaD</h1>
