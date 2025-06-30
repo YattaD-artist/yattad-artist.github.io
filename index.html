@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
   <link rel="stylesheet" href="style.css" />
-  
   <style>
     /* Hiệu ứng thẩm mỹ cho nhân vật */
     #character {
@@ -34,7 +33,9 @@
 <body>
   <div class="container">
     <header style="text-align: center;">
+      <!-- Nhân vật hiển thị 48x48 px -->
       <img id="character" src="assets/character/Idle00.png" alt="Vydra" width="48" height="48" />
+
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -51,13 +52,13 @@
   <script>
     const character = document.getElementById("character");
     let frame = 0;
-    const totalFrames = 16;
+    const totalFrames = 16; // Số frame nhân vật (Idle00 → Idle15)
 
     setInterval(() => {
       const frameStr = frame.toString().padStart(2, "0");
       character.src = `assets/character/Idle${frameStr}.png`;
       frame = (frame + 1) % totalFrames;
-    }, 150);
+    }, 150); // 150ms mỗi frame
   </script>
 </body>
 </html>
