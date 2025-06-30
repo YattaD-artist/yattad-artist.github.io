@@ -5,59 +5,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
   <link rel="stylesheet" href="style.css" />
+  
   <style>
-    /* Hiệu ứng thẩm mỹ cho nhân vật */
+    /* Nhân vật pixel-art */
     #character {
-  image-rendering: pixelated;
-  display: block;
-  margin: 0 auto;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-}
+      image-rendering: pixelated;
+      display: block;
+      margin: 16px auto;
+      width: 48px;
+      height: 48px;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Phông chữ và căn giữa */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f9ff;
+      color: #223;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 8px 0;
+      color: #2a2a4a;
+    }
+
+    p {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+    }
+
+    /* Menu điều hướng */
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.1em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .container {
+      padding: 24px;
+    }
   </style>
-  .menu a {
-  display: inline-block;
-  text-decoration: none;
-  color: #334;
-  font-size: 1.1em;
-  margin: 0 12px;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.menu a:hover {
-  transform: scale(1.2);
-  color: #4e5ba6; /* màu nhấn khi hover */
-}
-
 </head>
+
 <body>
   <div class="container">
-    <header style="text-align: center;">
+    <header>
       <!-- Nhân vật hiển thị 48x48 px -->
-      <img id="character" src="assets/character/Idle00.png" alt="Vydra" width="48" height="48" />
+      <img id="character" src="assets/character/Idle00.png" alt="Vydra" />
 
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
 
-    <nav class="menu">
-      <a href="about.html">Giới thiệu</a>
-      <a href="illustrations.html">Minh Họa</a>
-      <a href="concepts.html">Thiết kế</a>
-      <a href="comics.html">Truyện Tranh</a>
-    </nav>
-  </div>
-
-  <!-- Script hoạt ảnh nhân vật -->
-  <script>
-    const character = document.getElementById("character");
-    let frame = 0;
-    const totalFrames = 16; // Số frame nhân vật (Idle00 → Idle15)
-
-    setInterval(() => {
-      const frameStr = frame.toString().padStart(2, "0");
-      character.src = `assets/character/Idle${frameStr}.png`;
-      frame = (frame + 1) % totalFrames;
-    }, 150); // 150ms mỗi frame
-  </script>
-</body>
-</html>
+    <nav
