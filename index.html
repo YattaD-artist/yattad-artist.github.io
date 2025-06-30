@@ -90,9 +90,9 @@
   <script>
     const character = document.getElementById("character");
 
-    // Các trạng thái và hướng
-    let state = "Idle"; // Idle, Walk, Run
-    let direction = ""; // "", "U", "R", "L"
+    // Trạng thái
+    let state = "Idle";      // Idle, Walk, Run
+    let direction = "";      // "", U, R, L
     let frame = 0;
 
     const frameLimits = {
@@ -106,7 +106,7 @@
 
     function updateSprite() {
       const frameStr = frame.toString().padStart(2, "0");
-      const suffix = direction !== "" ? direction : "";
+      const suffix = direction; // "" hoặc "U", "R", "L"
       const filename = `${state}${suffix}${frameStr}`;
       character.src = `assets/character/${state}/${filename}.png`;
     }
@@ -117,11 +117,13 @@
       frame = 0;
     }
 
+    // Cập nhật khung hình nhân vật
     setInterval(() => {
       updateSprite();
       frame = (frame + 1) % frameLimits[state];
     }, 150);
 
+    // Tự động thay đổi hành vi sau mỗi 4 giây
     setInterval(() => {
       randomizeState();
     }, 4000);
