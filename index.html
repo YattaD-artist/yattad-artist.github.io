@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YattaD</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YattaD</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Hiệu ứng thẩm mỹ cho nhân vật */
+    #character {
+      image-rendering: pixelated;
+      display: block;
+      margin: 0 auto;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease-in-out;
+    }
+
+    #character:hover {
+      transform: scale(2);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div style="text-align: center;">
-  <img src="assets/character/Idle00.png" alt="Vydra" width="48" height="48">
-</div>
-            <h1>YattaD</h1>
-            <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-        </header>
-        <nav class="menu">
-            <a href="about.html">Giới thiệu</a>
-            <a href="illustrations.html">Minh Họa</a>
-            <a href="concepts.html">Thiết kế</a>
-            <a href="comics.html">Truyện Tranh</a>
-        </nav>
-    </div>
+  <div class="container">
+    <header style="text-align: center;">
+      <!-- Nhân vật hiển thị 48x48 px -->
+      <img id="character" src="assets/character/Idle00.png" alt="Vydra" width="48" height="48" />
+
+      <h1>YattaD</h1>
+      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
+    </header>
+
+    <nav class="menu">
+      <a href="about.html">Giới thiệu</a>
+      <a href="illustrations.html">Minh Họa</a>
+      <a href="concepts.html">Thiết kế</a>
+      <a href="comics.html">Truyện Tranh</a>
+    </nav>
+  </div>
+
+  <!-- Script hoạt ảnh nhân vật -->
+  <script>
+    const character = document.getElementById("character");
+    let frame = 0;
+    const totalFrames = 16; // Số frame nhân vật (Idle00 → Idle15)
+
+    setInterval(() => {
+      const frameStr = frame.toString().padStart(2, "0");
+      character.src = `assets/character/Idle${frameStr}.png`;
+      frame = (frame + 1) % totalFrames;
+    }, 150); // 150ms mỗi frame
+  </script>
 </body>
 </html>
