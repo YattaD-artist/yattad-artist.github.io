@@ -4,12 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      height: 100%;
       background-color: #e8eff3;
+      font-family: 'Inter', sans-serif;
     }
 
     canvas#bgCanvas {
@@ -17,13 +21,18 @@
       top: 0;
       left: 0;
       z-index: 0;
+      pointer-events: none;
     }
 
     .container {
       position: relative;
       z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      padding: 24px;
     }
 
     #character {
@@ -33,6 +42,19 @@
       width: 48px;
       height: 48px;
       filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 12px 0 8px;
+      font-weight: 800;
+      color: #2f3250;
+    }
+
+    p {
+      font-size: 1.1em;
+      color: #667;
+      margin-bottom: 32px;
     }
 
     .menu a {
@@ -51,10 +73,10 @@
   </style>
 </head>
 <body>
-  <!-- Canvas nền -->
+  <!-- Canvas nền gạch -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- Nội dung -->
+  <!-- Nội dung trang -->
   <div class="container">
     <header>
       <img id="character" src="assets/character/Idle00.png" alt="Vydra" />
@@ -70,7 +92,7 @@
     </nav>
   </div>
 
-  <!-- Script hoạt ảnh nhân vật -->
+  <!-- Hoạt ảnh nhân vật -->
   <script>
     const character = document.getElementById("character");
     let frame = 0;
@@ -91,7 +113,7 @@
     const tileSize = 98;
     const opacity = 0.3;
     const img = new Image();
-    img.src = "assets/Dat.png"; // dùng đường dẫn thực tế trên server của bạn
+    img.src = "assets/Dat.png"; // Hoặc thay bằng ./mnt/data/... nếu chạy local
 
     function drawTiles() {
       canvas.width = window.innerWidth;
