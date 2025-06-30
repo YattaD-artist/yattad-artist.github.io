@@ -17,9 +17,6 @@
     .container {
       position: relative;
       z-index: 2;
-    }
-
-    header {
       text-align: center;
       padding-top: 48px;
     }
@@ -53,7 +50,6 @@
       color: #4e5ba6;
     }
 
-    /* Nền gạch lặp */
     .background {
       position: fixed;
       top: 0;
@@ -66,7 +62,6 @@
       z-index: 0;
     }
 
-    /* Nhân vật */
     #character {
       position: absolute;
       width: 48px;
@@ -80,7 +75,7 @@
 <body>
   <div class="background"></div>
 
-  <div class="container">
+  <div class="container" id="text-container">
     <header>
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
@@ -98,9 +93,10 @@
 
   <script>
     const character = document.getElementById("character");
+    const textContainer = document.getElementById("text-container");
 
     let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2;
+    let posY = window.innerHeight / 2 + 100;
     let frame = 0;
     let state = "idle";
     let direction = "";
@@ -124,6 +120,40 @@
       character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
+    function checkCollision(dx, dy) {
+      const futureX = posX + dx;
+      const futureY = posY + dy;
+
+      const charRect = {
+        left: futureX,
+        top: futureY,
+        right: futureX + 48,
+        bottom: futureY + 48
+      };
+
+      const screen = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      if (
+        charRect.left < 0 || charRect.right > screen.width ||
+        charRect.top < 0 || charRect.bottom > screen.height
+      ) {
+        return true;
+      }
+
+      const textRect = textContainer.getBoundingClientRect();
+      const overlap = !(
+        charRect.right < textRect.left ||
+        charRect.left > textRect.right ||
+        charRect.bottom < textRect.top ||
+        charRect.top > textRect.bottom
+      );
+
+      return overlap;
+    }
+
     function smoothWalkStep(dx, dy, onFinish) {
       const totalFrames = 16;
       let current = 0;
@@ -145,7 +175,7 @@
         updateSprite();
 
         current++;
-        setTimeout(step, 60); // 60ms per frame ~ 16.6 FPS
+        setTimeout(step, 70); // Chậm hơn một chút cho mượt mà
       }
 
       step();
@@ -170,7 +200,19 @@
           return;
         }
 
-        smoothWalkStep(vx * 48, vy * 48, () => {
+        const dx = vx * 48;
+        const dy = vy * 48;
+
+        if (checkCollision(dx, dy)) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        smoothWalkStep(dx, dy, () => {
           stepCount++;
           next();
         });
@@ -204,7 +246,6 @@
       }, delay);
     }
 
-    // Idle animation loop
     setInterval(() => {
       if (state === "idle") {
         frame = (frame + 1) % 16;
