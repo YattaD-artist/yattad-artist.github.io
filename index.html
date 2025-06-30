@@ -6,7 +6,25 @@
   <title>YattaD</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Nhân vật pixel-art đổ bóng theo hình dạng thật */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #223;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px;
+    }
+
+    /* Nhân vật pixel-art */
     #character {
       image-rendering: pixelated;
       display: block;
@@ -16,7 +34,7 @@
       filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
     }
 
-    /* Menu điều hướng */
+    /* Menu */
     .menu a {
       display: inline-block;
       text-decoration: none;
@@ -28,40 +46,43 @@
 
     .menu a:hover {
       transform: scale(1.2);
-      color: #4e5ba6; /* màu nhấn khi hover */
+      color: #4e5ba6;
     }
 
-    /* Tùy chọn font và màu nền */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f3f9ff;
-      color: #223;
-      text-align: center;
-      margin: 0;
-      padding: 0;
+    /* Nền gạch */
+    #background-tiles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin: 8px 0;
-      color: #2a2a4a;
+    .tile {
+      position: absolute;
+      width: 98px;
+      height: 98px;
+      image-rendering: pixelated;
     }
 
-    p {
-      font-size: 1.1em;
-      margin-bottom: 24px;
-    }
-
-    .container {
-      padding: 24px;
+    .tile img {
+      width: 98px;
+      height: 98px;
+      display: block;
     }
   </style>
 </head>
 <body>
+  <!-- NỀN -->
+  <div id="background-tiles"></div>
+
+  <!-- NỘI DUNG -->
   <div class="container">
     <header>
-      <!-- Nhân vật hoạt ảnh, hiển thị 48x48 px -->
-      <img id="character" src="assets/character/Idle00.png" alt="Vydra" width="48" height="48" />
+      <img id="character" src="assets/character/Idle00.png" alt="Vydra" />
 
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
@@ -79,13 +100,51 @@
   <script>
     const character = document.getElementById("character");
     let frame = 0;
-    const totalFrames = 16; // Số frame nhân vật (Idle00 → Idle15)
+    const totalFrames = 16;
 
     setInterval(() => {
       const frameStr = frame.toString().padStart(2, "0");
       character.src = `assets/character/Idle${frameStr}.png`;
       frame = (frame + 1) % totalFrames;
-    }, 150); // 150ms mỗi frame
+    }, 150);
+  </script>
+
+  <!-- Script tạo nền lặp -->
+  <script>
+    const container = document.getElementById('background-tiles');
+    const tileSize = 98;
+    const tileImg = 'assets/Dat.png';
+
+    const w = Math.ceil(window.innerWidth / tileSize);
+    const h = Math.ceil(window.innerHeight / tileSize);
+
+    function randomTransform() {
+      const options = [
+        'rotate(0deg)',
+        'rotate(90deg)',
+        'rotate(180deg)',
+        'rotate(-90deg)',
+        'scaleX(-1)',
+        'scaleY(-1)'
+      ];
+      return options[Math.floor(Math.random() * options.length)];
+    }
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.style.left = `${x * tileSize}px`;
+        tile.style.top = `${y * tileSize}px`;
+
+        const img = document.createElement('img');
+        img.src = tileImg;
+        img.style.transform = randomTransform();
+
+        tile.appendChild(img);
+        container.appendChild(tile);
+      }
+    }
   </script>
 </body>
 </html>
