@@ -99,42 +99,70 @@
   <script>
     const character = document.getElementById("character");
 
-    // Vị trí và trạng thái
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2;
     let frame = 0;
-    let state = "idle"; // idle, walk
-    let direction = ""; // "", U, L, R
+    let state = "idle";
+    let direction = "";
+    let isMoving = false;
 
     const directions = ["", "U", "L", "R"];
-    const directionVectors = {
+    const dirVectors = {
       "": [0, 1],
       "U": [0, -1],
       "L": [-1, 0],
-      "R": [1, 0]
+      "R": [1, 0],
     };
 
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-      const folder = state === "walk" ? "Walk" : "Idle";
+      const folder = (state === "walk") ? "Walk" : "Idle";
       const suffix = direction;
       const frameStr = frame.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
-    function walkSmooth(steps) {
-      const framesPerStep = 16;
-      const totalFrames = framesPerStep * steps;
-      let currentFrame = 0;
+    function smoothWalkStep(dx, dy, onFinish) {
+      const totalFrames = 16;
+      let current = 0;
+      const stepSizeX = dx / totalFrames;
+      const stepSizeY = dy / totalFrames;
 
-      const [dx, dy] = directionVectors[direction];
-      const movePerFrameX = (dx * 48) / framesPerStep;
-      const movePerFrameY = (dy * 48) / framesPerStep;
+      function step() {
+        if (current >= totalFrames) {
+          onFinish();
+          return;
+        }
 
-      function animate() {
-        if (currentFrame >= totalFrames) {
+        posX += stepSizeX;
+        posY += stepSizeY;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+
+        frame = current % 16;
+        updateSprite();
+
+        current++;
+        setTimeout(step, 60); // 60ms per frame ~ 16.6 FPS
+      }
+
+      step();
+    }
+
+    function startWalk(steps) {
+      if (isMoving) return;
+      isMoving = true;
+      state = "walk";
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let stepCount = 0;
+
+      function next() {
+        if (stepCount >= steps) {
+          isMoving = false;
           state = "idle";
           frame = 0;
           updateSprite();
@@ -142,43 +170,36 @@
           return;
         }
 
-        frame = currentFrame % framesPerStep;
-        updateSprite();
-
-        posX += movePerFrameX;
-        posY += movePerFrameY;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-
-        currentFrame++;
-        setTimeout(animate, 60); // 60ms/frame ~16fps
+        smoothWalkStep(vx * 48, vy * 48, () => {
+          stepCount++;
+          next();
+        });
       }
 
-      animate();
+      next();
     }
 
     function chooseAction() {
       const r = Math.random();
 
       if (r < 0.6) {
-        state = "walk";
-        const steps = 1 + Math.floor(Math.random() * 3); // 1 đến 3 bước
-        walkSmooth(steps);
+        const steps = 1 + Math.floor(Math.random() * 3);
+        startWalk(steps);
       } else {
         state = "idle";
+        frame = 0;
+        updateSprite();
         scheduleNextAction();
       }
     }
 
     function scheduleNextAction() {
       const delay = (direction === "U")
-        ? 1500 + Math.random() * 1000 // ngắn hơn
+        ? 1500 + Math.random() * 1000
         : 1500 + Math.random() * 3500;
 
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
-        frame = 0;
-        updateSprite();
         chooseAction();
       }, delay);
     }
