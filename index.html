@@ -66,12 +66,18 @@
       width: 98px;
       height: 98px;
       image-rendering: pixelated;
+      overflow: hidden;
     }
 
     .tile img {
       width: 98px;
       height: 98px;
       display: block;
+      opacity: 0.3; /* làm mờ 30% */
+      transform-origin: top left;
+      backface-visibility: hidden;
+      will-change: transform;
+      image-rendering: pixelated;
     }
   </style>
 </head>
@@ -109,7 +115,7 @@
     }, 150);
   </script>
 
-  <!-- Script tạo nền lặp -->
+  <!-- Script tạo nền gạch ngẫu nhiên -->
   <script>
     const container = document.getElementById('background-tiles');
     const tileSize = 98;
