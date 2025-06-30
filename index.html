@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     html, body {
@@ -25,7 +24,7 @@
 
     .container {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -41,6 +40,8 @@
       width: 48px;
       height: 48px;
       filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
@@ -48,12 +49,16 @@
       margin: 12px 0 8px;
       font-weight: 800;
       color: #2f3250;
+      z-index: 3;
+      position: relative;
     }
 
     p {
       font-size: 1.1em;
       color: #667;
       margin-bottom: 32px;
+      z-index: 3;
+      position: relative;
     }
 
     .menu a {
@@ -63,6 +68,8 @@
       font-size: 1.1em;
       margin: 0 12px;
       transition: transform 0.2s ease, color 0.2s ease;
+      z-index: 3;
+      position: relative;
     }
 
     .menu a:hover {
@@ -76,7 +83,9 @@
 
   <div class="container">
     <header>
+      <!-- Nhân vật hiển thị -->
       <img id="character" src="assets/character/Idle/Idle00.png" alt="YattaD" />
+
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -89,47 +98,51 @@
     </nav>
   </div>
 
-  <!-- JS: hoạt ảnh nhân vật -->
+  <!-- Script: hoạt ảnh Idle và tự xoay hướng -->
   <script>
     const character = document.getElementById("character");
     let frame = 0;
     const totalFrames = 16;
+    const directions = ["", "U", "L", "R"]; // "" = xuống
 
-    const directions = ["", "U", "L", "R"]; // "" là hướng xuống (Idle)
-    let currentDirection = ""; // bắt đầu hướng xuống
+    let currentDirection = "";
 
     function updateIdleSprite() {
       const frameStr = frame.toString().padStart(2, "0");
-      const directionSuffix = currentDirection;
-      const path = `assets/character/Idle/Idle${directionSuffix}${frameStr}.png`;
-      character.src = path;
+      const suffix = currentDirection;
+      character.src = `assets/character/Idle/Idle${suffix}${frameStr}.png`;
     }
 
-    // Cập nhật frame liên tục
     setInterval(() => {
       updateIdleSprite();
       frame = (frame + 1) % totalFrames;
     }, 150);
 
-    // Thay đổi hướng sau khoảng thời gian ngẫu nhiên
     function changeDirectionRandomly() {
-      const newDir = directions[Math.floor(Math.random() * directions.length)];
-      currentDirection = newDir;
+      const newDirection = directions[Math.floor(Math.random() * directions.length)];
+      currentDirection = newDirection;
     }
 
     function scheduleDirectionChange() {
-      const delay = 3000 + Math.random() * 4000; // 3-7 giây
+      let delay;
+
+      // Nếu đang quay lên, chọn delay ngắn
+      if (currentDirection === "U") {
+        delay = 1500 + Math.random() * 1000; // 1.5 - 2.5 giây
+      } else {
+        delay = 3000 + Math.random() * 4000; // 3 - 7 giây
+      }
+
       setTimeout(() => {
         changeDirectionRandomly();
         scheduleDirectionChange();
       }, delay);
     }
 
-    // Khởi động thay đổi hướng
     scheduleDirectionChange();
   </script>
 
-  <!-- Nền gạch -->
+  <!-- Script: nền gạch -->
   <script>
     const canvas = document.getElementById("bgCanvas");
     const ctx = canvas.getContext("2d");
