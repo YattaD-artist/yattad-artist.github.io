@@ -12,6 +12,7 @@
       height: 100%;
       background-color: #e8eff3;
       font-family: 'Inter', sans-serif;
+      overflow: hidden;
     }
 
     canvas#bgCanvas {
@@ -35,13 +36,19 @@
 
     #character {
       image-rendering: pixelated;
-      display: block;
-      margin: 0 auto;
+      position: absolute;
       width: 48px;
       height: 48px;
       filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
-      position: relative;
       z-index: 1;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    h1, p, .menu a {
+      position: relative;
+      z-index: 3;
     }
 
     h1 {
@@ -49,16 +56,12 @@
       margin: 12px 0 8px;
       font-weight: 800;
       color: #2f3250;
-      z-index: 3;
-      position: relative;
     }
 
     p {
       font-size: 1.1em;
       color: #667;
       margin-bottom: 32px;
-      z-index: 3;
-      position: relative;
     }
 
     .menu a {
@@ -68,8 +71,6 @@
       font-size: 1.1em;
       margin: 0 12px;
       transition: transform 0.2s ease, color 0.2s ease;
-      z-index: 3;
-      position: relative;
     }
 
     .menu a:hover {
@@ -83,9 +84,7 @@
 
   <div class="container">
     <header>
-      <!-- Nhân vật hiển thị -->
       <img id="character" src="assets/character/Idle/Idle00.png" alt="YattaD" />
-
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -98,58 +97,13 @@
     </nav>
   </div>
 
-  <!-- Script: hoạt ảnh Idle và tự xoay hướng -->
-  <script>
-    const character = document.getElementById("character");
-    let frame = 0;
-    const totalFrames = 16;
-    const directions = ["", "U", "L", "R"]; // "" = xuống
-
-    let currentDirection = "";
-
-    function updateIdleSprite() {
-      const frameStr = frame.toString().padStart(2, "0");
-      const suffix = currentDirection;
-      character.src = `assets/character/Idle/Idle${suffix}${frameStr}.png`;
-    }
-
-    setInterval(() => {
-      updateIdleSprite();
-      frame = (frame + 1) % totalFrames;
-    }, 150);
-
-    function changeDirectionRandomly() {
-      const newDirection = directions[Math.floor(Math.random() * directions.length)];
-      currentDirection = newDirection;
-    }
-
-    function scheduleDirectionChange() {
-      let delay;
-
-      // Nếu đang quay lên, chọn delay ngắn
-      if (currentDirection === "U") {
-        delay = 1500 + Math.random() * 1000; // 1.5 - 2.5 giây
-      } else {
-        delay = 3000 + Math.random() * 4000; // 3 - 7 giây
-      }
-
-      setTimeout(() => {
-        changeDirectionRandomly();
-        scheduleDirectionChange();
-      }, delay);
-    }
-
-    scheduleDirectionChange();
-  </script>
-
-  <!-- Script: nền gạch -->
   <script>
     const canvas = document.getElementById("bgCanvas");
     const ctx = canvas.getContext("2d");
     const tileSize = 98;
     const opacity = 0.3;
-    const img = new Image();
-    img.src = "assets/Dat.png";
+    const bgImg = new Image();
+    bgImg.src = "assets/Dat.png";
 
     function drawTiles() {
       canvas.width = window.innerWidth;
@@ -171,14 +125,106 @@
           ctx.rotate((angle * Math.PI) / 180);
           ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
           ctx.globalAlpha = opacity;
-          ctx.drawImage(img, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
+          ctx.drawImage(bgImg, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
           ctx.restore();
         }
       }
     }
 
-    img.onload = drawTiles;
+    bgImg.onload = drawTiles;
     window.addEventListener("resize", drawTiles);
+  </script>
+
+  <script>
+    const character = document.getElementById("character");
+
+    const directions = ["", "U", "L", "R"]; // "" = Down
+    const directionVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
+    };
+
+    let state = "idle"; // "idle", "walk", "run"
+    let direction = "";
+    let frame = 0;
+    let stepCount = 0;
+    let posX = window.innerWidth / 2;
+    let posY = window.innerHeight / 2;
+
+    function updateSprite() {
+      const prefix = state === "idle" ? "Idle" : (state === "walk" ? "Walk" : "Run");
+      const frameTotal = (state === "run") ? 8 : 16;
+      const suffix = direction;
+      const frameStr = frame.toString().padStart(2, "0");
+      character.src = `assets/character/${prefix}/${prefix}${suffix}${frameStr}.png`;
+    }
+
+    function stepAnimation(speed) {
+      const frameTotal = (state === "run") ? 8 : 16;
+      const stepDelay = speed;
+
+      const step = () => {
+        if (stepCount <= 0) {
+          state = "idle";
+          scheduleNextAction();
+          return;
+        }
+
+        frame = (frame + 1) % frameTotal;
+        updateSprite();
+
+        const [dx, dy] = directionVectors[direction];
+        posX += dx * 48;
+        posY += dy * 48;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+
+        stepCount--;
+        setTimeout(step, stepDelay);
+      };
+
+      step();
+    }
+
+    function chooseAction() {
+      const r = Math.random();
+
+      if (r < 0.5) {
+        state = "walk";
+        stepCount = 1 + Math.floor(Math.random() * 4);
+        stepAnimation(250);
+      } else if (r < 0.8) {
+        state = "run";
+        stepCount = 2 + Math.floor(Math.random() * 5);
+        stepAnimation(120);
+      } else {
+        state = "idle";
+        scheduleNextAction();
+      }
+    }
+
+    function scheduleNextAction() {
+      const delay = (direction === "U")
+        ? 1500 + Math.random() * 1000
+        : 1500 + Math.random() * 3500;
+
+      setTimeout(() => {
+        direction = directions[Math.floor(Math.random() * directions.length)];
+        chooseAction();
+      }, delay);
+    }
+
+    setInterval(() => {
+      if (state === "idle") {
+        frame = (frame + 1) % 16;
+        updateSprite();
+      }
+    }, 150);
+
+    updateSprite();
+    scheduleNextAction();
   </script>
 </body>
 </html>
