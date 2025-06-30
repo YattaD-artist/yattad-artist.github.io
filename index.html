@@ -4,17 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background-color: #e8eff3;
     }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #223;
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
     }
 
     .container {
@@ -24,7 +26,6 @@
       padding: 24px;
     }
 
-    /* Nhân vật pixel-art */
     #character {
       image-rendering: pixelated;
       display: block;
@@ -34,7 +35,6 @@
       filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
     }
 
-    /* Menu */
     .menu a {
       display: inline-block;
       text-decoration: none;
@@ -48,48 +48,16 @@
       transform: scale(1.2);
       color: #4e5ba6;
     }
-
-    /* Nền gạch */
-    #background-tiles {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .tile {
-      position: absolute;
-      width: 98px;
-      height: 98px;
-      image-rendering: pixelated;
-      overflow: hidden;
-    }
-
-    .tile img {
-      width: 98px;
-      height: 98px;
-      display: block;
-      opacity: 0.3; /* làm mờ 30% */
-      transform-origin: top left;
-      backface-visibility: hidden;
-      will-change: transform;
-      image-rendering: pixelated;
-    }
   </style>
 </head>
 <body>
-  <!-- NỀN -->
-  <div id="background-tiles"></div>
+  <!-- Canvas nền -->
+  <canvas id="bgCanvas"></canvas>
 
-  <!-- NỘI DUNG -->
+  <!-- Nội dung -->
   <div class="container">
     <header>
       <img id="character" src="assets/character/Idle00.png" alt="Vydra" />
-
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -115,42 +83,46 @@
     }, 150);
   </script>
 
-  <!-- Script tạo nền gạch ngẫu nhiên -->
+  <!-- Script vẽ nền gạch bằng canvas -->
   <script>
-    const container = document.getElementById('background-tiles');
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
     const tileSize = 98;
-    const tileImg = 'assets/Dat.png';
+    const opacity = 0.3;
+    const img = new Image();
+    img.src = "assets/Dat.png"; // dùng đường dẫn thực tế trên server của bạn
 
-    const w = Math.ceil(window.innerWidth / tileSize);
-    const h = Math.ceil(window.innerHeight / tileSize);
+    function drawTiles() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-    function randomTransform() {
-      const options = [
-        'rotate(0deg)',
-        'rotate(90deg)',
-        'rotate(180deg)',
-        'rotate(-90deg)',
-        'scaleX(-1)',
-        'scaleY(-1)'
-      ];
-      return options[Math.floor(Math.random() * options.length)];
-    }
+      const cols = Math.ceil(canvas.width / tileSize);
+      const rows = Math.ceil(canvas.height / tileSize);
 
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.style.left = `${x * tileSize}px`;
-        tile.style.top = `${y * tileSize}px`;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const dx = x * tileSize;
+          const dy = y * tileSize;
 
-        const img = document.createElement('img');
-        img.src = tileImg;
-        img.style.transform = randomTransform();
+          const angleOptions = [0, 90, 180, 270];
+          const flipX = Math.random() < 0.5;
+          const flipY = Math.random() < 0.5;
+          const angle = angleOptions[Math.floor(Math.random() * angleOptions.length)];
 
-        tile.appendChild(img);
-        container.appendChild(tile);
+          ctx.save();
+          ctx.translate(dx + tileSize / 2, dy + tileSize / 2);
+          ctx.rotate((angle * Math.PI) / 180);
+          ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+          ctx.globalAlpha = opacity;
+          ctx.drawImage(img, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
+          ctx.restore();
+        }
       }
     }
+
+    img.onload = drawTiles;
+    window.addEventListener("resize", drawTiles);
   </script>
 </body>
 </html>
