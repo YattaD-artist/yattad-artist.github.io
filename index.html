@@ -10,9 +10,44 @@
       margin: 0;
       padding: 0;
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 120%;
-      background-color: #111;
+      background-color: #f8f8ff;
       overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 48px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0.2em 0 0;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.1em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
     }
 
     .background {
@@ -25,48 +60,6 @@
       background-size: 98px 98px;
       opacity: 0.3;
       z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 64px;
-    }
-
-    h1 {
-      font-size: 2.8em;
-      margin: 0.2em 0 0;
-      color: white;
-    }
-
-    p {
-      font-size: 1.4em;
-      color: #ddd;
-    }
-
-    .menu {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .menu a {
-      display: inline-block;
-      text-decoration: none;
-      font-weight: bold;
-      color: rgba(255, 255, 255, 0.85);
-      border-bottom: 4px solid rgba(255, 255, 255, 0.6);
-      padding: 8px 16px;
-      margin: 0 8px;
-      font-size: 1.3em;
-      transition: transform 0.2s ease, color 0.2s ease;
-      image-rendering: pixelated;
-    }
-
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #ffd700;
-      background-color: rgba(255, 255, 255, 0.1);
     }
 
     #character {
@@ -98,119 +91,170 @@
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
-  <!-- Âm thanh hover -->
-  <audio id="hover-sound" src="assets/sfx/click.mp3" preload="auto"></audio>
-
   <script>
-    const hoverSound = document.getElementById("hover-sound");
-    document.querySelectorAll('.menu a').forEach(link => {
-      link.addEventListener('mouseenter', () => {
-        hoverSound.currentTime = 0;
-        hoverSound.play();
-      });
-    });
-
     const character = document.getElementById("character");
-    const container = document.querySelector('.container');
+    const textContainer = document.getElementById("text-container");
 
-    const directions = ['down', 'up', 'left', 'right'];
-    const idleDirs = {
-      down: 'Idle',
-      up: 'IdleU',
-      left: 'IdleL',
-      right: 'IdleR'
-    };
-    const walkDirs = {
-      down: 'Walk',
-      up: 'WalkU',
-      left: 'WalkL',
-      right: 'WalkR'
-    };
-
-    let dir = 'down';
-    let state = 'idle'; // idle, walk
+    let posX = window.innerWidth / 2;
+    let posY = window.innerHeight / 2 + 100;
     let frame = 0;
-    let frameInterval = 100; // ms per frame
-    let pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    const step = 48;
-    let walkSteps = 0;
-    let walkProgress = 0;
+    let state = "idle";
+    let direction = "";
+    let isMoving = false;
 
-    const textRect = document.querySelector('.container').getBoundingClientRect();
+    const directions = ["", "U", "L", "R"];
+    const dirVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0],
+    };
 
-    function isWithinBounds(x, y) {
-      const margin = 10;
-      return (
-        x >= margin &&
-        y >= margin &&
-        x + 48 <= window.innerWidth - margin &&
-        y + 48 <= window.innerHeight - margin &&
-        !(x + 48 > textRect.left && x < textRect.right && y + 48 > textRect.top && y < textRect.bottom)
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+
+    function updateSprite() {
+      const folder = (state === "walk") ? "Walk" : "Idle";
+      const suffix = direction;
+      const frameStr = frame.toString().padStart(2, "0");
+      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
+    }
+
+    function checkCollision(dx, dy) {
+      const futureX = posX + dx;
+      const futureY = posY + dy;
+
+      const charRect = {
+        left: futureX,
+        top: futureY,
+        right: futureX + 48,
+        bottom: futureY + 48
+      };
+
+      const screen = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      if (
+        charRect.left < 0 || charRect.right > screen.width ||
+        charRect.top < 0 || charRect.bottom > screen.height
+      ) {
+        return true;
+      }
+
+      const textRect = textContainer.getBoundingClientRect();
+      const overlap = !(
+        charRect.right < textRect.left ||
+        charRect.left > textRect.right ||
+        charRect.bottom < textRect.top ||
+        charRect.top > textRect.bottom
       );
+
+      return overlap;
     }
 
-    function chooseNewBehavior() {
-      const r = Math.random();
-      if (r < 0.2) {
-        state = 'idle';
-        setTimeout(chooseNewBehavior, 1000 + Math.random() * 3000);
-      } else {
-        state = 'walk';
-        dir = directions[Math.floor(Math.random() * 4)];
-        walkSteps = Math.floor(1 + Math.random() * 4);
-        walkProgress = 0;
-      }
-    }
+    function smoothWalkStep(dx, dy, onFinish) {
+      const totalFrames = 16;
+      let current = 0;
+      const stepSizeX = dx / totalFrames;
+      const stepSizeY = dy / totalFrames;
 
-    function updateFrame() {
-      let animPrefix = (state === 'walk' ? walkDirs[dir] : idleDirs[dir]);
-      let animFrames = (state === 'walk' ? 16 : 16);
-      let frameStr = frame.toString().padStart(2, '0');
-      character.src = `assets/character/${state === 'walk' ? 'Walk' : 'Idle'}/${animPrefix}${frameStr}.png`;
-      frame = (frame + 1) % animFrames;
-    }
-
-    function updatePosition() {
-      if (state !== 'walk') return;
-      const movePerFrame = step / 16;
-      let dx = 0, dy = 0;
-
-      if (dir === 'up') dy = -movePerFrame;
-      if (dir === 'down') dy = movePerFrame;
-      if (dir === 'left') dx = -movePerFrame;
-      if (dir === 'right') dx = movePerFrame;
-
-      const newX = pos.x + dx;
-      const newY = pos.y + dy;
-
-      if (isWithinBounds(newX, newY)) {
-        pos.x = newX;
-        pos.y = newY;
-        walkProgress += movePerFrame;
-        if (walkProgress >= step) {
-          walkSteps--;
-          walkProgress = 0;
-          if (walkSteps <= 0) {
-            state = 'idle';
-            frame = 0;
-            setTimeout(chooseNewBehavior, 1500 + Math.random() * 3500);
-          }
+      function step() {
+        if (current >= totalFrames) {
+          onFinish();
+          return;
         }
+
+        posX += stepSizeX;
+        posY += stepSizeY;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+
+        frame = current % 16;
+        updateSprite();
+
+        current++;
+        setTimeout(step, 70); // Chậm hơn một chút cho mượt mà
+      }
+
+      step();
+    }
+
+    function startWalk(steps) {
+      if (isMoving) return;
+      isMoving = true;
+      state = "walk";
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let stepCount = 0;
+
+      function next() {
+        if (stepCount >= steps) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        const dx = vx * 48;
+        const dy = vy * 48;
+
+        if (checkCollision(dx, dy)) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        smoothWalkStep(dx, dy, () => {
+          stepCount++;
+          next();
+        });
+      }
+
+      next();
+    }
+
+    function chooseAction() {
+      const r = Math.random();
+
+      if (r < 0.6) {
+        const steps = 1 + Math.floor(Math.random() * 3);
+        startWalk(steps);
       } else {
-        state = 'idle';
-        setTimeout(chooseNewBehavior, 1500 + Math.random() * 3500);
+        state = "idle";
+        frame = 0;
+        updateSprite();
+        scheduleNextAction();
       }
     }
 
-    function gameLoop() {
-      updateFrame();
-      updatePosition();
-      character.style.left = `${pos.x}px`;
-      character.style.top = `${pos.y}px`;
+    function scheduleNextAction() {
+      const delay = (direction === "U")
+        ? 1500 + Math.random() * 1000
+        : 1500 + Math.random() * 3500;
+
+      setTimeout(() => {
+        direction = directions[Math.floor(Math.random() * directions.length)];
+        chooseAction();
+      }, delay);
     }
 
-    setInterval(gameLoop, frameInterval);
-    setTimeout(chooseNewBehavior, 1000);
+    setInterval(() => {
+      if (state === "idle") {
+        frame = (frame + 1) % 16;
+        updateSprite();
+      }
+    }, 150);
+
+    updateSprite();
+    scheduleNextAction();
   </script>
 </body>
 </html>
