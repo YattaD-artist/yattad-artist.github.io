@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <!-- Google Fonts: Inter -->
+  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-
   <style>
     html, body {
       margin: 0;
@@ -73,13 +72,11 @@
   </style>
 </head>
 <body>
-  <!-- Canvas nền gạch -->
   <canvas id="bgCanvas"></canvas>
 
-  <!-- Nội dung trang -->
   <div class="container">
     <header>
-      <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+      <img id="character" src="assets/character/Idle/Idle00.png" alt="YattaD" />
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -92,24 +89,50 @@
     </nav>
   </div>
 
-  <!-- Hoạt ảnh nhân vật -->
+  <!-- JS: hoạt ảnh nhân vật -->
   <script>
     const character = document.getElementById("character");
     let frame = 0;
     const totalFrames = 16;
 
-    setInterval(() => {
+    const directions = ["", "U", "L", "R"]; // "" là hướng xuống (Idle)
+    let currentDirection = ""; // bắt đầu hướng xuống
+
+    function updateIdleSprite() {
       const frameStr = frame.toString().padStart(2, "0");
-      character.src = `assets/character/Idle/Idle${frameStr}.png`;
+      const directionSuffix = currentDirection;
+      const path = `assets/character/Idle/Idle${directionSuffix}${frameStr}.png`;
+      character.src = path;
+    }
+
+    // Cập nhật frame liên tục
+    setInterval(() => {
+      updateIdleSprite();
       frame = (frame + 1) % totalFrames;
     }, 150);
+
+    // Thay đổi hướng sau khoảng thời gian ngẫu nhiên
+    function changeDirectionRandomly() {
+      const newDir = directions[Math.floor(Math.random() * directions.length)];
+      currentDirection = newDir;
+    }
+
+    function scheduleDirectionChange() {
+      const delay = 3000 + Math.random() * 4000; // 3-7 giây
+      setTimeout(() => {
+        changeDirectionRandomly();
+        scheduleDirectionChange();
+      }, delay);
+    }
+
+    // Khởi động thay đổi hướng
+    scheduleDirectionChange();
   </script>
 
-  <!-- Script vẽ nền gạch bằng canvas -->
+  <!-- Nền gạch -->
   <script>
     const canvas = document.getElementById("bgCanvas");
     const ctx = canvas.getContext("2d");
-
     const tileSize = 98;
     const opacity = 0.3;
     const img = new Image();
@@ -118,7 +141,6 @@
     function drawTiles() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
       const cols = Math.ceil(canvas.width / tileSize);
       const rows = Math.ceil(canvas.height / tileSize);
 
@@ -126,7 +148,6 @@
         for (let x = 0; x < cols; x++) {
           const dx = x * tileSize;
           const dy = y * tileSize;
-
           const angleOptions = [0, 90, 180, 270];
           const flipX = Math.random() < 0.5;
           const flipY = Math.random() < 0.5;
