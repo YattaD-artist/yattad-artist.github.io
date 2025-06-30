@@ -2,59 +2,41 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YattaD</title>
-  <!-- Google Fonts: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-
+  <link rel="stylesheet" href="style.css" />
   <style>
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      background-color: #e8eff3;
-      font-family: 'Inter', sans-serif;
-    }
-
-    canvas#bgCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
-      pointer-events: none;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefefe;
+      position: relative;
+      overflow: hidden;
     }
 
     .container {
       position: relative;
       z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    }
+
+    header {
       text-align: center;
+      margin-top: 20px;
     }
 
     #character {
       image-rendering: pixelated;
       display: block;
-      margin: 0 auto;
+      margin: 0 auto 12px;
       width: 48px;
       height: 48px;
-      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin: 12px 0 8px;
-      font-weight: 800;
-      color: #2f3250;
-    }
-
-    p {
-      font-size: 1.1em;
-      color: #667;
-      margin-bottom: 32px;
+    .menu {
+      text-align: center;
+      margin-top: 20px;
     }
 
     .menu a {
@@ -70,16 +52,29 @@
       transform: scale(1.2);
       color: #4e5ba6;
     }
+
+    .background-tile {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      background-image: url("assets/Dat.png");
+      background-repeat: repeat;
+      background-size: 98px 98px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
-  <!-- Canvas nền gạch -->
-  <canvas id="bgCanvas"></canvas>
 
-  <!-- Nội dung trang -->
+  <!-- Nền gạch -->
+  <div class="background-tile"></div>
+
   <div class="container">
     <header>
-      <img id="character" src="assets/character/Idle00.png" alt="Vydra" />
+      <img id="character" src="assets/character/Idle/Idle00.png" alt="NPC">
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
@@ -92,59 +87,44 @@
     </nav>
   </div>
 
-  <!-- Hoạt ảnh nhân vật -->
   <script>
     const character = document.getElementById("character");
+
+    // Các trạng thái và hướng
+    let state = "Idle"; // Idle, Walk, Run
+    let direction = ""; // "", "U", "R", "L"
     let frame = 0;
-    const totalFrames = 16;
 
-    setInterval(() => {
+    const frameLimits = {
+      Idle: 16,
+      Walk: 16,
+      Run: 8
+    };
+
+    const directions = ["", "U", "R", "L"];
+    const states = ["Idle", "Walk", "Run"];
+
+    function updateSprite() {
       const frameStr = frame.toString().padStart(2, "0");
-      character.src = `assets/character/Idle${frameStr}.png`;
-      frame = (frame + 1) % totalFrames;
-    }, 150);
-  </script>
-
-  <!-- Script vẽ nền gạch bằng canvas -->
-  <script>
-    const canvas = document.getElementById("bgCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const tileSize = 98;
-    const opacity = 0.3;
-    const img = new Image();
-    img.src = "assets/Dat.png"; // Hoặc thay bằng ./mnt/data/... nếu chạy local
-
-    function drawTiles() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const cols = Math.ceil(canvas.width / tileSize);
-      const rows = Math.ceil(canvas.height / tileSize);
-
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const dx = x * tileSize;
-          const dy = y * tileSize;
-
-          const angleOptions = [0, 90, 180, 270];
-          const flipX = Math.random() < 0.5;
-          const flipY = Math.random() < 0.5;
-          const angle = angleOptions[Math.floor(Math.random() * angleOptions.length)];
-
-          ctx.save();
-          ctx.translate(dx + tileSize / 2, dy + tileSize / 2);
-          ctx.rotate((angle * Math.PI) / 180);
-          ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
-          ctx.globalAlpha = opacity;
-          ctx.drawImage(img, -tileSize / 2, -tileSize / 2, tileSize, tileSize);
-          ctx.restore();
-        }
-      }
+      const suffix = direction !== "" ? direction : "";
+      const filename = `${state}${suffix}${frameStr}`;
+      character.src = `assets/character/${state}/${filename}.png`;
     }
 
-    img.onload = drawTiles;
-    window.addEventListener("resize", drawTiles);
+    function randomizeState() {
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      state = states[Math.floor(Math.random() * states.length)];
+      frame = 0;
+    }
+
+    setInterval(() => {
+      updateSprite();
+      frame = (frame + 1) % frameLimits[state];
+    }, 150);
+
+    setInterval(() => {
+      randomizeState();
+    }, 4000);
   </script>
 </body>
 </html>
