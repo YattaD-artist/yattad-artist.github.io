@@ -110,7 +110,7 @@ function startMove(steps, mode) {
   state = mode;
   direction = directions[Math.floor(Math.random() * directions.length)];
 
-  moveFrame = 1;
+  moveFrame = 1; // ← Cập nhật frame đầu tiên ngay lập tức
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
@@ -126,7 +126,7 @@ function startMove(steps, mode) {
       return;
     }
 
-    const dx = vx * 62;
+    const dx = vx * 62; // bước di chuyển theo kích thước sprite mới
     const dy = vy * 62;
 
     if (checkCollision(dx, dy)) {
@@ -145,7 +145,6 @@ function startMove(steps, mode) {
 
   nextStep();
 }
-
 
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
