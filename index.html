@@ -74,13 +74,11 @@
 </head>
 <body>
   <div class="background"></div>
-
   <div class="container" id="text-container">
     <header>
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
-
     <nav class="menu">
       <a href="about.html">Giới thiệu</a>
       <a href="illustrations.html">Minh Họa</a>
@@ -88,188 +86,171 @@
       <a href="comics.html">Truyện Tranh</a>
     </nav>
   </div>
-
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+  <script>
+    const character = document.getElementById("character");
+    const textContainer = document.getElementById("text-container");
+    let posX = window.innerWidth / 2;
+    let posY = window.innerHeight / 2 + 100;
+    let frame = 0;
+    let state = "idle";
+    let direction = "";
+    let isMoving = false;
+    let frameTimer;
 
-<script>
-const character = document.getElementById("character");
-const textContainer = document.getElementById("text-container");
+    const directions = ["", "U", "L", "R"];
+    const dirVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
+    };
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-let frame = 0;
-let state = "idle";
-let direction = "D";
-let isMoving = false;
-let frameTimer;
-let isChoosingDirection = false;
-
-const directions = ["D", "U", "L", "R"];
-const dirVectors = {
-  "D": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
-};
-
-function updateSprite() {
-  let folder = state.charAt(0).toUpperCase() + state.slice(1);
-  const maxFrame = (state === "run") ? 8 : 16;
-  const frameStr = (frame % maxFrame).toString().padStart(2, "0");
-
-  let fileName;
-  if (direction === "D") {
-    fileName = `${folder}${frameStr}.png`;
-  } else {
-    fileName = `${folder}${direction}${frameStr}.png`;
-  }
-
-  character.src = `assets/character/${folder}/${fileName}`;
-}
-
-function startFrameLoop(speed) {
-  if (frameTimer) clearInterval(frameTimer);
-  frameTimer = setInterval(() => {
-    frame++;
-    updateSprite();
-  }, speed);
-}
-
-function stopFrameLoop() {
-  clearInterval(frameTimer);
-}
-
-function checkCollision(dx, dy) {
-  const futureX = posX + dx;
-  const futureY = posY + dy;
-  const charRect = {
-    left: futureX, top: futureY,
-    right: futureX + 48, bottom: futureY + 48
-  };
-  const screen = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-
-  if (
-    charRect.left < 0 || charRect.right > screen.width ||
-    charRect.top < 0 || charRect.bottom > screen.height
-  ) return true;
-
-  const textRect = textContainer.getBoundingClientRect();
-  const overlap = !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
-  );
-
-  return overlap;
-}
-
-function moveOneStep(type, callback) {
-  const [vx, vy] = dirVectors[direction];
-  const dx = vx * 48;
-  const dy = vy * 48;
-  const duration = 500;
-  const steps = (type === "run") ? 8 : 16;
-  const interval = duration / steps;
-  let current = 0;
-
-  startFrameLoop(interval);
-
-  function step() {
-    if (current >= steps) {
-      stopFrameLoop();
-      callback();
-      return;
+    function updateSprite() {
+      const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
+      const suffix = direction;
+      const frameStr = frame.toString().padStart(2, "0");
+      const fileName = suffix ? `${folder}${suffix}${frameStr}` : `${folder}${frameStr}`;
+      character.src = `assets/character/${folder}/${fileName}.png`;
     }
-    posX += dx / steps;
-    posY += dy / steps;
+
+    function startFrameLoop(speed, totalFrames) {
+      if (frameTimer) clearInterval(frameTimer);
+      frame = 0;
+      frameTimer = setInterval(() => {
+        frame = (frame + 1) % totalFrames;
+        updateSprite();
+      }, speed);
+    }
+
+    function stopFrameLoop() {
+      clearInterval(frameTimer);
+    }
+
+    function checkCollision(dx, dy) {
+      const futureX = posX + dx;
+      const futureY = posY + dy;
+      const charRect = {
+        left: futureX, top: futureY,
+        right: futureX + 48, bottom: futureY + 48
+      };
+      const screen = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      if (
+        charRect.left < 0 || charRect.right > screen.width ||
+        charRect.top < 0 || charRect.bottom > screen.height
+      ) return true;
+
+      const textRect = textContainer.getBoundingClientRect();
+      const overlap = !(
+        charRect.right < textRect.left ||
+        charRect.left > textRect.right ||
+        charRect.bottom < textRect.top ||
+        charRect.top > textRect.bottom
+      );
+
+      return overlap;
+    }
+
+    function moveOneStep(type, callback) {
+      const [vx, vy] = dirVectors[direction];
+      const dx = vx * 48;
+      const dy = vy * 48;
+      const totalFrames = type === "run" ? 8 : 16;
+      const duration = 500;
+      const interval = duration / totalFrames;
+      let current = 0;
+
+      startFrameLoop(interval, totalFrames);
+
+      function step() {
+        if (current >= totalFrames) {
+          stopFrameLoop();
+          callback();
+          return;
+        }
+        posX += dx / totalFrames;
+        posY += dy / totalFrames;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+        current++;
+        setTimeout(step, interval);
+      }
+
+      step();
+    }
+
+    function chooseDirection() {
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      state = "idle";
+      frame = 0;
+      updateSprite();
+      setTimeout(() => chooseAction(), 300);
+    }
+
+    function chooseAction() {
+      if (isMoving) return;
+      const r = Math.random();
+      const steps = 1 + Math.floor(Math.random() * 3);
+      const moveType = (r < 0.5) ? "walk" : "run";
+      startMove(moveType, steps);
+    }
+
+    function startMove(type, steps) {
+      if (isMoving) return;
+      isMoving = true;
+      state = type;
+      frame = 0;
+      updateSprite();
+      let count = 0;
+
+      function next() {
+        if (count >= steps) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          setTimeout(chooseDirection, 1000 + Math.random() * 1000);
+          return;
+        }
+
+        const [vx, vy] = dirVectors[direction];
+        const dx = vx * 48;
+        const dy = vy * 48;
+
+        if (checkCollision(dx, dy)) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          setTimeout(chooseDirection, 1000);
+          return;
+        }
+
+        moveOneStep(type, () => {
+          count++;
+          next();
+        });
+      }
+
+      next();
+    }
+
+    function idleLoop() {
+      if (!isMoving && state === "idle") {
+        frame = (frame + 1) % 16;
+        updateSprite();
+      }
+    }
+    setInterval(idleLoop, 31.25);
+
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
-    current++;
-    setTimeout(step, interval);
-  }
-
-  step();
-}
-
-function chooseDirection() {
-  isChoosingDirection = true;
-  direction = directions[Math.floor(Math.random() * directions.length)];
-  state = "idle";
-  frame = 0;
-  updateSprite();
-
-  setTimeout(() => {
-    isChoosingDirection = false;
-    chooseAction();
-  }, 300);
-}
-
-function chooseAction() {
-  if (isMoving || isChoosingDirection) return;
-  const r = Math.random();
-  const steps = 1 + Math.floor(Math.random() * 3);
-  const moveType = (r < 0.5) ? "walk" : "run";
-  startMove(moveType, steps);
-}
-
-function startMove(type, steps) {
-  if (isMoving) return;
-  isMoving = true;
-  state = type;
-  frame = 0;
-  updateSprite();
-
-  let count = 0;
-  function next() {
-    if (count >= steps) {
-      isMoving = false;
-      state = "idle";
-      frame = 0;
-      updateSprite();
-      setTimeout(chooseDirection, 1000 + Math.random() * 1000);
-      return;
-    }
-
-    const [vx, vy] = dirVectors[direction];
-    const dx = vx * 48;
-    const dy = vy * 48;
-
-    if (checkCollision(dx, dy)) {
-      isMoving = false;
-      state = "idle";
-      frame = 0;
-      updateSprite();
-      setTimeout(chooseDirection, 1000);
-      return;
-    }
-
-    moveOneStep(type, () => {
-      count++;
-      next();
-    });
-  }
-
-  next();
-}
-
-function idleLoop() {
-  if (!isMoving && !isChoosingDirection) {
-    state = "idle";
-    frame = (frame + 1) % 16;
     updateSprite();
-  }
-}
-
-setInterval(idleLoop, 31.25);
-
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-updateSprite();
-chooseDirection();
-</script>
+    chooseDirection();
+  </script>
 </body>
 </html>
