@@ -99,31 +99,30 @@ let posX = window.innerWidth / 2;
 let posY = window.innerHeight / 2 + 100;
 let frame = 0;
 let state = "idle";
-let direction = "";
+let direction = "D";
 let isMoving = false;
-let isChoosingDirection = false;
 let frameTimer;
+let isChoosingDirection = false;
 
-const directions = ["", "U", "L", "R"];
+const directions = ["D", "U", "L", "R"];
 const dirVectors = {
-  "": [0, 1], // xuống
+  "D": [0, 1],
   "U": [0, -1],
   "L": [-1, 0],
   "R": [1, 0]
 };
 
 function updateSprite() {
-  let folder = "Idle";
-  if (state === "walk") folder = "Walk";
-  else if (state === "run") folder = "Run";
-
-  const suffix = direction !== "" ? direction : "";
+  let folder = state.charAt(0).toUpperCase() + state.slice(1);
   const maxFrame = (state === "run") ? 8 : 16;
   const frameStr = (frame % maxFrame).toString().padStart(2, "0");
 
-  const fileName = direction === "" 
-    ? `${folder}${frameStr}.png` 
-    : `${folder}${suffix}${frameStr}.png`;
+  let fileName;
+  if (direction === "D") {
+    fileName = `${folder}${frameStr}.png`;
+  } else {
+    fileName = `${folder}${direction}${frameStr}.png`;
+  }
 
   character.src = `assets/character/${folder}/${fileName}`;
 }
@@ -210,7 +209,7 @@ function chooseDirection() {
 }
 
 function chooseAction() {
-  if (isMoving) return;
+  if (isMoving || isChoosingDirection) return;
   const r = Math.random();
   const steps = 1 + Math.floor(Math.random() * 3);
   const moveType = (r < 0.5) ? "walk" : "run";
@@ -264,7 +263,8 @@ function idleLoop() {
     updateSprite();
   }
 }
-setInterval(idleLoop, 31.25); // ~500ms cho 16 frame idle
+
+setInterval(idleLoop, 31.25);
 
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
