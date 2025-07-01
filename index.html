@@ -253,21 +253,25 @@
       next();
     }
 
-    function chooseAction() {
-      const r = Math.random();
-      const steps = 1 + Math.floor(Math.random() * 3);
+   function chooseAction() {
+  const r = Math.random();
+  const steps = 1 + Math.floor(Math.random() * 3);
 
-      if (r < 0.4) {
-        state = "idle";
-        frame = 0;
-        updateSprite();
-        scheduleNextAction();
-      } else if (r < 0.75) {
-        startWalk(steps, "walk");
-      } else {
-        startWalk(steps, "run");
-      }
-    }
+  if (r < 0.1) {
+    // 10% Idle
+    state = "idle";
+    frame = 0;
+    updateSprite();
+    scheduleNextAction();
+  } else if (r < 0.4) {
+    // 30% Walk
+    startWalk(steps, "walk");
+  } else {
+    // 60% Run
+    startWalk(steps, "run");
+  }
+}
+
 
     function scheduleNextAction() {
       const delay = 1500 + Math.random() * 3500;
