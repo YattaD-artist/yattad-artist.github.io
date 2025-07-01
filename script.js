@@ -22,10 +22,9 @@ let posY = window.innerHeight / 2 + 100;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 
-// Cập nhật hình ảnh sprite theo trạng thái và hướng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const baseName = folder; // KHÔNG thêm dirSuffix nữa
+  const baseName = folder + direction; // Idle, WalkU, RunL, v.v.
 
   let totalFrames, frameIndex, frameStr;
 
@@ -42,9 +41,9 @@ function updateSprite() {
   const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
   console.log("Sprite path:", spritePath);
   character.src = spritePath;
+  character.onerror = () => console.error("Không tìm thấy sprite:", spritePath);
 }
 
-// Kiểm tra va chạm nhân vật với biên hoặc phần tử văn bản
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
@@ -75,7 +74,6 @@ function checkCollision(dx, dy) {
   );
 }
 
-// Hoạt họa khi đang di chuyển (walk/run)
 function startAnimationLoop() {
   function loop() {
     if (!isMoving) return;
@@ -86,7 +84,6 @@ function startAnimationLoop() {
   requestAnimationFrame(loop);
 }
 
-// Di chuyển mượt theo từng bước, với tốc độ tùy theo trạng thái
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
@@ -112,7 +109,6 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
-// Bắt đầu di chuyển trong vài bước, với hành vi cụ thể (walk hoặc run)
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
@@ -154,10 +150,10 @@ function startMove(steps, mode) {
   nextStep();
 }
 
-// Hẹn giờ tự động chuyển hành động
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
+    direction = directions[Math.floor(Math.random() * directions.length)];
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
     if (chance < 0.2) {
@@ -173,7 +169,6 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Vòng lặp cho trạng thái đứng yên
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
