@@ -1,96 +1,3 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YattaD</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Pixelify Sans', sans-serif;
-      background-color: #f8f8ff;
-      overflow: hidden;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 48px;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin: 0.2em 0 0;
-    }
-
-    p {
-      font-size: 1.2em;
-      color: #444;
-    }
-
-    .menu {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .menu a {
-      display: inline-block;
-      text-decoration: none;
-      color: #334;
-      font-size: 1.1em;
-      margin: 0 12px;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
-
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #4e5ba6;
-    }
-
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
-
-    #character {
-      position: absolute;
-      width: 48px;
-      height: 48px;
-      image-rendering: pixelated;
-      z-index: 1;
-      pointer-events: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="background"></div>
-
-  <div class="container" id="text-container">
-    <header>
-      <h1>YattaD</h1>
-      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
-
-    <nav class="menu">
-      <a href="about.html">Giới thiệu</a>
-      <a href="illustrations.html">Minh Họa</a>
-      <a href="concepts.html">Thiết kế</a>
-      <a href="comics.html">Truyện Tranh</a>
-    </nav>
-  </div>
-
-  <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-
 <script>
   const character = document.getElementById("character");
   const textContainer = document.getElementById("text-container");
@@ -154,8 +61,10 @@
     );
   }
 
-  function smoothWalkStep(dx, dy, onFinish, speed = 70) {
-    const totalFrames = 16;
+  function smoothWalkStep(dx, dy, onFinish, mode = "walk") {
+    const totalFrames = mode === "run" ? 8 : 16;
+    const speed = mode === "run" ? 20 : 70;
+
     let current = 0;
     const stepX = dx / totalFrames;
     const stepY = dy / totalFrames;
@@ -171,7 +80,7 @@
       character.style.left = `${posX}px`;
       character.style.top = `${posY}px`;
 
-      moveFrame = current % 8;
+      moveFrame = current % totalFrames;
       updateSprite();
 
       current++;
@@ -213,8 +122,7 @@
         return;
       }
 
-      const speed = mode === "run" ? 20 : 70;
-      smoothWalkStep(dx, dy, next, speed);
+      smoothWalkStep(dx, dy, next, mode);
       stepCount++;
     }
 
@@ -245,7 +153,6 @@
     }, delay);
   }
 
-  // Animation idle loop
   setInterval(() => {
     if (state === "idle") {
       idleFrame = (idleFrame + 1) % 16;
@@ -256,6 +163,3 @@
   updateSprite();
   scheduleNextAction();
 </script>
-
-</body>
-</html>
