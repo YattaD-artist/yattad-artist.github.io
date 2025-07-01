@@ -57,7 +57,7 @@
     </header>
     <nav class="menu">
       <a href="about.html">Giới thiệu</a>
-      <a href="illustrations.html">Minh Họa</a>
+      <a href="illustrations.html">Minh HỌa</a>
       <a href="concepts.html">Thiết kế</a>
       <a href="comics.html">Truyện Tranh</a>
     </nav>
@@ -69,35 +69,45 @@
     let x = innerWidth / 2, y = innerHeight / 2 + 100, f = 0;
     let state = "idle", dir = "", moving = false;
     const dirs = ["", "U", "L", "R"], vec = {"": [0,1], U: [0,-1], L: [-1,0], R: [1,0]};
-    const frameLen = { idle: 100, walk: 64, run: 48 };
+    const frameLen = { idle: 100, walk: 80, run: 60 };
 
     function sprite() {
       const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
       const suffix = dir;
       const max = folder === "Run" ? 8 : 16;
       const frameId = (f % max).toString().padStart(2, '0');
-      const name = folder === "Idle" ? `Idle${frameId}` : `${folder}${suffix}${frameId}`;
-      char.src = `assets/character/${folder}/${name}.png`;
+      const name = `${folder}${suffix}${frameId}`;
+      const path = `assets/character/${folder}/${name}.png`;
+      if (char.src !== path) char.src = path;
     }
 
     function step(type, done) {
-      const [vx, vy] = vec[dir], steps = type === "walk" ? 2 : 1;
-      const frames = type === "run" ? 8 : 16;
-      const dx = vx * 48 / steps / frames, dy = vy * 48 / steps / frames;
-      let s = 0;
-      function doStep() {
-        if (s++ >= steps) return done();
-        let ff = 0;
-        const t = setInterval(() => {
-          if (ff >= frames) return clearInterval(t), doStep();
-          f = ff++;
+      const [vx, vy] = vec[dir];
+      const totalFrames = type === "run" ? 8 : 16;
+      const steps = type === "run" ? 1 : 2;
+      const dx = vx * 48 / steps;
+      const dy = vy * 48 / steps;
+      let subStep = 0;
+
+      function animateStep() {
+        let localF = 0;
+        const interval = setInterval(() => {
+          f = localF++;
           sprite();
-          x += dx; y += dy;
-          char.style.left = `${x}px`;
-          char.style.top = `${y}px`;
+          if (localF >= totalFrames) {
+            clearInterval(interval);
+            x += dx;
+            y += dy;
+            char.style.left = `${x}px`;
+            char.style.top = `${y}px`;
+            subStep++;
+            if (subStep < steps) animateStep();
+            else done();
+          }
         }, frameLen[type]);
       }
-      doStep();
+
+      animateStep();
     }
 
     function collide(dx, dy) {
@@ -131,16 +141,29 @@
       state = t; f = 0; sprite();
       let done = 0;
       function next() {
-        if (done++ >= steps) return moving = false, state = "idle", f = 0, sprite(), setTimeout(pickDir, 800);
+        if (done++ >= steps) {
+          moving = false;
+          state = "idle"; f = 0;
+          sprite();
+          return setTimeout(pickDir, 800);
+        }
         const [vx, vy] = vec[dir];
-        if (collide(vx * 48, vy * 48)) return moving = false, state = "idle", f = 0, sprite(), setTimeout(pickDir, 800);
+        if (collide(vx * 48, vy * 48)) {
+          moving = false;
+          state = "idle"; f = 0;
+          sprite();
+          return setTimeout(pickDir, 800);
+        }
         step(t, next);
       }
       next();
     }
 
     function idleAnim() {
-      if (!moving && state === "idle") f = (f + 1) % 16, sprite();
+      if (!moving && state === "idle") {
+        f = (f + 1) % 16;
+        sprite();
+      }
     }
 
     setInterval(idleAnim, frameLen.idle);
