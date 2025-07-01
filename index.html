@@ -115,15 +115,18 @@
 
     function updateSprite() {
       let folder = "Idle";
-      if (state === "walk") folder = "Walk";
-      else if (state === "run") folder = "Run";
+      let maxFrames = 16;
+
+      if (state === "walk") {
+        folder = "Walk";
+      } else if (state === "run") {
+        folder = "Run";
+        maxFrames = 8;
+      }
 
       const suffix = direction;
-      const frameStr = frame.toString().padStart(2, "0");
-      const path = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
-      character.src = path;
-
-      console.log(`State: ${state}, Direction: ${direction}, Frame: ${frameStr}, Src: ${path}`);
+      const frameStr = (frame % maxFrames).toString().padStart(2, "0");
+      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
     function checkCollision(dx, dy) {
@@ -160,6 +163,7 @@
 
     function animateMovement(totalFrames, stepSizeX, stepSizeY, speed, onFinish) {
       let currentFrame = 0;
+      const maxFrames = state === "run" ? 8 : 16;
 
       function step() {
         if (currentFrame >= totalFrames) {
@@ -172,7 +176,7 @@
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
-        frame = currentFrame % 16;
+        frame = currentFrame % maxFrames;
         updateSprite();
 
         currentFrame++;
@@ -193,7 +197,7 @@
       const dx = vx * 48;
       const dy = vy * 48;
       const speed = type === "run" ? 30 : 70;
-      const totalFrames = 16;
+      const totalFrames = state === "run" ? 8 : 16;
       const stepSizeX = dx / totalFrames;
       const stepSizeY = dy / totalFrames;
       let stepCount = 0;
@@ -223,12 +227,9 @@
         });
       }
 
-      // Delay nhẹ để mượt hơn
       frame = 0;
       updateSprite();
-      setTimeout(() => {
-        nextStep();
-      }, 100);
+      setTimeout(nextStep, 100);
     }
 
     function chooseAction() {
@@ -238,10 +239,6 @@
         const steps = 1 + Math.floor(Math.random() * 3);
         startMove("walk", steps);
       } else if (r < 0.8) {
-        // Nếu run mà direction là "", chọn lại hướng
-        if (direction === "") {
-          direction = directions[Math.floor(1 + Math.random() * (directions.length - 1))];
-        }
         const steps = 1 + Math.floor(Math.random() * 4);
         startMove("run", steps);
       } else {
@@ -259,17 +256,10 @@
 
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
-
-        // Tránh direction rỗng khi sắp chạy
-        if (direction === "" && Math.random() < 0.5) {
-          direction = directions[Math.floor(1 + Math.random() * (directions.length - 1))];
-        }
-
         chooseAction();
       }, delay);
     }
 
-    // Idle animation riêng, không can thiệp move
     setInterval(() => {
       if (state === "idle") {
         frame = (frame + 1) % 16;
