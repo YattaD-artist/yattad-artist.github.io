@@ -106,6 +106,12 @@
       "R": [1, 0]
     };
 
+    const frameIntervalByState = {
+      idle: 64,
+      walk: 32,
+      run: 32
+    };
+
     function updateSprite() {
       const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
       const suffix = direction;
@@ -126,8 +132,12 @@
       const [vx, vy] = dirVectors[direction];
       const steps = (type === "walk") ? 2 : 1;
       const framesPerStep = (type === "run") ? 8 : 16;
+      const interval = frameIntervalByState[type];
+
       const dxTotal = vx * 48;
       const dyTotal = vy * 48;
+      const dx = dxTotal / steps / framesPerStep;
+      const dy = dyTotal / steps / framesPerStep;
 
       let stepNum = 0;
 
@@ -138,10 +148,6 @@
         }
 
         let f = 0;
-        const interval = 30;
-        const dx = dxTotal / steps / framesPerStep;
-        const dy = dyTotal / steps / framesPerStep;
-
         clearInterval(frameTimer);
         frameTimer = setInterval(() => {
           if (f >= framesPerStep) {
@@ -151,7 +157,7 @@
             return;
           }
 
-          frame = f % framesPerStep;
+          frame = f;
           updateSprite();
           posX += dx;
           posY += dy;
@@ -255,7 +261,7 @@
       }
     }
 
-    setInterval(idleLoop, 31.25);
+    setInterval(idleLoop, frameIntervalByState.idle);
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     updateSprite();
