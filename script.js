@@ -28,16 +28,14 @@ function updateSprite() {
   const dirSuffix = direction; // "", U, L, R
   const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
 
-  let totalFrames, frameIndex, frameStr;
+  let frameIndex, frameStr;
 
   if (state === "run") {
-    totalFrames = 8;
-    frameIndex = moveFrame % totalFrames;
-    frameStr = frameIndex.toString(); // Run0.png → Run7.png
+    frameIndex = moveFrame % 8;          // Run có 8 frame
+    frameStr = frameIndex.toString();    // Không pad: Run0.png → Run7.png
   } else {
-    totalFrames = 16;
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
-    frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16); // 16 frame cho Idle/Walk
+    frameStr = frameIndex.toString().padStart(2, "0");             // Pad: Idle00.png → Idle15.png
   }
 
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
