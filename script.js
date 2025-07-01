@@ -6,6 +6,7 @@ let isMoving = false;
 let idleFrame = 0;
 let moveFrame = 0;
 
+const frameSize = 62;
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
   "": [0, 1],
@@ -21,18 +22,48 @@ let posX = window.innerWidth / 2;
 let posY = window.innerHeight / 2 + 100;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
-character.style.width = "62px";
-character.style.height = "62px";
+character.style.width = `${frameSize}px`;
+character.style.height = `${frameSize}px`;
 
-// Đồng bộ sprite theo trạng thái
+function preloadImages(callback) {
+  const folders = ["Idle", "Walk", "Run"];
+  const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
+  let loaded = 0;
+  let total = 0;
+
+  for (const folder of folders) {
+    for (const dir of directions) {
+      const suffix = dir;
+      const prefix = folder + suffix;
+      const count = counts[folder];
+      total += count;
+      for (let i = 0; i < count; i++) {
+        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+        const img = new Image();
+        img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
+        img.onload = () => {
+          loaded++;
+          if (loaded >= total) callback();
+        };
+        img.onerror = () => {
+          console.warn("Failed to load: ", img.src);
+          loaded++;
+          if (loaded >= total) callback();
+        };
+      }
+    }
+  }
+}
+
 function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const baseName = folder + direction; // Idle, WalkU, RunL, v.v.
+  const folder = state.charAt(0).toUpperCase() + state.slice(1);
+  const baseName = folder + direction;
 
   let frameIndex, frameStr;
+
   if (state === "run") {
     frameIndex = moveFrame % 8;
-    frameStr = frameIndex.toString();
+    frameStr = `${frameIndex}`;
   } else {
     frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
     frameStr = frameIndex.toString().padStart(2, "0");
@@ -44,9 +75,11 @@ function updateSprite() {
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-  const charRect = { left: nextX, top: nextY, right: nextX + 62, bottom: nextY + 62 };
+  const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
+
   if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
+
   const textRect = textContainer.getBoundingClientRect();
   return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
 }
@@ -78,7 +111,7 @@ function startMove(steps, mode) {
   isMoving = true;
   state = mode;
   direction = directions[Math.floor(Math.random() * directions.length)];
-  moveFrame = 1; // start animating immediately
+  moveFrame = 1;
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
@@ -94,11 +127,8 @@ function startMove(steps, mode) {
       return;
     }
 
-    // Điều chỉnh khoảng cách chạy lớn hơn
-    const multiplier = (mode === "run") ? 2 : 1;
-    const dx = vx * 62 * multiplier;
-    const dy = vy * 62 * multiplier;
-
+    const dx = vx * frameSize;
+    const dy = vy * frameSize;
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -117,6 +147,7 @@ function startMove(steps, mode) {
 }
 
 function scheduleNextAction() {
+  const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
@@ -130,7 +161,7 @@ function scheduleNextAction() {
     } else {
       startMove(steps, "run");
     }
-  }, 1000 + Math.random() * 2500);
+  }, delay);
 }
 
 setInterval(() => {
@@ -140,5 +171,8 @@ setInterval(() => {
   }
 }, 200);
 
+// Bắt đầu bằng việc preload sprite trước
 updateSprite();
-setTimeout(scheduleNextAction, 3000);
+preloadImages(() => {
+  setTimeout(scheduleNextAction, 3000 + Math.random() * 2000); // chờ ngẫu nhiên từ 3-5 giây
+});
