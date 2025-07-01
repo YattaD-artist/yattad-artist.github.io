@@ -110,7 +110,7 @@ function startMove(steps, mode) {
   state = mode;
   direction = directions[Math.floor(Math.random() * directions.length)];
 
-  moveFrame = 1; // ← Cập nhật frame đầu tiên ngay lập tức
+  moveFrame = 1;
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
@@ -126,8 +126,8 @@ function startMove(steps, mode) {
       return;
     }
 
-    const dx = vx * 48;
-    const dy = vy * 48;
+    const dx = vx * 62;
+    const dy = vy * 62;
 
     if (checkCollision(dx, dy)) {
       isMoving = false;
@@ -145,6 +145,7 @@ function startMove(steps, mode) {
 
   nextStep();
 }
+
 
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
