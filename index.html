@@ -104,6 +104,7 @@
   let isMoving = false;
   let mouseX = -999;
   let mouseY = -999;
+  let panicCount = 0;
 
   const directions = ["", "U", "L", "R"];
   const dirVectors = {
@@ -183,13 +184,14 @@
     step();
   }
 
-  function startWalk(steps, mode = "walk") {
+  function startWalk(steps, mode = "walk", customDir = null, onDone = null) {
     if (isMoving) return;
     isMoving = true;
     state = mode;
     moveFrame = 0;
     updateSprite();
 
+    if (customDir) direction = customDir;
     const [vx, vy] = dirVectors[direction];
     let stepCount = 0;
 
@@ -199,7 +201,8 @@
         state = "idle";
         idleFrame = 0;
         updateSprite();
-        scheduleNextAction();
+        if (onDone) onDone();
+        else scheduleNextAction();
         return;
       }
 
@@ -211,7 +214,8 @@
         state = "idle";
         idleFrame = 0;
         updateSprite();
-        scheduleNextAction();
+        if (onDone) onDone();
+        else scheduleNextAction();
         return;
       }
 
@@ -223,23 +227,19 @@
   }
 
   function chooseAction() {
-    // Nếu chuột gần, né chuột
     const dx = posX - mouseX;
     const dy = posY - mouseY;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 120) {
-      // Né bằng cách chạy theo hướng ngược lại
-      const angle = Math.atan2(dy, dx);
-      const dirX = Math.round(Math.cos(angle));
-      const dirY = Math.round(Math.sin(angle));
-
-      direction = dirX < 0 ? "L" : dirX > 0 ? "R" : (dirY < 0 ? "U" : "");
-      startWalk(1, "run");
+    if (dist < 80 && panicCount === 0) {
+      // Hoảng loạn 3 lần
+      panicCount = 3;
+      panicRun();
       return;
     }
 
-    // Ngẫu nhiên
+    if (panicCount > 0) return; // Đang hoảng
+
     const r = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
 
@@ -257,6 +257,31 @@
     }
   }
 
+  function panicRun() {
+    if (panicCount <= 0) {
+      scheduleNextAction();
+      return;
+    }
+
+    // Né chuột ngẫu nhiên
+    const angle = Math.atan2(posY - mouseY, posX - mouseX);
+    const offset = (Math.random() - 0.5) * Math.PI / 2; // ±45 độ lệch
+    const finalAngle = angle + offset;
+
+    const dirX = Math.round(Math.cos(finalAngle));
+    const dirY = Math.round(Math.sin(finalAngle));
+
+    let dir = "";
+    if (Math.abs(dirX) > Math.abs(dirY)) dir = dirX < 0 ? "L" : "R";
+    else if (dirY < 0) dir = "U";
+    else dir = "";
+
+    startWalk(1, "run", dir, () => {
+      panicCount--;
+      setTimeout(panicRun, 100);
+    });
+  }
+
   function scheduleNextAction() {
     const delay = 800 + Math.random() * 1800;
     setTimeout(chooseAction, delay);
@@ -269,7 +294,6 @@
     }
   }, 200);
 
-  // Theo dõi chuột
   window.addEventListener("mousemove", (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
@@ -278,6 +302,7 @@
   updateSprite();
   scheduleNextAction();
 </script>
+
 
 </body>
 </html>
