@@ -81,7 +81,12 @@ function checkCollision(dx, dy) {
   if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
 
   const textRect = textContainer.getBoundingClientRect();
-  return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
+  return !(
+    charRect.right < textRect.left ||
+    charRect.left > textRect.right ||
+    charRect.bottom < textRect.top ||
+    charRect.top > textRect.bottom
+  );
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
@@ -174,5 +179,5 @@ setInterval(() => {
 // Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
-  setTimeout(scheduleNextAction, 3000 + Math.random() * 2000); // chờ ngẫu nhiên từ 3-5 giây
+  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
 });
