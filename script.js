@@ -28,14 +28,16 @@ function updateSprite() {
   const dirSuffix = direction; // "", U, L, R
   const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
 
-  let frameIndex, frameStr;
+  let totalFrames, frameIndex, frameStr;
 
   if (state === "run") {
-    frameIndex = moveFrame % 8;          // Run có 8 frame
-    frameStr = frameIndex.toString();    // Không pad: Run0.png → Run7.png
+    totalFrames = 8;
+    frameIndex = moveFrame % totalFrames;
+    frameStr = frameIndex.toString(); // Run0.png → Run7.png
   } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16); // 16 frame cho Idle/Walk
-    frameStr = frameIndex.toString().padStart(2, "0");             // Pad: Idle00.png → Idle15.png
+    totalFrames = 16;
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
+    frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
 
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
@@ -124,7 +126,10 @@ function startMove(steps, mode) {
   function nextStep() {
     if (stepCount >= steps) {
       isMoving = false;
-      transitionToIdle();
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
       return;
     }
 
@@ -133,7 +138,10 @@ function startMove(steps, mode) {
 
     if (checkCollision(dx, dy)) {
       isMoving = false;
-      transitionToIdle();
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
       return;
     }
 
@@ -145,14 +153,6 @@ function startMove(steps, mode) {
   nextStep();
 }
 
-// Chuyển sang trạng thái Idle một cách rõ ràng
-function transitionToIdle() {
-  state = "idle";
-  idleFrame = 0;
-  updateSprite();
-  scheduleNextAction();
-}
-
 // Hẹn giờ tự động chuyển hành động
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
@@ -160,7 +160,10 @@ function scheduleNextAction() {
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
     if (chance < 0.2) {
-      transitionToIdle();
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
     } else if (chance < 0.65) {
       startMove(steps, "walk");
     } else {
