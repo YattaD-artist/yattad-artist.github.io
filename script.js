@@ -1,10 +1,16 @@
-// Trạng thái nhân vật: idle, walk, run
+// script.js - NPC di chuyển ngẫu nhiên với hoạt ảnh mượt và khớp hướng
+
+// Trạng thái và thông tin nhân vật
 let state = "idle";
 let direction = ""; // "", U, L, R
 let isMoving = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
+
+const FRAME_SIZE = 62;
+const character = document.getElementById("character");
+const textContainer = document.getElementById("text-container");
 
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
@@ -14,88 +20,54 @@ const dirVectors = {
   "R": [1, 0]
 };
 
-const character = document.getElementById("character");
-const textContainer = document.getElementById("text-container");
-
 let posX = window.innerWidth / 2;
 let posY = window.innerHeight / 2 + 100;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
-character.style.width = "62px";
-character.style.height = "62px";
+character.style.width = `${FRAME_SIZE}px`;
+character.style.height = `${FRAME_SIZE}px`;
 
+// Cập nhật hình ảnh theo trạng thái và hướng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const baseName = folder + direction;
-
-  let totalFrames, frameIndex, frameStr;
-
-  if (state === "run") {
-    totalFrames = 8;
-    frameIndex = moveFrame % totalFrames;
-    frameStr = frameIndex.toString(); // Run0.png → Run7.png
-  } else {
-    totalFrames = 16;
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
-    frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
-  }
-
-  const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
-  character.src = spritePath;
-  character.onerror = () => console.error("Không tìm thấy sprite:", spritePath);
+  const base = folder + direction;
+  const frame = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  const frameStr = state === "run" ? frame.toString() : frame.toString().padStart(2, "0");
+  const path = `assets/character/${folder}/${base}${frameStr}.png`;
+  character.src = path;
 }
 
+// Kiểm tra va chạm với viền hoặc phần chữ
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
+  const rect = { left: nextX, top: nextY, right: nextX + FRAME_SIZE, bottom: nextY + FRAME_SIZE };
+  const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  const charRect = {
-    left: nextX,
-    top: nextY,
-    right: nextX + 62,
-    bottom: nextY + 62
-  };
-
-  const bounds = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-
-  if (
-    charRect.left < 0 || charRect.right > bounds.width ||
-    charRect.top < 0 || charRect.bottom > bounds.height
-  ) return true;
-
+  if (rect.left < 0 || rect.right > bounds.width || rect.top < 0 || rect.bottom > bounds.height) return true;
   const textRect = textContainer.getBoundingClientRect();
   return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
+    rect.right < textRect.left || rect.left > textRect.right ||
+    rect.bottom < textRect.top || rect.top > textRect.bottom
   );
 }
 
+// Di chuyển mượt từng bước
 function smoothMove(dx, dy, onFinish, mode) {
-  const totalFrames = mode === "run" ? 8 : 16;
+  const total = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
   let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
+  const stepX = dx / total;
+  const stepY = dy / total;
 
   function step() {
-    if (current >= totalFrames) {
-      onFinish();
-      return;
-    }
-
+    if (current >= total) return onFinish();
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
-
     moveFrame = current;
     updateSprite();
-
     current++;
     setTimeout(step, speed);
   }
@@ -103,19 +75,20 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
+// Bắt đầu đi hoặc chạy một số bước
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-  direction = directions[Math.floor(Math.random() * directions.length)];
+  moveFrame = 0;
 
-  moveFrame = 0; // Đảm bảo bắt đầu từ frame 0 của animation
-  updateSprite(); // Cập nhật ngay frame đầu tiên trước khi di chuyển
+  direction = directions[Math.floor(Math.random() * directions.length)];
+  updateSprite(); // đảm bảo đổi sprite đúng trước khi di chuyển
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
 
-  function nextStep() {
+  function next() {
     if (stepCount >= steps) {
       isMoving = false;
       state = "idle";
@@ -125,8 +98,8 @@ function startMove(steps, mode) {
       return;
     }
 
-    const dx = vx * 62;
-    const dy = vy * 62;
+    const dx = vx * FRAME_SIZE;
+    const dy = vy * FRAME_SIZE;
 
     if (checkCollision(dx, dy)) {
       isMoving = false;
@@ -137,19 +110,16 @@ function startMove(steps, mode) {
       return;
     }
 
-    moveFrame = 0;
-    updateSprite(); // Đảm bảo chuyển sprite đúng hướng trước khi di chuyển
-    smoothMove(dx, dy, nextStep, mode);
+    smoothMove(dx, dy, next, mode);
     stepCount++;
   }
 
-  nextStep();
+  next();
 }
 
+// Hẹn giờ hành động kế tiếp
 function scheduleNextAction() {
-  const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
-    direction = directions[Math.floor(Math.random() * directions.length)];
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
     if (chance < 0.2) {
@@ -162,9 +132,10 @@ function scheduleNextAction() {
     } else {
       startMove(steps, "run");
     }
-  }, delay);
+  }, 1000 + Math.random() * 2500);
 }
 
+// Vòng lặp đứng yên
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -173,6 +144,4 @@ setInterval(() => {
 }, 200);
 
 updateSprite();
-setTimeout(() => {
-  scheduleNextAction();
-}, 3000);
+setTimeout(scheduleNextAction, 3000);
