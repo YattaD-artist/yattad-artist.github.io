@@ -1,10 +1,76 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Pixelify Sans', sans-serif;
+      background-color: #f8f8ff;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 48px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0.2em 0 0;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.1em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    #character {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
