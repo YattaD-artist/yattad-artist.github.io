@@ -91,169 +91,193 @@
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
-  <script>
-    const character = document.getElementById("character");
-    const textContainer = document.getElementById("text-container");
+<script>
+  const character = document.getElementById("character");
+  const textContainer = document.getElementById("text-container");
 
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2 + 100;
-    let idleFrame = 0;
-    let moveFrame = 0;
-    let state = "idle";
-    let direction = "";
-    let isMoving = false;
+  let posX = window.innerWidth / 2;
+  let posY = window.innerHeight / 2 + 100;
+  let idleFrame = 0;
+  let moveFrame = 0;
+  let state = "idle";
+  let direction = "";
+  let isMoving = false;
+  let mouseX = -999;
+  let mouseY = -999;
 
-    const directions = ["", "U", "L", "R"];
-    const dirVectors = {
-      "": [0, 1],
-      "U": [0, -1],
-      "L": [-1, 0],
-      "R": [1, 0],
+  const directions = ["", "U", "L", "R"];
+  const dirVectors = {
+    "": [0, 1],
+    "U": [0, -1],
+    "L": [-1, 0],
+    "R": [1, 0],
+  };
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+
+  function updateSprite() {
+    const folder = state === "walk" ? "Walk" :
+                   state === "run" ? "Run" : "Idle";
+    const suffix = direction;
+    const frameNumber = state === "idle" ? idleFrame : moveFrame;
+    const frameStr = frameNumber.toString().padStart(2, "0");
+    character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
+  }
+
+  function checkCollision(dx, dy) {
+    const futureX = posX + dx;
+    const futureY = posY + dy;
+
+    const charRect = {
+      left: futureX,
+      top: futureY,
+      right: futureX + 48,
+      bottom: futureY + 48
     };
 
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
+    const screen = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
 
-    function updateSprite() {
-      const folder = state === "walk" ? "Walk" :
-                     state === "run" ? "Run" : "Idle";
-      const suffix = direction;
-      const frameNumber = state === "idle" ? idleFrame : moveFrame;
-      const frameStr = frameNumber.toString().padStart(2, "0");
-      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
-    }
+    if (
+      charRect.left < 0 || charRect.right > screen.width ||
+      charRect.top < 0 || charRect.bottom > screen.height
+    ) return true;
 
-    function checkCollision(dx, dy) {
-      const futureX = posX + dx;
-      const futureY = posY + dy;
+    const textRect = textContainer.getBoundingClientRect();
+    return !(
+      charRect.right < textRect.left ||
+      charRect.left > textRect.right ||
+      charRect.bottom < textRect.top ||
+      charRect.top > textRect.bottom
+    );
+  }
 
-      const charRect = {
-        left: futureX,
-        top: futureY,
-        right: futureX + 48,
-        bottom: futureY + 48
-      };
+  function smoothWalkStep(dx, dy, onFinish, mode = "walk") {
+    const totalFrames = mode === "run" ? 8 : 16;
+    const speed = mode === "run" ? 20 : 70;
+    let current = 0;
+    const stepX = dx / totalFrames;
+    const stepY = dy / totalFrames;
 
-      const screen = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      };
-
-      if (
-        charRect.left < 0 || charRect.right > screen.width ||
-        charRect.top < 0 || charRect.bottom > screen.height
-      ) return true;
-
-      const textRect = textContainer.getBoundingClientRect();
-      return !(
-        charRect.right < textRect.left ||
-        charRect.left > textRect.right ||
-        charRect.bottom < textRect.top ||
-        charRect.top > textRect.bottom
-      );
-    }
-
-    function smoothWalkStep(dx, dy, onFinish, mode = "walk") {
-      const totalFrames = mode === "run" ? 8 : 16;
-      const speed = mode === "run" ? 20 : 70;
-
-      let current = 0;
-      const stepX = dx / totalFrames;
-      const stepY = dy / totalFrames;
-
-      function step() {
-        if (current >= totalFrames) {
-          onFinish();
-          return;
-        }
-
-        posX += stepX;
-        posY += stepY;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-
-        moveFrame = current % totalFrames;
-        updateSprite();
-
-        current++;
-        setTimeout(step, speed);
+    function step() {
+      if (current >= totalFrames) {
+        onFinish();
+        return;
       }
 
-      step();
-    }
+      posX += stepX;
+      posY += stepY;
+      character.style.left = `${posX}px`;
+      character.style.top = `${posY}px`;
 
-    function startWalk(steps, mode = "walk") {
-      if (isMoving) return;
-      isMoving = true;
-      state = mode;
-      moveFrame = 0;
+      moveFrame = current % totalFrames;
       updateSprite();
 
-      const [vx, vy] = dirVectors[direction];
-      let stepCount = 0;
-
-      function next() {
-        if (stepCount >= steps) {
-          isMoving = false;
-          state = "idle";
-          idleFrame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        const dx = vx * 48;
-        const dy = vy * 48;
-
-        if (checkCollision(dx, dy)) {
-          isMoving = false;
-          state = "idle";
-          idleFrame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        smoothWalkStep(dx, dy, next, mode);
-        stepCount++;
-      }
-
-      next();
+      current++;
+      setTimeout(step, speed);
     }
 
-    function chooseAction() {
-      const r = Math.random();
-      const steps = 1 + Math.floor(Math.random() * 3);
+    step();
+  }
 
-      if (r < 0.15) {
+  function startWalk(steps, mode = "walk") {
+    if (isMoving) return;
+    isMoving = true;
+    state = mode;
+    moveFrame = 0;
+    updateSprite();
+
+    const [vx, vy] = dirVectors[direction];
+    let stepCount = 0;
+
+    function next() {
+      if (stepCount >= steps) {
+        isMoving = false;
         state = "idle";
         idleFrame = 0;
         updateSprite();
         scheduleNextAction();
-      } else if (r < 0.6) {
-        startWalk(steps, "walk");
-      } else {
-        startWalk(steps, "run");
+        return;
       }
-    }
 
-    function scheduleNextAction() {
-      const delay = 1000 + Math.random() * 2500;
-      setTimeout(() => {
-        direction = directions[Math.floor(Math.random() * directions.length)];
-        chooseAction();
-      }, delay);
-    }
+      const dx = vx * 48;
+      const dy = vy * 48;
 
-    setInterval(() => {
-      if (state === "idle") {
-        idleFrame = (idleFrame + 1) % 16;
+      if (checkCollision(dx, dy)) {
+        isMoving = false;
+        state = "idle";
+        idleFrame = 0;
         updateSprite();
+        scheduleNextAction();
+        return;
       }
-    }, 200);
 
-    updateSprite();
-    scheduleNextAction();
-  </script>
+      smoothWalkStep(dx, dy, next, mode);
+      stepCount++;
+    }
+
+    next();
+  }
+
+  function chooseAction() {
+    // Nếu chuột gần, né chuột
+    const dx = posX - mouseX;
+    const dy = posY - mouseY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 120) {
+      // Né bằng cách chạy theo hướng ngược lại
+      const angle = Math.atan2(dy, dx);
+      const dirX = Math.round(Math.cos(angle));
+      const dirY = Math.round(Math.sin(angle));
+
+      direction = dirX < 0 ? "L" : dirX > 0 ? "R" : (dirY < 0 ? "U" : "");
+      startWalk(1, "run");
+      return;
+    }
+
+    // Ngẫu nhiên
+    const r = Math.random();
+    const steps = 1 + Math.floor(Math.random() * 3);
+
+    if (r < 0.15) {
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
+    } else if (r < 0.6) {
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      startWalk(steps, "walk");
+    } else {
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      startWalk(steps, "run");
+    }
+  }
+
+  function scheduleNextAction() {
+    const delay = 800 + Math.random() * 1800;
+    setTimeout(chooseAction, delay);
+  }
+
+  setInterval(() => {
+    if (state === "idle") {
+      idleFrame = (idleFrame + 1) % 16;
+      updateSprite();
+    }
+  }, 200);
+
+  // Theo dõi chuột
+  window.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  updateSprite();
+  scheduleNextAction();
+</script>
+
 </body>
 </html>
