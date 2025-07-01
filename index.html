@@ -109,22 +109,50 @@
     function updateSprite() {
       const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
       const suffix = direction;
+      const maxFrame = state === "run" ? 7 : 15;
       const frameStr = frame.toString().padStart(2, "0");
       const fileName = suffix ? `${folder}${suffix}${frameStr}` : `${folder}${frameStr}`;
       character.src = `assets/character/${folder}/${fileName}.png`;
     }
 
-    function startFrameLoop(speed, totalFrames) {
-      if (frameTimer) clearInterval(frameTimer);
-      frame = 0;
-      frameTimer = setInterval(() => {
-        frame = (frame + 1) % totalFrames;
-        updateSprite();
-      }, speed);
-    }
+    function animateStep(type, callback) {
+      const [vx, vy] = dirVectors[direction];
+      const steps = (type === "walk") ? 2 : 1;
+      const frameCount = (type === "run") ? 8 : 16;
+      const duration = 500; // mỗi bước chân 0.5s
+      let stepNum = 0;
 
-    function stopFrameLoop() {
-      clearInterval(frameTimer);
+      function doStep() {
+        if (stepNum >= steps) {
+          callback();
+          return;
+        }
+
+        let f = 0;
+        const interval = duration / frameCount;
+        const dx = (vx * 48) / steps;
+        const dy = (vy * 48) / steps;
+
+        if (frameTimer) clearInterval(frameTimer);
+
+        frameTimer = setInterval(() => {
+          if (f >= frameCount) {
+            clearInterval(frameTimer);
+            stepNum++;
+            doStep();
+            return;
+          }
+          frame = f;
+          updateSprite();
+          posX += dx / frameCount;
+          posY += dy / frameCount;
+          character.style.left = `${posX}px`;
+          character.style.top = `${posY}px`;
+          f++;
+        }, interval);
+      }
+
+      doStep();
     }
 
     function checkCollision(dx, dy) {
@@ -153,34 +181,6 @@
       );
 
       return overlap;
-    }
-
-    function moveOneStep(type, callback) {
-      const [vx, vy] = dirVectors[direction];
-      const dx = vx * 48;
-      const dy = vy * 48;
-      const totalFrames = type === "run" ? 8 : 16;
-      const duration = 500;
-      const interval = duration / totalFrames;
-      let current = 0;
-
-      startFrameLoop(interval, totalFrames);
-
-      function step() {
-        if (current >= totalFrames) {
-          stopFrameLoop();
-          callback();
-          return;
-        }
-        posX += dx / totalFrames;
-        posY += dy / totalFrames;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-        current++;
-        setTimeout(step, interval);
-      }
-
-      step();
     }
 
     function chooseDirection() {
@@ -230,7 +230,7 @@
           return;
         }
 
-        moveOneStep(type, () => {
+        animateStep(type, () => {
           count++;
           next();
         });
@@ -245,8 +245,8 @@
         updateSprite();
       }
     }
-    setInterval(idleLoop, 31.25);
 
+    setInterval(idleLoop, 31.25);
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     updateSprite();
