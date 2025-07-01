@@ -31,12 +31,23 @@ character.style.top = `${posY}px`;
 // Hàm cập nhật hình ảnh nhân vật dựa vào trạng thái và hướng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const dirSuffix = direction;
-  const baseName = folder + dirSuffix;
   const totalFrames = state === "run" ? 8 : 16;
   const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
   const frameStr = frameIndex.toString().padStart(2, "0");
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+
+  let baseName;
+
+  if (state === "run") {
+    if (direction === "") {
+      baseName = `${folder}${frameStr}`; // Run00.png → Run07.png
+    } else {
+      baseName = `${folder}${direction}${frameStr}`; // RunU00.png, RunL00.png...
+    }
+  } else {
+    baseName = `${folder}${direction}${frameStr}`; // WalkU00.png, IdleL00.png...
+  }
+
+  character.src = `assets/character/${folder}/${baseName}.png`;
 }
 
 // Kiểm tra va chạm nhân vật với biên và vùng chứa văn bản
