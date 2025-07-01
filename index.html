@@ -91,190 +91,181 @@
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
-  <script>
-    const character = document.getElementById("character");
-    const textContainer = document.getElementById("text-container");
+<script>
+const character = document.getElementById("character");
+const textContainer = document.getElementById("text-container");
 
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2 + 100;
-    let frame = 0;
-    let state = "idle";
-    let direction = "";
-    let isMoving = false;
+let posX = window.innerWidth / 2;
+let posY = window.innerHeight / 2 + 100;
+let frame = 0;
+let state = "idle";
+let direction = "";
+let isMoving = false;
+let frameTimer;
 
-    const directions = ["", "U", "L", "R"];
-    const dirVectors = {
-      "": [0, 1], // xuống mặc định
-      "U": [0, -1],
-      "L": [-1, 0],
-      "R": [1, 0],
-    };
+const directions = ["", "U", "L", "R"];
+const dirVectors = {
+  "": [0, 1], // xuống
+  "U": [0, -1],
+  "L": [-1, 0],
+  "R": [1, 0]
+};
 
+function updateSprite() {
+  let folder = "Idle";
+  if (state === "walk") folder = "Walk";
+  else if (state === "run") folder = "Run";
+
+  const suffix = direction !== "" ? direction : "";
+  const maxFrame = (state === "run") ? 8 : 16;
+  const frameStr = (frame % maxFrame).toString().padStart(2, "0");
+
+  const fileName = direction === "" 
+    ? `${folder}${frameStr}.png` 
+    : `${folder}${suffix}${frameStr}.png`;
+
+  character.src = `assets/character/${folder}/${fileName}`;
+}
+
+function startFrameLoop(speed) {
+  if (frameTimer) clearInterval(frameTimer);
+  frameTimer = setInterval(() => {
+    frame++;
+    updateSprite();
+  }, speed);
+}
+
+function stopFrameLoop() {
+  clearInterval(frameTimer);
+}
+
+function checkCollision(dx, dy) {
+  const futureX = posX + dx;
+  const futureY = posY + dy;
+  const charRect = {
+    left: futureX, top: futureY,
+    right: futureX + 48, bottom: futureY + 48
+  };
+  const screen = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+
+  if (
+    charRect.left < 0 || charRect.right > screen.width ||
+    charRect.top < 0 || charRect.bottom > screen.height
+  ) return true;
+
+  const textRect = textContainer.getBoundingClientRect();
+  const overlap = !(
+    charRect.right < textRect.left ||
+    charRect.left > textRect.right ||
+    charRect.bottom < textRect.top ||
+    charRect.top > textRect.bottom
+  );
+
+  return overlap;
+}
+
+function moveOneStep(type, callback) {
+  const [vx, vy] = dirVectors[direction];
+  const dx = vx * 48;
+  const dy = vy * 48;
+  const duration = 500;
+  const steps = (type === "run") ? 8 : 16;
+  const interval = duration / steps;
+  let current = 0;
+
+  startFrameLoop(interval);
+
+  function step() {
+    if (current >= steps) {
+      stopFrameLoop();
+      callback();
+      return;
+    }
+    posX += dx / steps;
+    posY += dy / steps;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
+    current++;
+    setTimeout(step, interval);
+  }
 
-    function updateSprite() {
-      let folder = "Idle";
-      if (state === "walk") folder = "Walk";
-      else if (state === "run") folder = "Run";
+  step();
+}
 
-      const suffix = direction !== "" ? direction : "";
-      const maxFrame = (state === "run") ? 8 : 16;
-      const frameStr = (frame % maxFrame).toString().padStart(2, "0");
+function chooseDirection() {
+  direction = directions[Math.floor(Math.random() * directions.length)];
+  state = "idle";
+  frame = 0;
+  updateSprite();
 
-      const fileName = direction === ""
-        ? `${folder}${frameStr}.png`         // ví dụ: Walk00.png
-        : `${folder}${suffix}${frameStr}.png`; // ví dụ: WalkU03.png
+  // Cho nhân vật quay mặt đúng hướng trong 300ms trước khi hành động
+  setTimeout(() => chooseAction(), 300);
+}
 
-      character.src = `assets/character/${folder}/${fileName}`;
-    }
+function chooseAction() {
+  if (isMoving) return;
+  const r = Math.random();
+  const steps = 1 + Math.floor(Math.random() * 3);
+  const moveType = (r < 0.5) ? "walk" : "run";
+  startMove(moveType, steps);
+}
 
-    function checkCollision(dx, dy) {
-      const futureX = posX + dx;
-      const futureY = posY + dy;
+function startMove(type, steps) {
+  if (isMoving) return;
+  isMoving = true;
+  state = type;
+  frame = 0;
+  updateSprite();
 
-      const charRect = {
-        left: futureX,
-        top: futureY,
-        right: futureX + 48,
-        bottom: futureY + 48
-      };
-
-      const screen = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      };
-
-      if (
-        charRect.left < 0 || charRect.right > screen.width ||
-        charRect.top < 0 || charRect.bottom > screen.height
-      ) return true;
-
-      const textRect = textContainer.getBoundingClientRect();
-      const overlap = !(
-        charRect.right < textRect.left ||
-        charRect.left > textRect.right ||
-        charRect.bottom < textRect.top ||
-        charRect.top > textRect.bottom
-      );
-
-      return overlap;
-    }
-
-    function smoothWalkStep(dx, dy, speedPerFrame, onFinish) {
-      const totalFrames = 16;
-      let current = 0;
-      const stepSizeX = dx / totalFrames;
-      const stepSizeY = dy / totalFrames;
-
-      function step() {
-        if (current >= totalFrames) {
-          onFinish();
-          return;
-        }
-
-        posX += stepSizeX;
-        posY += stepSizeY;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-
-        frame = current;
-        updateSprite();
-
-        current++;
-        setTimeout(step, speedPerFrame);
-      }
-
-      step();
-    }
-
-    function startMove(type, steps) {
-      if (isMoving) return;
-      isMoving = true;
-      state = type;
+  let count = 0;
+  function next() {
+    if (count >= steps) {
+      isMoving = false;
+      state = "idle";
       frame = 0;
       updateSprite();
+      setTimeout(chooseDirection, 1000 + Math.random() * 1000);
+      return;
+    }
 
-      const [vx, vy] = dirVectors[direction];
-      let stepCount = 0;
-      const dx = vx * 48;
-      const dy = vy * 48;
-      const speed = (type === "run") ? 30 : 70;
+    const [vx, vy] = dirVectors[direction];
+    const dx = vx * 48;
+    const dy = vy * 48;
 
-      function next() {
-        if (stepCount >= steps) {
-          isMoving = false;
-          state = "idle";
-          frame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
+    if (checkCollision(dx, dy)) {
+      isMoving = false;
+      state = "idle";
+      frame = 0;
+      updateSprite();
+      setTimeout(chooseDirection, 1000);
+      return;
+    }
 
-        if (checkCollision(dx, dy)) {
-          isMoving = false;
-          state = "idle";
-          frame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        smoothWalkStep(dx, dy, speed, () => {
-          stepCount++;
-          next();
-        });
-      }
-
+    moveOneStep(type, () => {
+      count++;
       next();
-    }
+    });
+  }
 
-    function chooseAction() {
-      const r = Math.random();
+  next();
+}
 
-      if (r < 0.5) {
-        const steps = 1 + Math.floor(Math.random() * 3);
-        startMove("walk", steps);
-      } else if (r < 0.8) {
-        const steps = 1 + Math.floor(Math.random() * 4);
-        startMove("run", steps);
-      } else {
-        state = "idle";
-        frame = 0;
-        updateSprite();
-        scheduleNextAction();
-      }
-    }
-
-    function scheduleNextAction() {
-      const delay = (direction === "U")
-        ? 1500 + Math.random() * 1000
-        : 1500 + Math.random() * 3000;
-
-      setTimeout(() => {
-        direction = directions[Math.floor(Math.random() * directions.length)];
-
-        // Hiển thị sprite Idle của hướng mới 200ms trước khi di chuyển
-        state = "idle";
-        frame = 0;
-        updateSprite();
-
-        setTimeout(() => {
-          chooseAction();
-        }, 200);
-      }, delay);
-    }
-
-    // Idle animation loop
-    setInterval(() => {
-      if (state === "idle") {
-        frame = (frame + 1) % 16;
-        updateSprite();
-      }
-    }, 150);
-
+function idleLoop() {
+  if (!isMoving) {
+    state = "idle";
+    frame = (frame + 1) % 16;
     updateSprite();
-    scheduleNextAction();
-  </script>
+  }
+}
+setInterval(idleLoop, 31.25); // ~500ms cho 16 frame idle
+
+character.style.left = `${posX}px`;
+character.style.top = `${posY}px`;
+updateSprite();
+chooseDirection();
+</script>
 </body>
 </html>
