@@ -169,4 +169,8 @@ setInterval(() => {
 }, 200);
 
 updateSprite();
-scheduleNextAction();
+
+// Đợi 3 giây trước khi bắt đầu hành động để đảm bảo mọi tài nguyên được tải
+setTimeout(() => {
+  scheduleNextAction();
+}, 3000);
