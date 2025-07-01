@@ -25,8 +25,7 @@ character.style.top = `${posY}px`;
 // Cập nhật hình ảnh sprite theo trạng thái và hướng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const dirSuffix = direction; // "", U, L, R
-  const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
+  const baseName = folder; // KHÔNG thêm dirSuffix nữa
 
   let totalFrames, frameIndex, frameStr;
 
@@ -39,6 +38,16 @@ function updateSprite() {
     frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
     frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
+
+  const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
+  console.log("Sprite path:", spritePath);
+
+  character.onerror = function() {
+    console.error('Không load được sprite:', character.src);
+    character.src = 'assets/character/default.png'; // ảnh dự phòng
+  };
+  character.src = spritePath;
+}
 
   const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
   console.log("Sprite path:", spritePath);
