@@ -1,21 +1,11 @@
-// Lấy tham chiếu đến phần tử nhân vật và vùng chứa văn bản
-const character = document.getElementById("character");
-const textContainer = document.getElementById("text-container");
-
-// Tọa độ hiện tại của nhân vật
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-
-// Trạng thái và hướng của nhân vật
-let state = "idle";         // Các trạng thái: idle, walk, run
-let direction = "";         // Các hướng: "" (xuống), U, L, R
+// Trạng thái nhân vật: idle, walk, run
+let state = "idle";
+let direction = ""; // "", U, L, R
 let isMoving = false;
 
-// Frame cho từng loại animation
 let idleFrame = 0;
 let moveFrame = 0;
 
-// Các hướng có thể và vector tương ứng
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
   "": [0, 1],
@@ -24,33 +14,26 @@ const dirVectors = {
   "R": [1, 0]
 };
 
-// Cập nhật vị trí hiển thị nhân vật
+const character = document.getElementById("character");
+const textContainer = document.getElementById("text-container");
+
+let posX = window.innerWidth / 2;
+let posY = window.innerHeight / 2 + 100;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 
-// Hàm cập nhật hình ảnh nhân vật dựa vào trạng thái và hướng
+// Cập nhật hình ảnh sprite theo trạng thái và hướng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+  const dirSuffix = direction; // "", U, L, R
+  const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
   const totalFrames = state === "run" ? 8 : 16;
   const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
-  const frameStr = frameIndex.toString().padStart(2, "0");
-
-  let baseName;
-
-  if (state === "run") {
-    if (direction === "") {
-      baseName = `${folder}${frameStr}`; // Run00.png → Run07.png
-    } else {
-      baseName = `${folder}${direction}${frameStr}`; // RunU00.png, RunL00.png...
-    }
-  } else {
-    baseName = `${folder}${direction}${frameStr}`; // WalkU00.png, IdleL00.png...
-  }
-
-  character.src = `assets/character/${folder}/${baseName}.png`;
+  const frameStr = frameIndex.toString(); // Không cần padStart vì tên là Run0 → Run7
+  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
-// Kiểm tra va chạm nhân vật với biên và vùng chứa văn bản
+// Kiểm tra va chạm nhân vật với biên hoặc phần tử văn bản
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
@@ -81,10 +64,10 @@ function checkCollision(dx, dy) {
   );
 }
 
-// Di chuyển mượt với animation hoàn chỉnh cho mỗi bước
+// Di chuyển mượt theo từng bước, với tốc độ tùy theo trạng thái
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70; // Run nhanh gấp đôi walk
+  const speed = mode === "run" ? 35 : 70; // Run nhanh gấp đôi
   let current = 0;
   const stepX = dx / totalFrames;
   const stepY = dy / totalFrames;
@@ -110,7 +93,7 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
-// Bắt đầu di chuyển trong trạng thái chỉ định (walk/run)
+// Bắt đầu di chuyển trong vài bước, với hành vi cụ thể (walk hoặc run)
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
@@ -151,7 +134,7 @@ function startMove(steps, mode) {
   nextStep();
 }
 
-// Lập lịch hành động tiếp theo ngẫu nhiên
+// Hẹn giờ tự động chuyển hành động
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
@@ -162,7 +145,7 @@ function scheduleNextAction() {
       idleFrame = 0;
       updateSprite();
       scheduleNextAction();
-    } else if (chance < 0.7) {
+    } else if (chance < 0.65) {
       startMove(steps, "walk");
     } else {
       startMove(steps, "run");
@@ -170,7 +153,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Animation vòng lặp cho trạng thái Idle
+// Vòng lặp cho trạng thái đứng yên
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -178,6 +161,5 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động lần đầu
 updateSprite();
 scheduleNextAction();
