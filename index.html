@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
+  <!-- Font pixel-style -->
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+
   <style>
+    /* Đặt lại lề và font, nền trắng nhẹ */
     html, body {
       margin: 0;
       padding: 0;
@@ -14,6 +17,7 @@
       overflow: hidden;
     }
 
+    /* Khối nội dung chính */
     .container {
       position: relative;
       z-index: 2;
@@ -31,6 +35,7 @@
       color: #444;
     }
 
+    /* Menu điều hướng */
     .menu {
       text-align: center;
       margin-top: 20px;
@@ -50,6 +55,7 @@
       color: #4e5ba6;
     }
 
+    /* Nền pixel lưới */
     .background {
       position: fixed;
       top: 0;
@@ -62,6 +68,7 @@
       z-index: 0;
     }
 
+    /* Sprite nhân vật chính */
     #character {
       position: absolute;
       width: 48px;
@@ -73,14 +80,17 @@
   </style>
 </head>
 <body>
+  <!-- Nền lưới -->
   <div class="background"></div>
 
+  <!-- Nội dung giới thiệu -->
   <div class="container" id="text-container">
     <header>
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
 
+    <!-- Thanh menu -->
     <nav class="menu">
       <a href="about.html">Giới thiệu</a>
       <a href="illustrations.html">Minh Họa</a>
@@ -89,22 +99,26 @@
     </nav>
   </div>
 
-  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
+  <!-- Nhân vật hoạt hình -->
+  <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
   <script>
     const character = document.getElementById("character");
     const textContainer = document.getElementById("text-container");
 
+    // Vị trí khởi tạo nhân vật (giữa màn hình, lệch xuống dưới)
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
 
-    let state = "idle";         // idle, walk, run
-    let direction = "";         // "", U, L, R
+    // Trạng thái hiện tại: idle, walk, run
+    let state = "idle";
+    let direction = "";       // "", U, L, R
     let isMoving = false;
 
-    let idleFrame = 0;
-    let moveFrame = 0;
+    let idleFrame = 0;        // Frame cho idle
+    let moveFrame = 0;        // Frame cho walk/run
 
+    // Hướng và vector di chuyển tương ứng
     const directions = ["", "U", "L", "R"];
     const dirVectors = {
       "": [0, 1],
@@ -113,19 +127,24 @@
       "R": [1, 0]
     };
 
+    // Đặt vị trí ban đầu
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
+    // Hàm cập nhật sprite theo trạng thái hiện tại
     function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const dirSuffix = direction; // "", U, L, R
-  const baseName = state.charAt(0).toUpperCase() + state.slice(1) + dirSuffix;
-  const totalFrames = state === "run" ? 8 : 16;
-  const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
-  const frameStr = frameIndex.toString().padStart(2, "0");
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
-}
+      const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+      const dirSuffix = direction; // "", U, L, R
+      const baseName = folder + dirSuffix; // Ex: RunL
+      const totalFrames = state === "run" ? 8 : 16;
+      const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
+      const frameStr = frameIndex.toString().padStart(2, "0");
 
+      // Đường dẫn đến sprite tương ứng
+      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+    }
+
+    // Kiểm tra va chạm với viền màn hình hoặc container
     function checkCollision(dx, dy) {
       const nextX = posX + dx;
       const nextY = posY + dy;
@@ -142,11 +161,13 @@
         height: window.innerHeight
       };
 
+      // Va chạm với rìa màn hình
       if (
         charRect.left < 0 || charRect.right > bounds.width ||
         charRect.top < 0 || charRect.bottom > bounds.height
       ) return true;
 
+      // Va chạm với khối văn bản (container)
       const textRect = textContainer.getBoundingClientRect();
       return !(
         charRect.right < textRect.left ||
@@ -156,9 +177,10 @@
       );
     }
 
+    // Di chuyển mượt từng bước nhỏ (walk hoặc run)
     function smoothMove(dx, dy, onFinish, mode) {
       const totalFrames = mode === "run" ? 8 : 16;
-      const speed = mode === "run" ? 20 : 70;
+      const speed = mode === "run" ? 20 : 70; // chạy nhanh hơn
       let current = 0;
       const stepX = dx / totalFrames;
       const stepY = dy / totalFrames;
@@ -184,6 +206,7 @@
       step();
     }
 
+    // Bắt đầu thực hiện một chuỗi bước di chuyển
     function startMove(steps, mode) {
       if (isMoving) return;
       isMoving = true;
@@ -196,6 +219,7 @@
 
       function nextStep() {
         if (stepCount >= steps) {
+          // Kết thúc di chuyển
           isMoving = false;
           state = "idle";
           idleFrame = 0;
@@ -208,6 +232,7 @@
         const dy = vy * 48;
 
         if (checkCollision(dx, dy)) {
+          // Nếu va chạm thì dừng lại
           isMoving = false;
           state = "idle";
           idleFrame = 0;
@@ -224,25 +249,31 @@
       nextStep();
     }
 
+    // Lên lịch hành động tiếp theo (idle, walk, run)
     function scheduleNextAction() {
       const delay = 1000 + Math.random() * 2500;
+
       setTimeout(() => {
         const chance = Math.random();
         const steps = 1 + Math.floor(Math.random() * 3);
+
         if (chance < 0.15) {
+          // Nghỉ ngơi (Idle)
           state = "idle";
           idleFrame = 0;
           updateSprite();
           scheduleNextAction();
         } else if (chance < 0.6) {
+          // Đi bộ
           startMove(steps, "walk");
         } else {
+          // Chạy
           startMove(steps, "run");
         }
       }, delay);
     }
 
-    // Idle loop animation
+    // Animation lặp lại khi ở trạng thái idle
     setInterval(() => {
       if (state === "idle") {
         idleFrame = (idleFrame + 1) % 16;
@@ -250,6 +281,7 @@
       }
     }, 200);
 
+    // Bắt đầu chạy lần đầu
     updateSprite();
     scheduleNextAction();
   </script>
