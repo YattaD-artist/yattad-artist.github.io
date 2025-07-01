@@ -101,6 +101,7 @@ let frame = 0;
 let state = "idle";
 let direction = "";
 let isMoving = false;
+let isChoosingDirection = false;
 let frameTimer;
 
 const directions = ["", "U", "L", "R"];
@@ -196,13 +197,16 @@ function moveOneStep(type, callback) {
 }
 
 function chooseDirection() {
+  isChoosingDirection = true;
   direction = directions[Math.floor(Math.random() * directions.length)];
   state = "idle";
   frame = 0;
   updateSprite();
 
-  // Cho nhân vật quay mặt đúng hướng trong 300ms trước khi hành động
-  setTimeout(() => chooseAction(), 300);
+  setTimeout(() => {
+    isChoosingDirection = false;
+    chooseAction();
+  }, 300);
 }
 
 function chooseAction() {
@@ -254,7 +258,7 @@ function startMove(type, steps) {
 }
 
 function idleLoop() {
-  if (!isMoving) {
+  if (!isMoving && !isChoosingDirection) {
     state = "idle";
     frame = (frame + 1) % 16;
     updateSprite();
