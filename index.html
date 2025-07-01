@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -110,14 +110,14 @@
       "R": [1, 0],
     };
 
-    character.style.left = ${posX}px;
-    character.style.top = ${posY}px;
+    character.style.left = posX + "px";
+    character.style.top = posY + "px";
 
     function updateSprite() {
       const folder = (state === "walk") ? "Walk" : "Idle";
       const suffix = direction;
       const frameStr = frame.toString().padStart(2, "0");
-      character.src = assets/character/${folder}/${folder}${suffix}${frameStr}.png;
+      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
     function checkCollision(dx, dy) {
@@ -168,14 +168,14 @@
 
         posX += stepSizeX;
         posY += stepSizeY;
-        character.style.left = ${posX}px;
-        character.style.top = ${posY}px;
+        character.style.left = posX + "px";
+        character.style.top = posY + "px";
 
         frame = current % 16;
         updateSprite();
 
         current++;
-        setTimeout(step, 70); // Chậm hơn một chút cho mượt mà
+        setTimeout(step, 70);
       }
 
       step();
