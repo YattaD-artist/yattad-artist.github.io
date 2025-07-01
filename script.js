@@ -51,8 +51,8 @@ function checkCollision(dx, dy) {
   const charRect = {
     left: nextX,
     top: nextY,
-    right: nextX + 48,
-    bottom: nextY + 48
+    right: nextX + 62,
+    bottom: nextY + 62
   };
 
   const bounds = {
