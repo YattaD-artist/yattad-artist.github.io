@@ -33,47 +33,25 @@ function updateSprite() {
   if (state === "run") {
     totalFrames = 8;
     frameIndex = moveFrame % totalFrames;
-    frameStr = frameIndex.toString(); // Run0.png → Run7.png
+    frameStr = frameIndex.toString(); // Run0 -> Run7
   } else {
     totalFrames = 16;
     frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
-    frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
+    frameStr = frameIndex.toString().padStart(2, "0"); // 00 -> 15
   }
 
   const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
-  console.log("Sprite path:", spritePath);
   character.src = spritePath;
-  character.onerror = () => console.error("Không tìm thấy sprite:", spritePath);
 }
 
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-
-  const charRect = {
-    left: nextX,
-    top: nextY,
-    right: nextX + 62,
-    bottom: nextY + 62
-  };
-
-  const bounds = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-
-  if (
-    charRect.left < 0 || charRect.right > bounds.width ||
-    charRect.top < 0 || charRect.bottom > bounds.height
-  ) return true;
-
+  const charRect = { left: nextX, top: nextY, right: nextX + 62, bottom: nextY + 62 };
+  const bounds = { width: window.innerWidth, height: window.innerHeight };
+  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
   const textRect = textContainer.getBoundingClientRect();
-  return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
-  );
+  return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
@@ -84,19 +62,13 @@ function smoothMove(dx, dy, onFinish, mode) {
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) {
-      onFinish();
-      return;
-    }
-
+    if (current >= totalFrames) { onFinish(); return; }
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
-
     moveFrame = current;
     updateSprite();
-
     current++;
     setTimeout(step, speed);
   }
@@ -109,8 +81,7 @@ function startMove(steps, mode) {
   isMoving = true;
   state = mode;
   direction = directions[Math.floor(Math.random() * directions.length)];
-
-  moveFrame = 1; // ← Cập nhật frame đầu tiên ngay lập tức
+  moveFrame = 1; // khởi động animation ngay frame 1
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
@@ -125,10 +96,8 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
-
-    const dx = vx * 62; // bước di chuyển theo kích thước sprite mới
+    const dx = vx * 62;
     const dy = vy * 62;
-
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -137,7 +106,6 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
-
     moveFrame = 0;
     smoothMove(dx, dy, nextStep, mode);
     stepCount++;
@@ -147,9 +115,7 @@ function startMove(steps, mode) {
 }
 
 function scheduleNextAction() {
-  const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
-    direction = directions[Math.floor(Math.random() * directions.length)];
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
     if (chance < 0.2) {
@@ -162,7 +128,7 @@ function scheduleNextAction() {
     } else {
       startMove(steps, "run");
     }
-  }, delay);
+  }, 1000 + Math.random() * 2500);
 }
 
 setInterval(() => {
@@ -173,8 +139,4 @@ setInterval(() => {
 }, 200);
 
 updateSprite();
-
-// Đợi 3 giây trước khi bắt đầu hành động để đảm bảo mọi tài nguyên được tải
-setTimeout(() => {
-  scheduleNextAction();
-}, 3000);
+setTimeout(scheduleNextAction, 3000);
