@@ -97,9 +97,9 @@
 
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
-    let state = "idle";
-    let direction = "";
     let frame = 0;
+    let state = "idle"; // idle, walk, run
+    let direction = "";
     let isMoving = false;
 
     const directions = ["", "U", "L", "R"];
@@ -115,17 +115,11 @@
 
     function updateSprite() {
       let folder = "Idle";
-      let maxFrames = 16;
-
-      if (state === "walk") {
-        folder = "Walk";
-      } else if (state === "run") {
-        folder = "Run";
-        maxFrames = 8;
-      }
+      if (state === "walk") folder = "Walk";
+      else if (state === "run") folder = "Run";
 
       const suffix = direction;
-      const frameStr = (frame % maxFrames).toString().padStart(2, "0");
+      const frameStr = frame.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
@@ -161,12 +155,14 @@
       return overlap;
     }
 
-    function animateMovement(totalFrames, stepSizeX, stepSizeY, speed, onFinish) {
-      let currentFrame = 0;
-      const maxFrames = state === "run" ? 8 : 16;
+    function smoothWalkStep(dx, dy, speedPerFrame, onFinish) {
+      const totalFrames = 16;
+      let current = 0;
+      const stepSizeX = dx / totalFrames;
+      const stepSizeY = dy / totalFrames;
 
       function step() {
-        if (currentFrame >= totalFrames) {
+        if (current >= totalFrames) {
           onFinish();
           return;
         }
@@ -176,60 +172,54 @@
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
-        frame = currentFrame % maxFrames;
+        frame = current % 16;
         updateSprite();
 
-        currentFrame++;
-        setTimeout(() => requestAnimationFrame(step), speed);
+        current++;
+        setTimeout(step, speedPerFrame);
       }
 
-      frame = 0;
-      requestAnimationFrame(step);
+      step();
     }
 
     function startMove(type, steps) {
-      if (isMoving || direction === "") return;
-
+      if (isMoving) return;
       isMoving = true;
       state = type;
+      updateSprite();
 
       const [vx, vy] = dirVectors[direction];
+      let stepCount = 0;
       const dx = vx * 48;
       const dy = vy * 48;
-      const speed = type === "run" ? 30 : 70;
-      const totalFrames = state === "run" ? 8 : 16;
-      const stepSizeX = dx / totalFrames;
-      const stepSizeY = dy / totalFrames;
-      let stepCount = 0;
+      const speed = (type === "run") ? 30 : 70;
 
-      function nextStep() {
+      function next() {
         if (stepCount >= steps) {
+          isMoving = false;
           state = "idle";
           frame = 0;
-          isMoving = false;
           updateSprite();
           scheduleNextAction();
           return;
         }
 
         if (checkCollision(dx, dy)) {
+          isMoving = false;
           state = "idle";
           frame = 0;
-          isMoving = false;
           updateSprite();
           scheduleNextAction();
           return;
         }
 
-        animateMovement(totalFrames, stepSizeX, stepSizeY, speed, () => {
+        smoothWalkStep(dx, dy, speed, () => {
           stepCount++;
-          nextStep();
+          next();
         });
       }
 
-      frame = 0;
-      updateSprite();
-      setTimeout(nextStep, 100);
+      next();
     }
 
     function chooseAction() {
