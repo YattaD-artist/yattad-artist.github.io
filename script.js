@@ -24,22 +24,25 @@ character.style.top = `${posY}px`;
 
 // Cập nhật hình ảnh sprite theo trạng thái và hướng
 function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+  const folder = state.toLowerCase(); // sửa ở đây
   const dirSuffix = direction; // "", U, L, R
-  const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
+  const baseName = folder.charAt(0).toUpperCase() + folder.slice(1) + dirSuffix;
 
   let totalFrames, frameIndex, frameStr;
 
   if (state === "run") {
-    frameIndex = moveFrame % 8;
+    totalFrames = 8;
+    frameIndex = moveFrame % totalFrames;
     frameStr = frameIndex.toString(); // Run0.png → Run7.png
   } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
+    totalFrames = 16;
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
     frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
 
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
+
 
 // Kiểm tra va chạm nhân vật với biên hoặc phần tử văn bản
 function checkCollision(dx, dy) {
