@@ -31,12 +31,10 @@ function updateSprite() {
   let totalFrames, frameIndex, frameStr;
 
   if (state === "run") {
-    totalFrames = 8;
-    frameIndex = moveFrame % totalFrames;
+    frameIndex = moveFrame % 8;
     frameStr = frameIndex.toString(); // Run0.png → Run7.png
   } else {
-    totalFrames = 16;
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
     frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
 
