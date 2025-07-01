@@ -110,8 +110,16 @@
       const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
       const suffix = direction;
       const frameStr = frame.toString().padStart(2, "0");
-      const fileName = suffix ? `${folder}${suffix}${frameStr}` : `${folder}${frameStr}`;
+      let fileName;
+      if (folder === "Idle") {
+        fileName = `Idle${frameStr}`;
+      } else {
+        fileName = `${folder}${suffix}${frameStr}`;
+      }
       character.src = `assets/character/${folder}/${fileName}.png`;
+      character.onerror = () => {
+        console.error("Không tải được sprite:", character.src);
+      };
     }
 
     function animateStep(type, callback) {
@@ -143,7 +151,7 @@
             return;
           }
 
-          frame = f;
+          frame = f % framesPerStep;
           updateSprite();
           posX += dx;
           posY += dy;
