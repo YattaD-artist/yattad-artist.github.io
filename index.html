@@ -114,14 +114,21 @@
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-      let folder = "Idle";
-      if (state === "walk") folder = "Walk";
-      else if (state === "run") folder = "Run";
+  let folder = "Idle";
+  if (state === "walk") folder = "Walk";
+  else if (state === "run") folder = "Run";
 
-      const suffix = direction;
-      const frameStr = frame.toString().padStart(2, "0");
-      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
-    }
+  const suffix = direction !== "" ? direction : ""; // "" tương ứng với hướng xuống
+  const maxFrame = (state === "run") ? 8 : 16;
+  const frameStr = (frame % maxFrame).toString().padStart(2, "0");
+
+  // Nếu hướng là "", không chèn hậu tố
+  const fileName = direction === "" 
+    ? `${folder}${frameStr}.png`
+    : `${folder}${suffix}${frameStr}.png`;
+
+  character.src = `assets/character/${folder}/${fileName}`;
+}
 
     function checkCollision(dx, dy) {
       const futureX = posX + dx;
