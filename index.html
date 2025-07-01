@@ -4,73 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Pixelify Sans', sans-serif;
-      background-color: #f8f8ff;
-      overflow: hidden;
-    }
-
-    .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 48px;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin: 0.2em 0 0;
-    }
-
-    p {
-      font-size: 1.2em;
-      color: #444;
-    }
-
-    .menu {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .menu a {
-      display: inline-block;
-      text-decoration: none;
-      color: #334;
-      font-size: 1.1em;
-      margin: 0 12px;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
-
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #4e5ba6;
-    }
-
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
-
-    #character {
-      position: absolute;
-      width: 48px;
-      height: 48px;
-      image-rendering: pixelated;
-      z-index: 1;
-      pointer-events: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="background"></div>
@@ -89,172 +23,53 @@
     </nav>
   </div>
 
-  <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+  <img id="character" src="assets/character/Idle/Idle00.png" alt="Nhân vật hoạt hình đang chuyển động" />
 
   <script>
-    const character = document.getElementById("character");
-    const textContainer = document.getElementById("text-container");
+    const character = document.getElementById('character');
 
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2 + 100;
+    const FRAME_COUNT = 4;
+    const FRAME_DELAY = 200;
+    const DIRECTIONS = ['U', 'D', 'L', 'R'];
+    let currentDirection = 'D';
     let frame = 0;
-    let state = "idle";
-    let direction = "";
     let isMoving = false;
+    let animation;
 
-    const directions = ["", "U", "L", "R"];
-    const dirVectors = {
-      "": [0, 1],
-      "U": [0, -1],
-      "L": [-1, 0],
-      "R": [1, 0],
-    };
+    function updateFrame() {
+      if (!isMoving) return;
 
-    character.style.left = posX + "px";
-    character.style.top = posY + "px";
+      const path = `assets/character/Walk${currentDirection}/Walk${currentDirection}0${frame}.png`;
+      character.src = path;
 
-    function updateSprite() {
-      const folder = (state === "walk") ? "Walk" : "Idle";
-      const suffix = direction;
-      const frameStr = frame.toString().padStart(2, "0");
-      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
+      frame = (frame + 1) % FRAME_COUNT;
     }
 
-    function checkCollision(dx, dy) {
-      const futureX = posX + dx;
-      const futureY = posY + dy;
+    function startWalking(dir) {
+      if (!DIRECTIONS.includes(dir)) return;
 
-      const charRect = {
-        left: futureX,
-        top: futureY,
-        right: futureX + 48,
-        bottom: futureY + 48
-      };
-
-      const screen = {
-        width: window.innerWidth,
-        height: window.innerHeight
-      };
-
-      if (
-        charRect.left < 0 || charRect.right > screen.width ||
-        charRect.top < 0 || charRect.bottom > screen.height
-      ) {
-        return true;
-      }
-
-      const textRect = textContainer.getBoundingClientRect();
-      const overlap = !(
-        charRect.right < textRect.left ||
-        charRect.left > textRect.right ||
-        charRect.bottom < textRect.top ||
-        charRect.top > textRect.bottom
-      );
-
-      return overlap;
-    }
-
-    function smoothWalkStep(dx, dy, onFinish) {
-      const totalFrames = 16;
-      let current = 0;
-      const stepSizeX = dx / totalFrames;
-      const stepSizeY = dy / totalFrames;
-
-      function step() {
-        if (current >= totalFrames) {
-          onFinish();
-          return;
-        }
-
-        posX += stepSizeX;
-        posY += stepSizeY;
-        character.style.left = posX + "px";
-        character.style.top = posY + "px";
-
-        frame = current % 16;
-        updateSprite();
-
-        current++;
-        setTimeout(step, 70);
-      }
-
-      step();
-    }
-
-    function startWalk(steps) {
-      if (isMoving) return;
+      currentDirection = dir;
       isMoving = true;
-      state = "walk";
-      updateSprite();
-
-      const [vx, vy] = dirVectors[direction];
-      let stepCount = 0;
-
-      function next() {
-        if (stepCount >= steps) {
-          isMoving = false;
-          state = "idle";
-          frame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        const dx = vx * 48;
-        const dy = vy * 48;
-
-        if (checkCollision(dx, dy)) {
-          isMoving = false;
-          state = "idle";
-          frame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        smoothWalkStep(dx, dy, () => {
-          stepCount++;
-          next();
-        });
-      }
-
-      next();
+      clearInterval(animation);
+      animation = setInterval(updateFrame, FRAME_DELAY);
     }
 
-    function chooseAction() {
-      const r = Math.random();
-
-      if (r < 0.6) {
-        const steps = 1 + Math.floor(Math.random() * 3);
-        startWalk(steps);
-      } else {
-        state = "idle";
-        frame = 0;
-        updateSprite();
-        scheduleNextAction();
-      }
+    function stopWalking() {
+      isMoving = false;
+      clearInterval(animation);
+      character.src = `assets/character/Idle/Idle00.png`;
     }
 
-    function scheduleNextAction() {
-      const delay = (direction === "U")
-        ? 1500 + Math.random() * 1000
-        : 1500 + Math.random() * 3500;
-
-      setTimeout(() => {
-        direction = directions[Math.floor(Math.random() * directions.length)];
-        chooseAction();
-      }, delay);
-    }
-
-    setInterval(() => {
-      if (state === "idle") {
-        frame = (frame + 1) % 16;
-        updateSprite();
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp': startWalking('U'); break;
+        case 'ArrowDown': startWalking('D'); break;
+        case 'ArrowLeft': startWalking('L'); break;
+        case 'ArrowRight': startWalking('R'); break;
       }
-    }, 150);
+    });
 
-    updateSprite();
-    scheduleNextAction();
+    document.addEventListener('keyup', stopWalking);
   </script>
 </body>
 </html>
