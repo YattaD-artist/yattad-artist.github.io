@@ -72,40 +72,42 @@ function checkCollision(dx, dy) {
 function smoothMove(dx, dy, onFinish) {
   const totalFrames = 16;
   const speed = 70;
-  let current = 0;
+  let currentFrame = 0;
+
   const stepX = dx / totalFrames;
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) {
-      onFinish();
+    if (currentFrame >= totalFrames) {
+      onFinish(); // Kết thúc di chuyển
       return;
     }
 
+    // Di chuyển vị trí
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
-    moveFrame = current;
+    // Cập nhật frame hoạt hình
+    moveFrame = currentFrame;
     updateSprite();
 
-    current++;
+    currentFrame++;
     setTimeout(step, speed);
   }
 
   step();
 }
 
-// Bắt đầu di chuyển ngẫu nhiên
 function startMove(steps) {
   if (isMoving) return;
+
   isMoving = true;
   state = "walk";
-  moveFrame = 0;
-
   direction = directions[Math.floor(Math.random() * directions.length)];
   const [vx, vy] = dirVectors[direction];
+
   let stepCount = 0;
 
   function nextStep() {
@@ -121,6 +123,7 @@ function startMove(steps) {
     const dx = vx * 48;
     const dy = vy * 48;
 
+    // Kiểm tra va chạm trước khi bước
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -130,13 +133,15 @@ function startMove(steps) {
       return;
     }
 
-    moveFrame = 0;
-    smoothMove(dx, dy, nextStep);
-    stepCount++;
+    smoothMove(dx, dy, () => {
+      stepCount++;
+      nextStep(); // bước tiếp theo
+    });
   }
 
   nextStep();
 }
+
 
 // Lập lịch hành động tiếp theo: Idle hoặc Walk
 function scheduleNextAction() {
