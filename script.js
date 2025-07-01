@@ -1,182 +1,128 @@
-// Trạng thái nhân vật: idle, walk, run
-let state = "idle";
-let direction = ""; // "", U, L, R
-let isMoving = false;
+let character = document.getElementById("character");
 
-let idleFrame = 0;
-let moveFrame = 0;
+let position = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+let velocity = { x: 0, y: 0 };
 
-const directions = ["", "U", "L", "R"];
-const dirVectors = {
-  "": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
+const frameCounts = {
+  Idle: 16,
+  Walk: 16,
+  Run: 8
 };
 
-const character = document.getElementById("character");
-const textContainer = document.getElementById("text-container");
+const frameDigits = {
+  Idle: 2,
+  Walk: 2,
+  Run: 1
+};
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
+let direction = "D"; // D = Down, U = Up, L = Left, R = Right
+let currentState = "Idle";
+let frame = 0;
+let frameTime = 0;
+let idleTimeout = null;
 
-// Cập nhật hình ảnh sprite theo trạng thái và hướng
-function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const dirSuffix = direction; // "", U, L, R
-  const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
+const speed = {
+  Idle: 0,
+  Walk: 2,
+  Run: 4
+};
 
-  let frameIndex, frameStr;
-
-  if (state === "run") {
-    frameIndex = moveFrame % 8;          // Run có 8 frame
-    frameStr = frameIndex.toString();    // Không pad: Run0.png → Run7.png
-  } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16); // 16 frame cho Idle/Walk
-    frameStr = frameIndex.toString().padStart(2, "0");             // Pad: Idle00.png → Idle15.png
-  }
-
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+function padFrameNumber(num, digits) {
+  return String(num).padStart(digits, '0');
 }
 
-// Kiểm tra va chạm nhân vật với biên hoặc phần tử văn bản
-function checkCollision(dx, dy) {
-  const nextX = posX + dx;
-  const nextY = posY + dy;
+function updateCharacterAnimation(deltaTime) {
+  frameTime += deltaTime;
 
-  const charRect = {
-    left: nextX,
-    top: nextY,
-    right: nextX + 48,
-    bottom: nextY + 48
-  };
+  const frameDuration = currentState === "Run" ? 80 : 160;
 
-  const bounds = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
+  if (frameTime >= frameDuration) {
+    frame = (frame + 1) % frameCounts[currentState];
+    frameTime = 0;
 
-  if (
-    charRect.left < 0 || charRect.right > bounds.width ||
-    charRect.top < 0 || charRect.bottom > bounds.height
-  ) return true;
+    const frameStr = padFrameNumber(frame, frameDigits[currentState]);
+    let src = `assets/character/${currentState}/${currentState}${direction}${frameStr}.png`;
 
-  const textRect = textContainer.getBoundingClientRect();
-  return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
-  );
-}
-
-// Hoạt họa khi đang di chuyển (walk/run)
-function startAnimationLoop() {
-  function loop() {
-    if (!isMoving) return;
-    moveFrame++;
-    updateSprite();
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
-}
-
-// Di chuyển mượt theo từng bước, với tốc độ tùy theo trạng thái
-function smoothMove(dx, dy, onFinish, mode) {
-  const totalFrames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70;
-  let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
-
-  function step() {
-    if (current >= totalFrames) {
-      onFinish();
-      return;
+    // Nếu không có hướng (Idle trạng thái đứng yên), dùng mặc định
+    if (currentState === "Idle" && !["U", "D", "L", "R"].includes(direction)) {
+      src = `assets/character/Idle/Idle00.png`;
     }
 
-    posX += stepX;
-    posY += stepY;
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-
-    current++;
-    setTimeout(step, speed);
+    character.src = src;
   }
-
-  step();
 }
 
-// Bắt đầu di chuyển trong vài bước, với hành vi cụ thể (walk hoặc run)
-function startMove(steps, mode) {
-  if (isMoving) return;
-  isMoving = true;
-  state = mode;
-  moveFrame = 0;
-  startAnimationLoop();
+function updatePosition() {
+  position.x += velocity.x;
+  position.y += velocity.y;
+  character.style.left = position.x + "px";
+  character.style.top = position.y + "px";
 
-  direction = directions[Math.floor(Math.random() * directions.length)];
-  const [vx, vy] = dirVectors[direction];
-  let stepCount = 0;
-
-  function nextStep() {
-    if (stepCount >= steps) {
-      isMoving = false;
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-      return;
-    }
-
-    const dx = vx * 48;
-    const dy = vy * 48;
-
-    if (checkCollision(dx, dy)) {
-      isMoving = false;
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-      return;
-    }
-
-    moveFrame = 0;
-    smoothMove(dx, dy, nextStep, mode);
-    stepCount++;
+  // Khi không còn di chuyển, tự về lại Idle
+  if (velocity.x === 0 && velocity.y === 0 && currentState !== "Idle") {
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(() => {
+      currentState = "Idle";
+      frame = 0;
+    }, 100);
   }
-
-  nextStep();
 }
 
-// Hẹn giờ tự động chuyển hành động
-function scheduleNextAction() {
-  const delay = 1000 + Math.random() * 2500;
-  setTimeout(() => {
-    const chance = Math.random();
-    const steps = 1 + Math.floor(Math.random() * 3);
-    if (chance < 0.2) {
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-    } else if (chance < 0.65) {
-      startMove(steps, "walk");
-    } else {
-      startMove(steps, "run");
-    }
-  }, delay);
+let lastTime = performance.now();
+
+function gameLoop(currentTime) {
+  let deltaTime = currentTime - lastTime;
+  lastTime = currentTime;
+
+  updatePosition();
+  updateCharacterAnimation(deltaTime);
+
+  requestAnimationFrame(gameLoop);
 }
+requestAnimationFrame(gameLoop);
 
-// Vòng lặp cho trạng thái đứng yên
-setInterval(() => {
-  if (state === "idle") {
-    idleFrame = (idleFrame + 1) % 16;
-    updateSprite();
+window.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    case "ArrowUp":
+      velocity.y = -speed.Run;
+      direction = "U";
+      currentState = "Run";
+      break;
+    case "ArrowDown":
+      velocity.y = speed.Run;
+      direction = "D";
+      currentState = "Run";
+      break;
+    case "ArrowLeft":
+      velocity.x = -speed.Run;
+      direction = "L";
+      currentState = "Run";
+      break;
+    case "ArrowRight":
+      velocity.x = speed.Run;
+      direction = "R";
+      currentState = "Run";
+      break;
   }
-}, 200);
+});
 
-updateSprite();
-scheduleNextAction();
+window.addEventListener("keyup", (e) => {
+  switch (e.key) {
+    case "ArrowUp":
+    case "ArrowDown":
+      velocity.y = 0;
+      break;
+    case "ArrowLeft":
+    case "ArrowRight":
+      velocity.x = 0;
+      break;
+  }
+
+  // Nếu cả hai trục đều bằng 0 thì chuẩn bị chuyển Idle
+  if (velocity.x === 0 && velocity.y === 0) {
+    idleTimeout = setTimeout(() => {
+      currentState = "Idle";
+      frame = 0;
+    }, 100);
+  }
+});
