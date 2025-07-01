@@ -38,15 +38,6 @@ function updateSprite() {
     frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
     frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
-
-  const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
-  console.log("Sprite path:", spritePath);
-
-  character.onerror = function() {
-    console.error('Không load được sprite:', character.src);
-    character.src = 'assets/character/default.png'; // ảnh dự phòng
-  };
-  character.src = spritePath;
 }
 
   const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
