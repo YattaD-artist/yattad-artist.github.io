@@ -24,22 +24,25 @@ character.style.top = `${posY}px`;
 
 // Cập nhật hình ảnh sprite theo trạng thái và hướng
 function updateSprite() {
-  const folder = state.toLowerCase(); // Đúng tên thư mục: idle, walk, run
-  const dirSuffix = direction;        // "", U, L, R
-  const baseName = state.charAt(0).toUpperCase() + state.slice(1) + dirSuffix;
-  // → Idle, IdleU, WalkR, RunU, ...
+  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+  const dirSuffix = direction; // "", U, L, R
+  const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
 
-  let frameIndex, frameStr;
+  let totalFrames, frameIndex, frameStr;
 
   if (state === "run") {
-    frameIndex = moveFrame % 8;
-    frameStr = frameIndex.toString(); // Không pad
+    totalFrames = 8;
+    frameIndex = moveFrame % totalFrames;
+    frameStr = frameIndex.toString(); // Run0.png → Run7.png
   } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-    frameStr = frameIndex.toString().padStart(2, "0"); // pad 2 chữ số
+    totalFrames = 16;
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
+    frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
 
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+  const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
+  console.log("Sprite path:", spritePath);
+  character.src = spritePath;
 }
 
 // Kiểm tra va chạm nhân vật với biên hoặc phần tử văn bản
