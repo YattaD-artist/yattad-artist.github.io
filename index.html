@@ -4,10 +4,76 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link rel="preload" href="assets/Dat.png" as="image">
-  <link rel="preload" href="assets/character/Idle/Idle00.png" as="image">
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      font-family: 'VT323', monospace;
+      overflow-x: hidden;
+    }
+
+    .background {
+      background-image: url('assets/Dat.png');
+      background-size: cover;
+      background-position: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    .container {
+      color: #fff;
+      padding: 30px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: #33e4cb;
+    }
+
+    p {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+      color: #f0f0f0;
+    }
+
+    .menu {
+      margin-top: 20px;
+    }
+
+    .menu a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #9cb4c6;
+      font-size: 1.3rem;
+    }
+
+    .menu a:hover {
+      color: #33e4cb;
+    }
+
+    #character {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 128px;
+      height: 128px;
+      image-rendering: pixelated;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
@@ -26,8 +92,53 @@
     </nav>
   </div>
 
-  <img id="character" src="assets/character/Idle/Idle00.png" alt="Nhân vật YattaD" />
+  <img id="character" src="assets/character/Idle/Idle00.png" alt="Nhân vật hoạt hình đang chuyển động" />
 
-  <script src="assets/js/main.js" defer></script>
+  <script>
+    const character = document.getElementById('character');
+
+    const FRAME_COUNT = 4;
+    const FRAME_DELAY = 200;
+    const DIRECTIONS = ['U', 'D', 'L', 'R'];
+    let currentDirection = 'D';
+    let frame = 0;
+    let isMoving = false;
+    let animation;
+
+    function updateFrame() {
+      if (!isMoving) return;
+
+      const path = `assets/character/Walk${currentDirection}/Walk${currentDirection}0${frame}.png`;
+      character.src = path;
+
+      frame = (frame + 1) % FRAME_COUNT;
+    }
+
+    function startWalking(dir) {
+      if (!DIRECTIONS.includes(dir)) return;
+
+      currentDirection = dir;
+      isMoving = true;
+      clearInterval(animation);
+      animation = setInterval(updateFrame, FRAME_DELAY);
+    }
+
+    function stopWalking() {
+      isMoving = false;
+      clearInterval(animation);
+      character.src = `assets/character/Idle/Idle00.png`;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp': startWalking('U'); break;
+        case 'ArrowDown': startWalking('D'); break;
+        case 'ArrowLeft': startWalking('L'); break;
+        case 'ArrowRight': startWalking('R'); break;
+      }
+    });
+
+    document.addEventListener('keyup', stopWalking);
+  </script>
 </body>
 </html>
