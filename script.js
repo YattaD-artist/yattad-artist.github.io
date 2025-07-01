@@ -1,142 +1,99 @@
-// Trạng thái nhân vật: idle, walk, run
-let state = "idle";
-let direction = ""; // "", U, L, R
-let isMoving = false;
-
-let idleFrame = 0;
-let moveFrame = 0;
-
-const directions = ["", "U", "L", "R"];
+// Tự động điều khiển NPC di chuyển ngẫu nhiên với animation đồng bộ
+const character = document.getElementById("character");
+const directions = ["U", "D", "L", "R"];
 const dirVectors = {
-  "": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
+  U: [0, -1],
+  D: [0, 1],
+  L: [-1, 0],
+  R: [1, 0]
 };
 
-const character = document.getElementById("character");
-const textContainer = document.getElementById("text-container");
-
 let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = "62px";
-character.style.height = "62px";
+let posY = window.innerHeight / 2;
+let currentState = "Idle"; // Idle, Walk, Run
+let currentDir = "D";
+let frameIndex = 0;
+let moving = false;
+let distanceRemaining = 0;
+let frameTimer = 0;
+let speed = 2; // px per frame (Walk)
 
 function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const baseName = folder + direction; // Idle, WalkU, RunL, v.v.
-
-  let totalFrames, frameIndex, frameStr;
-
-  if (state === "run") {
-    totalFrames = 8;
-    frameIndex = moveFrame % totalFrames;
-    frameStr = frameIndex.toString(); // Run0 -> Run7
-  } else {
-    totalFrames = 16;
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
-    frameStr = frameIndex.toString().padStart(2, "0"); // 00 -> 15
-  }
-
-  const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
-  character.src = spritePath;
+  const folder = currentState;
+  let frameStr =
+    currentState === "Run"
+      ? frameIndex.toString()
+      : frameIndex.toString().padStart(2, "0");
+  const path = `assets/character/${folder}/${folder}${currentDir}${frameStr}.png`;
+  character.src = path;
 }
 
-function checkCollision(dx, dy) {
-  const nextX = posX + dx;
-  const nextY = posY + dy;
-  const charRect = { left: nextX, top: nextY, right: nextX + 62, bottom: nextY + 62 };
-  const bounds = { width: window.innerWidth, height: window.innerHeight };
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
-  const textRect = textContainer.getBoundingClientRect();
-  return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
-}
-
-function smoothMove(dx, dy, onFinish, mode) {
-  const totalFrames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70;
-  let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
-
-  function step() {
-    if (current >= totalFrames) { onFinish(); return; }
-    posX += stepX;
-    posY += stepY;
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-    moveFrame = current;
-    updateSprite();
-    current++;
-    setTimeout(step, speed);
-  }
-
-  step();
-}
-
-function startMove(steps, mode) {
-  if (isMoving) return;
-  isMoving = true;
-  state = mode;
-  direction = directions[Math.floor(Math.random() * directions.length)];
-  moveFrame = 1; // khởi động animation ngay frame 1
+function startMove(dir, type = "Walk") {
+  currentDir = dir;
+  currentState = type;
+  frameIndex = 0;
+  frameTimer = 0;
+  distanceRemaining = 62;
+  speed = type === "Run" ? 4 : 2;
   updateSprite();
-
-  const [vx, vy] = dirVectors[direction];
-  let stepCount = 0;
-
-  function nextStep() {
-    if (stepCount >= steps) {
-      isMoving = false;
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-      return;
-    }
-    const dx = vx * 62;
-    const dy = vy * 62;
-    if (checkCollision(dx, dy)) {
-      isMoving = false;
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-      return;
-    }
-    moveFrame = 0;
-    smoothMove(dx, dy, nextStep, mode);
-    stepCount++;
-  }
-
-  nextStep();
+  moving = true;
 }
 
-function scheduleNextAction() {
+function gameLoop() {
+  if (moving) {
+    const [dx, dy] = dirVectors[currentDir];
+    let step = Math.min(speed, distanceRemaining);
+    posX += dx * step;
+    posY += dy * step;
+    distanceRemaining -= step;
+
+    frameTimer += step;
+    let frameThreshold = currentState === "Run" ? 8 : 4;
+    if (frameTimer >= frameThreshold) {
+      frameTimer = 0;
+      frameIndex = (frameIndex + 1) % (currentState === "Run" ? 8 : 16);
+      updateSprite();
+    }
+
+    if (distanceRemaining <= 0) {
+      moving = false;
+      currentState = "Idle";
+      frameIndex = 0;
+      updateSprite();
+      scheduleNextMove();
+    }
+  } else {
+    // Idle frame chuyển đổi mỗi 200ms
+    idleFrameTicker++;
+    if (idleFrameTicker >= 12) {
+      idleFrameTicker = 0;
+      frameIndex = (frameIndex + 1) % 16;
+      updateSprite();
+    }
+  }
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  requestAnimationFrame(gameLoop);
+}
+
+let idleFrameTicker = 0;
+
+function scheduleNextMove() {
   setTimeout(() => {
-    const chance = Math.random();
-    const steps = 1 + Math.floor(Math.random() * 3);
-    if (chance < 0.2) {
-      state = "idle";
-      idleFrame = 0;
-      updateSprite();
-      scheduleNextAction();
-    } else if (chance < 0.65) {
-      startMove(steps, "walk");
-    } else {
-      startMove(steps, "run");
-    }
-  }, 1000 + Math.random() * 2500);
+    const dir = directions[Math.floor(Math.random() * directions.length)];
+    const moveType = Math.random() < 0.3 ? "Run" : "Walk";
+    startMove(dir, moveType);
+  }, 1000 + Math.random() * 1500);
 }
 
-setInterval(() => {
-  if (state === "idle") {
-    idleFrame = (idleFrame + 1) % 16;
-    updateSprite();
-  }
-}, 200);
-
-updateSprite();
-setTimeout(scheduleNextAction, 3000);
+window.addEventListener("DOMContentLoaded", () => {
+  character.style.position = "absolute";
+  character.style.width = "62px";
+  character.style.height = "62px";
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  updateSprite();
+  scheduleNextMove();
+  requestAnimationFrame(gameLoop);
+});
