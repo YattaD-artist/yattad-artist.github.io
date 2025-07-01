@@ -155,7 +155,7 @@
       return overlap;
     }
 
-    function smoothMoveStep(dx, dy, totalFrames, frameCap, speed, onFinish) {
+    function smoothStep(dx, dy, speed, totalFrames, onFinish) {
       let current = 0;
       const stepSizeX = dx / totalFrames;
       const stepSizeY = dy / totalFrames;
@@ -171,7 +171,7 @@
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
-        frame = current % frameCap;
+        frame = current;
         updateSprite();
 
         current++;
@@ -184,11 +184,16 @@
     function startMove(mode, steps) {
       if (isMoving) return;
       isMoving = true;
-      state = mode;
-      updateSprite();
 
       const [vx, vy] = dirVectors[direction];
       let stepCount = 0;
+
+      function idlePrep(callback) {
+        state = "idle";
+        frame = 0;
+        updateSprite();
+        setTimeout(callback, 200);
+      }
 
       function next() {
         if (stepCount >= steps) {
@@ -212,31 +217,28 @@
           return;
         }
 
-        const totalFrames = mode === "run" ? 8 : 16;
-        const speed = mode === "run" ? 35 : 70;
-        smoothMoveStep(dx, dy, totalFrames, totalFrames, speed, () => {
+        state = mode;
+        const totalFrames = (mode === "run") ? 8 : 16;
+        const frameSpeed = (mode === "run") ? 35 : 70;
+
+        smoothStep(dx, dy, frameSpeed, totalFrames, () => {
           stepCount++;
           next();
         });
       }
 
-      next();
-    }
-
-    function playIdleThenMove(mode, steps) {
-      state = "idle";
-      frame = 0;
-      updateSprite();
-      setTimeout(() => startMove(mode, steps), 150);
+      idlePrep(next);
     }
 
     function chooseAction() {
       const r = Math.random();
-      const steps = 1 + Math.floor(Math.random() * 3);
+
       if (r < 0.4) {
-        playIdleThenMove("walk", steps);
-      } else if (r < 0.7) {
-        playIdleThenMove("run", 1);
+        const steps = 1 + Math.floor(Math.random() * 2);
+        startMove("walk", steps);
+      } else if (r < 0.75) {
+        const steps = 1 + Math.floor(Math.random() * 2);
+        startMove("run", steps);
       } else {
         state = "idle";
         frame = 0;
@@ -246,7 +248,10 @@
     }
 
     function scheduleNextAction() {
-      const delay = (direction === "U") ? 1500 + Math.random() * 1000 : 1500 + Math.random() * 3500;
+      const delay = (direction === "U")
+        ? 1000 + Math.random() * 1000
+        : 1500 + Math.random() * 3000;
+
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
         chooseAction();
