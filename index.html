@@ -114,18 +114,11 @@
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-      let folder = "Idle";
-      let suffix = direction;
-      let frameStr = frame.toString().padStart(2, "0");
-
-      if (state === "walk") {
-        folder = "Walk";
-      } else if (state === "run") {
-        folder = "Run";
-      }
-
-      const filename = `${folder}${suffix}${frameStr}.png`;
-      character.src = `assets/character/${folder}/${filename}`;
+      const folder = state === "walk" ? "Walk" :
+                     state === "run" ? "Run" : "Idle";
+      const suffix = direction;
+      const frameStr = frame.toString().padStart(2, "0");
+      character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
     }
 
     function checkCollision(dx, dy) {
@@ -147,26 +140,22 @@
       if (
         charRect.left < 0 || charRect.right > screen.width ||
         charRect.top < 0 || charRect.bottom > screen.height
-      ) {
-        return true;
-      }
+      ) return true;
 
       const textRect = textContainer.getBoundingClientRect();
-      const overlap = !(
+      return !(
         charRect.right < textRect.left ||
         charRect.left > textRect.right ||
         charRect.bottom < textRect.top ||
         charRect.top > textRect.bottom
       );
-
-      return overlap;
     }
 
     function smoothWalkStep(dx, dy, onFinish, speed = 70) {
       const totalFrames = 16;
       let current = 0;
-      const stepSizeX = dx / totalFrames;
-      const stepSizeY = dy / totalFrames;
+      const stepX = dx / totalFrames;
+      const stepY = dy / totalFrames;
 
       function step() {
         if (current >= totalFrames) {
@@ -174,8 +163,8 @@
           return;
         }
 
-        posX += stepSizeX;
-        posY += stepSizeY;
+        posX += stepX;
+        posY += stepY;
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
@@ -220,7 +209,7 @@
           return;
         }
 
-        const speed = (mode === "run") ? 35 : 70;
+        const speed = mode === "run" ? 35 : 70;
         smoothWalkStep(dx, dy, next, speed);
         stepCount++;
       }
@@ -232,12 +221,12 @@
       const r = Math.random();
       const steps = 1 + Math.floor(Math.random() * 3);
 
-      if (r < 0.1) {
+      if (r < 0.2) {
         state = "idle";
         frame = 0;
         updateSprite();
         scheduleNextAction();
-      } else if (r < 0.4) {
+      } else if (r < 0.6) {
         startWalk(steps, "walk");
       } else {
         startWalk(steps, "run");
@@ -245,10 +234,7 @@
     }
 
     function scheduleNextAction() {
-      const delay = (direction === "U")
-        ? 1500 + Math.random() * 1000
-        : 1500 + Math.random() * 3500;
-
+      const delay = 1500 + Math.random() * 2500;
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
         chooseAction();
@@ -260,7 +246,7 @@
         frame = (frame + 1) % 16;
         updateSprite();
       }
-    }, 150);
+    }, 200);
 
     updateSprite();
     scheduleNextAction();
