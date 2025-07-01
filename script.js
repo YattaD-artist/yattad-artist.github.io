@@ -109,6 +109,8 @@ function startMove(steps, mode) {
   moveFrame = 0;
 
   direction = directions[Math.floor(Math.random() * directions.length)];
+  updateSprite(); // Cập nhật sprite trước khi di chuyển để quay mặt đúng hướng
+
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
 
