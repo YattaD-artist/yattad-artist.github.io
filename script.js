@@ -1,11 +1,13 @@
+// script.js
+
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
 let posX = window.innerWidth / 2;
 let posY = window.innerHeight / 2 + 100;
 
-let state = "idle";         // idle, walk
-let direction = "";         // "", U, L, R
+let state = "idle";         // Các trạng thái: idle, walk
+let direction = "";         // Hướng di chuyển: "", U, L, R
 let isMoving = false;
 
 let idleFrame = 0;
@@ -13,28 +15,25 @@ let moveFrame = 0;
 
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
-  "": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
+  "": [0, 1],    // Xuống
+  "U": [0, -1],  // Lên
+  "L": [-1, 0],  // Trái
+  "R": [1, 0]    // Phải
 };
 
-// Đặt vị trí ban đầu cho nhân vật
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 
-// Hàm cập nhật hình ảnh Sprite dựa trên trạng thái hiện tại
 function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle hoặc Walk
+  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk
   const dirSuffix = direction; // "", U, L, R
   const baseName = folder + dirSuffix;
-  const totalFrames = 16; // Idle và Walk đều có 16 frame
+  const totalFrames = 16;
   const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
   const frameStr = frameIndex.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
-// Kiểm tra va chạm với lề màn hình và vùng văn bản
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
@@ -65,7 +64,6 @@ function checkCollision(dx, dy) {
   );
 }
 
-// Di chuyển mượt từng bước theo hướng chỉ định
 function smoothMove(dx, dy, onFinish) {
   const totalFrames = 16;
   const speed = 70;
@@ -75,7 +73,7 @@ function smoothMove(dx, dy, onFinish) {
 
   function step() {
     if (current >= totalFrames) {
-      onFinish();
+      onFinish(); // Chỉ gọi khi đã hoàn tất 1 vòng animation
       return;
     }
 
@@ -94,7 +92,6 @@ function smoothMove(dx, dy, onFinish) {
   step();
 }
 
-// Bắt đầu di chuyển theo số bước chỉ định
 function startMove(steps) {
   if (isMoving) return;
   isMoving = true;
@@ -128,37 +125,36 @@ function startMove(steps) {
     }
 
     moveFrame = 0;
-    smoothMove(dx, dy, nextStep);
-    stepCount++;
+    smoothMove(dx, dy, () => {
+      stepCount++;
+      nextStep();
+    });
   }
 
   nextStep();
 }
 
-// Lập lịch hành động tiếp theo: idle hoặc walk
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
-  const chance = Math.random();
+  setTimeout(() => {
+    const chance = Math.random();
+    const steps = 1 + Math.floor(Math.random() * 3);
+    if (chance < 0.3) {
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
 
-  if (chance < 0.3) {
-    // Cho nhân vật "đứng suy nghĩ" trong một khoảng thời gian
-    state = "idle";
-    idleFrame = 0;
-    updateSprite();
-
-    setTimeout(() => {
-      scheduleNextAction();
-    }, delay);
-  } else {
-    // Di chuyển ngẫu nhiên từ 1 đến 3 bước
-    setTimeout(() => {
-      const steps = 1 + Math.floor(Math.random() * 3);
+      // Chờ kết thúc 1 vòng idle animation (16 frame * 200ms)
+      setTimeout(() => {
+        scheduleNextAction();
+      }, 3200);
+    } else {
       startMove(steps);
-    }, delay);
-  }
+    }
+  }, delay);
 }
 
-// Vòng lặp lặp lại khi idle để nhân vật không bị "đơ"
+// Idle loop animation
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -166,6 +162,5 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động
 updateSprite();
 scheduleNextAction();
