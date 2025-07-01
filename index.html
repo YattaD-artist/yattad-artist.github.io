@@ -89,19 +89,16 @@
     </nav>
   </div>
 
-  <!-- Nhân vật chính -->
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
   <script>
     const character = document.getElementById("character");
     const textContainer = document.getElementById("text-container");
 
-    // Vị trí khởi đầu
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
 
-    // Trạng thái hiện tại của nhân vật
-    let state = "idle"; // "idle", "walk", "run"
+    let state = "idle"; // chỉ còn idle và walk
     let direction = ""; // "", "U", "L", "R"
     let isMoving = false;
 
@@ -110,27 +107,25 @@
 
     const directions = ["", "U", "L", "R"];
     const dirVectors = {
-      "": [0, 1],   // xuống
-      "U": [0, -1], // lên
-      "L": [-1, 0], // trái
-      "R": [1, 0]   // phải
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
     };
 
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
-    // Cập nhật sprite dựa trên trạng thái và hướng
     function updateSprite() {
-      const folder = state.charAt(0).toUpperCase() + state.slice(1); // "Idle", "Walk", "Run"
-      const dirSuffix = direction; // "", "U", "L", "R"
-      const baseName = folder + dirSuffix; // VD: RunL
-      const totalFrames = state === "run" ? 8 : 16;
+      const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle hoặc Walk
+      const dirSuffix = direction;
+      const baseName = folder + dirSuffix;
+      const totalFrames = 16;
       const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
       const frameStr = frameIndex.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     }
 
-    // Kiểm tra va chạm với viền và container chữ
     function checkCollision(dx, dy) {
       const nextX = posX + dx;
       const nextY = posY + dy;
@@ -161,10 +156,9 @@
       );
     }
 
-    // Di chuyển mượt từng bước (step animation)
-    function smoothMove(dx, dy, onFinish, mode) {
-      const totalFrames = mode === "run" ? 8 : 16;
-      const speed = mode === "run" ? 20 : 70;
+    function smoothMove(dx, dy, onFinish) {
+      const totalFrames = 16;
+      const speed = 70;
       let current = 0;
       const stepX = dx / totalFrames;
       const stepY = dy / totalFrames;
@@ -190,11 +184,10 @@
       step();
     }
 
-    // Bắt đầu di chuyển với số bước và kiểu (walk/run)
-    function startMove(steps, mode) {
+    function startMove(steps) {
       if (isMoving) return;
       isMoving = true;
-      state = mode;
+      state = "walk";
       moveFrame = 0;
 
       direction = directions[Math.floor(Math.random() * directions.length)];
@@ -224,33 +217,29 @@
         }
 
         moveFrame = 0;
-        smoothMove(dx, dy, nextStep, mode);
+        smoothMove(dx, dy, nextStep);
         stepCount++;
       }
 
       nextStep();
     }
 
-    // Lập lịch hành động tiếp theo (idle, walk, run ngẫu nhiên)
     function scheduleNextAction() {
       const delay = 1000 + Math.random() * 2500;
       setTimeout(() => {
         const chance = Math.random();
         const steps = 1 + Math.floor(Math.random() * 3);
-        if (chance < 0.15) {
+        if (chance < 0.25) {
           state = "idle";
           idleFrame = 0;
           updateSprite();
           scheduleNextAction();
-        } else if (chance < 0.6) {
-          startMove(steps, "walk");
         } else {
-          startMove(steps, "run");
+          startMove(steps);
         }
       }, delay);
     }
 
-    // Vòng lặp animation Idle
     setInterval(() => {
       if (state === "idle") {
         idleFrame = (idleFrame + 1) % 16;
@@ -258,7 +247,6 @@
       }
     }, 200);
 
-    // Khởi đầu
     updateSprite();
     scheduleNextAction();
   </script>
