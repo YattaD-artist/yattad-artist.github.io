@@ -21,6 +21,8 @@ let posX = window.innerWidth / 2;
 let posY = window.innerHeight / 2 + 100;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
+character.style.width = "62px";
+character.style.height = "62px";
 
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
@@ -106,10 +108,10 @@ function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-  moveFrame = 0;
-
   direction = directions[Math.floor(Math.random() * directions.length)];
-  updateSprite(); // Cập nhật sprite trước khi di chuyển để quay mặt đúng hướng
+
+  moveFrame = 1; // ← Cập nhật frame đầu tiên ngay lập tức
+  updateSprite();
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
