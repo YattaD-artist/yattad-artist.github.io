@@ -109,7 +109,6 @@
     function updateSprite() {
       const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
       const suffix = direction;
-      const maxFrame = state === "run" ? 7 : 15;
       const frameStr = frame.toString().padStart(2, "0");
       const fileName = suffix ? `${folder}${suffix}${frameStr}` : `${folder}${frameStr}`;
       character.src = `assets/character/${folder}/${fileName}.png`;
@@ -118,8 +117,10 @@
     function animateStep(type, callback) {
       const [vx, vy] = dirVectors[direction];
       const steps = (type === "walk") ? 2 : 1;
-      const frameCount = (type === "run") ? 8 : 16;
-      const duration = 500; // mỗi bước chân 0.5s
+      const framesPerStep = (type === "run") ? 8 : 16;
+      const dxTotal = vx * 48;
+      const dyTotal = vy * 48;
+
       let stepNum = 0;
 
       function doStep() {
@@ -129,23 +130,23 @@
         }
 
         let f = 0;
-        const interval = duration / frameCount;
-        const dx = (vx * 48) / steps;
-        const dy = (vy * 48) / steps;
+        const interval = 30;
+        const dx = dxTotal / steps / framesPerStep;
+        const dy = dyTotal / steps / framesPerStep;
 
-        if (frameTimer) clearInterval(frameTimer);
-
+        clearInterval(frameTimer);
         frameTimer = setInterval(() => {
-          if (f >= frameCount) {
+          if (f >= framesPerStep) {
             clearInterval(frameTimer);
             stepNum++;
             doStep();
             return;
           }
+
           frame = f;
           updateSprite();
-          posX += dx / frameCount;
-          posY += dy / frameCount;
+          posX += dx;
+          posY += dy;
           character.style.left = `${posX}px`;
           character.style.top = `${posY}px`;
           f++;
