@@ -29,7 +29,7 @@ function updateSprite() {
   const baseName = folder + dirSuffix; // Idle, WalkU, RunL, v.v.
   const totalFrames = state === "run" ? 8 : 16;
   const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
-  const frameStr = frameIndex.toString(); // Không cần padStart vì tên là Run0 → Run7
+  const frameStr = frameIndex.toString();
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
@@ -64,10 +64,21 @@ function checkCollision(dx, dy) {
   );
 }
 
+// Hoạt họa khi đang di chuyển (walk/run)
+function startAnimationLoop() {
+  function loop() {
+    if (!isMoving) return;
+    moveFrame++;
+    updateSprite();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
 // Di chuyển mượt theo từng bước, với tốc độ tùy theo trạng thái
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70; // Run nhanh gấp đôi
+  const speed = mode === "run" ? 35 : 70;
   let current = 0;
   const stepX = dx / totalFrames;
   const stepY = dy / totalFrames;
@@ -83,9 +94,6 @@ function smoothMove(dx, dy, onFinish, mode) {
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
-    moveFrame = current;
-    updateSprite();
-
     current++;
     setTimeout(step, speed);
   }
@@ -99,6 +107,7 @@ function startMove(steps, mode) {
   isMoving = true;
   state = mode;
   moveFrame = 0;
+  startAnimationLoop();
 
   direction = directions[Math.floor(Math.random() * directions.length)];
   const [vx, vy] = dirVectors[direction];
