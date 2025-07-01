@@ -38,7 +38,6 @@ function updateSprite() {
     frameIndex = (state === "idle" ? idleFrame : moveFrame % totalFrames);
     frameStr = frameIndex.toString().padStart(2, "0"); // 00 → 15
   }
-}
 
   const spritePath = `assets/character/${folder}/${baseName}${frameStr}.png`;
   console.log("Sprite path:", spritePath);
