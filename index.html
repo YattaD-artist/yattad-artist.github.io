@@ -117,14 +117,14 @@
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-      const folder = state.toLowerCase(); // idle, walk, run
-      const dirSuffix = direction;
-      const baseName = state.charAt(0).toUpperCase() + state.slice(1) + dirSuffix;
-      const totalFrames = state === "run" ? 8 : 16;
-      const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
-      const frameStr = frameIndex.toString().padStart(2, "0");
-      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
-    }
+  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+  const dirSuffix = direction; // "", U, L, R
+  const baseName = state.charAt(0).toUpperCase() + state.slice(1) + dirSuffix;
+  const totalFrames = state === "run" ? 8 : 16;
+  const frameIndex = state === "idle" ? idleFrame : moveFrame % totalFrames;
+  const frameStr = frameIndex.toString().padStart(2, "0");
+  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+}
 
     function checkCollision(dx, dy) {
       const nextX = posX + dx;
