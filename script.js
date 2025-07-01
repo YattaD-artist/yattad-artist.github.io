@@ -74,16 +74,6 @@ function checkCollision(dx, dy) {
   );
 }
 
-function startAnimationLoop() {
-  function loop() {
-    if (!isMoving) return;
-    moveFrame++;
-    updateSprite();
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
-}
-
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
@@ -102,6 +92,9 @@ function smoothMove(dx, dy, onFinish, mode) {
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
 
+    moveFrame = current;
+    updateSprite();
+
     current++;
     setTimeout(step, speed);
   }
@@ -114,7 +107,6 @@ function startMove(steps, mode) {
   isMoving = true;
   state = mode;
   moveFrame = 0;
-  startAnimationLoop();
 
   direction = directions[Math.floor(Math.random() * directions.length)];
   const [vx, vy] = dirVectors[direction];
