@@ -1,9 +1,11 @@
+/* Import font VT323 từ Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-/* Thiết lập toàn bộ trang */
+/* Thiết lập cơ bản cho toàn trang */
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'VT323', monospace;
     background-color: #f1faff;
     display: flex;
     justify-content: center;
@@ -11,29 +13,29 @@ body {
     height: 100vh;
 }
 
-/* Căn giữa toàn bộ nội dung */
+/* Container chính, căn giữa nội dung */
 .container {
     text-align: center;
     max-width: 1000px;
     padding: 20px;
 }
 
-/* Định dạng tiêu đề */
+/* Tiêu đề */
 h1 {
     font-size: 48px;
-    font-weight: bold;
+    font-weight: normal;
     color: #32365c;
     margin-bottom: 10px;
 }
 
-/* Định dạng đoạn giới thiệu */
+/* Đoạn giới thiệu */
 p {
-    font-size: 18px;
+    font-size: 20px;
     color: #5667c6;
     margin-bottom: 30px;
 }
 
-/* Định dạng menu */
+/* Menu chính */
 .menu {
     display: flex;
     justify-content: center;
@@ -42,7 +44,7 @@ p {
 
 .menu a {
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
     color: #9cb4c6;
     transition: color 0.3s ease;
 }
@@ -51,11 +53,9 @@ p {
     color: #33e4cb;
 }
 
-/* Thêm CSS mới cho comics.html */
-
-/* Định dạng menu trong comics.html */
+/* Menu phụ cho comics.html */
 .sub-menu {
-    display: none; /* Ẩn danh sách con mặc định */
+    display: none;
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
@@ -63,7 +63,7 @@ p {
 
 .sub-menu a {
     text-decoration: none;
-    font-size: 16px;
+    font-size: 18px;
     color: #007bff;
     padding: 10px;
     background-color: #e6f2ff;
@@ -76,23 +76,23 @@ p {
     color: white;
 }
 
-/* Nút bấm mở menu con */
+/* Nút mở menu con */
 .menu-item {
     background-color: #32365c;
     color: white;
     padding: 15px 30px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 20px;
     text-decoration: none;
-    transition: 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .menu-item:hover {
     background-color: #24284a;
 }
 
-/* Hiển thị sub-menu khi có class 'active' */
+/* Hiển thị sub-menu khi có class active */
 .sub-menu.active {
     display: flex;
 }
