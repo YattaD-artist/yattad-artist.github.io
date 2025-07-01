@@ -98,13 +98,13 @@
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
     let frame = 0;
-    let state = "idle"; // idle, walk, run
+    let state = "idle";
     let direction = "";
     let isMoving = false;
 
     const directions = ["", "U", "L", "R"];
     const dirVectors = {
-      "": [0, 1],
+      "": [0, 1], // xuống mặc định
       "U": [0, -1],
       "L": [-1, 0],
       "R": [1, 0],
@@ -114,21 +114,20 @@
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-  let folder = "Idle";
-  if (state === "walk") folder = "Walk";
-  else if (state === "run") folder = "Run";
+      let folder = "Idle";
+      if (state === "walk") folder = "Walk";
+      else if (state === "run") folder = "Run";
 
-  const suffix = direction !== "" ? direction : ""; // "" tương ứng với hướng xuống
-  const maxFrame = (state === "run") ? 8 : 16;
-  const frameStr = (frame % maxFrame).toString().padStart(2, "0");
+      const suffix = direction !== "" ? direction : "";
+      const maxFrame = (state === "run") ? 8 : 16;
+      const frameStr = (frame % maxFrame).toString().padStart(2, "0");
 
-  // Nếu hướng là "", không chèn hậu tố
-  const fileName = direction === "" 
-    ? `${folder}${frameStr}.png`
-    : `${folder}${suffix}${frameStr}.png`;
+      const fileName = direction === ""
+        ? `${folder}${frameStr}.png`         // ví dụ: Walk00.png
+        : `${folder}${suffix}${frameStr}.png`; // ví dụ: WalkU03.png
 
-  character.src = `assets/character/${folder}/${fileName}`;
-}
+      character.src = `assets/character/${folder}/${fileName}`;
+    }
 
     function checkCollision(dx, dy) {
       const futureX = posX + dx;
@@ -179,7 +178,7 @@
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
-        frame = current % 16;
+        frame = current;
         updateSprite();
 
         current++;
@@ -193,6 +192,7 @@
       if (isMoving) return;
       isMoving = true;
       state = type;
+      frame = 0;
       updateSprite();
 
       const [vx, vy] = dirVectors[direction];
@@ -253,10 +253,19 @@
 
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
-        chooseAction();
+
+        // Hiển thị sprite Idle của hướng mới 200ms trước khi di chuyển
+        state = "idle";
+        frame = 0;
+        updateSprite();
+
+        setTimeout(() => {
+          chooseAction();
+        }, 200);
       }, delay);
     }
 
+    // Idle animation loop
     setInterval(() => {
       if (state === "idle") {
         frame = (frame + 1) % 16;
