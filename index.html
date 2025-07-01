@@ -66,107 +66,98 @@
   <script>
     const char = document.getElementById("character");
     const textBox = document.getElementById("text-container");
-    let x = innerWidth / 2, y = innerHeight / 2 + 100, f = 0;
-    let state = "idle", dir = "", moving = false;
-    const dirs = ["", "U", "L", "R"], vec = {"": [0,1], U: [0,-1], L: [-1,0], R: [1,0]};
-    const frameLen = { idle: 100, walk: 80, run: 60 };
+    let x = innerWidth / 2, y = innerHeight / 2 + 100;
+    let frame = 0, state = "idle", dir = "", moving = false;
+
+    const dirs = ["", "U", "L", "R"];
+    const vec = {"": [0,1], U: [0,-1], L: [-1,0], R: [1,0]};
+    const frameCount = { idle: 16, walk: 16, run: 8 };
+    const frameDelay = { idle: 100, walk: 80, run: 60 };
 
     function sprite() {
-      const folder = state === "run" ? "Run" : state === "walk" ? "Walk" : "Idle";
+      const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const suffix = dir;
-      const max = folder === "Run" ? 8 : 16;
-      const frameId = (f % max).toString().padStart(2, '0');
-      const name = `${folder}${suffix}${frameId}`;
-      const path = `assets/character/${folder}/${name}.png`;
-      if (char.src !== path) char.src = path;
-    }
-
-    function step(type, done) {
-      const [vx, vy] = vec[dir];
-      const totalFrames = type === "run" ? 8 : 16;
-      const steps = type === "run" ? 1 : 2;
-      const dx = vx * 48 / steps;
-      const dy = vy * 48 / steps;
-      let subStep = 0;
-
-      function animateStep() {
-        let localF = 0;
-        const interval = setInterval(() => {
-          f = localF++;
-          sprite();
-          if (localF >= totalFrames) {
-            clearInterval(interval);
-            x += dx;
-            y += dy;
-            char.style.left = `${x}px`;
-            char.style.top = `${y}px`;
-            subStep++;
-            if (subStep < steps) animateStep();
-            else done();
-          }
-        }, frameLen[type]);
-      }
-
-      animateStep();
+      const max = frameCount[state];
+      const fId = (frame % max).toString().padStart(2, '0');
+      const path = `assets/character/${folder}/${folder}${suffix}${fId}.png`;
+      char.src = path;
     }
 
     function collide(dx, dy) {
       const nx = x + dx, ny = y + dy;
-      const charBox = {l: nx, r: nx + 48, t: ny, b: ny + 48};
+      const r = { l: nx, r: nx + 48, t: ny, b: ny + 48 };
       const box = textBox.getBoundingClientRect();
       return (
-        charBox.l < 0 || charBox.r > innerWidth ||
-        charBox.t < 0 || charBox.b > innerHeight ||
-        !(charBox.r < box.left || charBox.l > box.right || charBox.b < box.top || charBox.t > box.bottom)
+        r.l < 0 || r.r > innerWidth || r.t < 0 || r.b > innerHeight ||
+        !(r.r < box.left || r.l > box.right || r.b < box.top || r.t > box.bottom)
       );
+    }
+
+    function step(type, steps, onDone) {
+      const [vx, vy] = vec[dir];
+      const distance = 48;
+      const substeps = (type === "run" ? 8 : 16);
+      const dx = vx * distance / substeps;
+      const dy = vy * distance / substeps;
+      let current = 0;
+
+      const interval = setInterval(() => {
+        if (current >= substeps * steps) {
+          clearInterval(interval);
+          onDone();
+          return;
+        }
+
+        x += dx;
+        y += dy;
+        char.style.left = `${x}px`;
+        char.style.top = `${y}px`;
+
+        frame = current % frameCount[type];
+        sprite();
+        current++;
+      }, frameDelay[type]);
     }
 
     function pickDir() {
       dir = dirs[Math.random() * dirs.length | 0];
-      state = "idle"; f = 0;
+      state = "idle"; frame = 0;
       sprite();
       setTimeout(pickAction, 300);
     }
 
     function pickAction() {
       if (moving) return;
-      const t = Math.random() < 0.5 ? "walk" : "run";
-      const steps = 1 + Math.random() * 3 | 0;
-      move(t, steps);
+      const type = Math.random() < 0.5 ? "walk" : "run";
+      const steps = 1 + Math.floor(Math.random() * 3);
+      const [vx, vy] = vec[dir];
+      if (collide(vx * 48 * steps, vy * 48 * steps)) {
+        return setTimeout(pickDir, 500);
+      }
+      startMove(type, steps);
     }
 
-    function move(t, steps) {
-      if (moving) return;
+    function startMove(type, steps) {
       moving = true;
-      state = t; f = 0; sprite();
-      let done = 0;
-      function next() {
-        if (done++ >= steps) {
-          moving = false;
-          state = "idle"; f = 0;
-          sprite();
-          return setTimeout(pickDir, 800);
-        }
-        const [vx, vy] = vec[dir];
-        if (collide(vx * 48, vy * 48)) {
-          moving = false;
-          state = "idle"; f = 0;
-          sprite();
-          return setTimeout(pickDir, 800);
-        }
-        step(t, next);
-      }
-      next();
+      state = type; frame = 0;
+      sprite();
+
+      step(type, steps, () => {
+        moving = false;
+        state = "idle"; frame = 0;
+        sprite();
+        setTimeout(pickDir, 800);
+      });
     }
 
     function idleAnim() {
       if (!moving && state === "idle") {
-        f = (f + 1) % 16;
+        frame = (frame + 1) % frameCount.idle;
         sprite();
       }
     }
 
-    setInterval(idleAnim, frameLen.idle);
+    setInterval(idleAnim, frameDelay.idle);
     char.style.left = `${x}px`;
     char.style.top = `${y}px`;
     sprite();
