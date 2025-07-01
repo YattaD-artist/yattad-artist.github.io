@@ -1,13 +1,16 @@
-/* Thiết lập tổng thể cho toàn trang */
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
+
 html, body {
   margin: 0;
   padding: 0;
-  font-family: 'Pixelify Sans', sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   background-color: #f8f8ff;
   overflow: hidden;
 }
 
-/* Khối chứa nội dung chính */
 .container {
   position: relative;
   z-index: 2;
@@ -15,19 +18,18 @@ html, body {
   padding-top: 48px;
 }
 
-/* Tiêu đề chính */
 h1 {
+  font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
   margin: 0.2em 0 0;
 }
 
-/* Mô tả phụ */
 p {
-  font-size: 1.2em;
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
   color: #444;
 }
 
-/* Menu điều hướng */
 .menu {
   text-align: center;
   margin-top: 20px;
@@ -40,6 +42,7 @@ p {
   font-size: 1.1em;
   margin: 0 12px;
   transition: transform 0.2s ease, color 0.2s ease;
+  font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 .menu a:hover {
@@ -47,7 +50,6 @@ p {
   color: #4e5ba6;
 }
 
-/* Hình nền dạng lưới pixel */
 .background {
   position: fixed;
   top: 0;
@@ -60,7 +62,6 @@ p {
   z-index: 0;
 }
 
-/* Vị trí và hiển thị nhân vật */
 #character {
   position: absolute;
   width: 48px;
