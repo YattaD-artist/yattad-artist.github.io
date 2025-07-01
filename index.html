@@ -4,7 +4,73 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Pixelify Sans', sans-serif;
+      background-color: #f8f8ff;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 48px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0.2em 0 0;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.1em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    #character {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      z-index: 1;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
   <div class="background"></div>
@@ -48,7 +114,11 @@
     character.style.top = `${posY}px`;
 
     function updateSprite() {
-      const folder = (state === "walk") ? "Walk" : "Idle";
+      let folder;
+      if (state === "walk") folder = "Walk";
+      else if (state === "run") folder = "Run";
+      else folder = "Idle";
+
       const suffix = direction;
       const frameStr = frame.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${folder}${suffix}${frameStr}.png`;
@@ -115,6 +185,33 @@
       step();
     }
 
+    function smoothWalkStepFast(dx, dy, onFinish) {
+      const totalFrames = 8;
+      let current = 0;
+      const stepSizeX = dx / totalFrames;
+      const stepSizeY = dy / totalFrames;
+
+      function step() {
+        if (current >= totalFrames) {
+          onFinish();
+          return;
+        }
+
+        posX += stepSizeX;
+        posY += stepSizeY;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+
+        frame = current % 16;
+        updateSprite();
+
+        current++;
+        setTimeout(step, 35); // nhanh hơn
+      }
+
+      step();
+    }
+
     function startWalk(steps) {
       if (isMoving) return;
       isMoving = true;
@@ -155,12 +252,55 @@
       next();
     }
 
+    function startRun(steps) {
+      if (isMoving) return;
+      isMoving = true;
+      state = "run";
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let stepCount = 0;
+
+      function next() {
+        if (stepCount >= steps) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        const dx = vx * 48;
+        const dy = vy * 48;
+
+        if (checkCollision(dx, dy)) {
+          isMoving = false;
+          state = "idle";
+          frame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        smoothWalkStepFast(dx, dy, () => {
+          stepCount++;
+          next();
+        });
+      }
+
+      next();
+    }
+
     function chooseAction() {
       const r = Math.random();
 
-      if (r < 0.6) {
+      if (r < 0.4) {
         const steps = 1 + Math.floor(Math.random() * 3);
         startWalk(steps);
+      } else if (r < 0.7) {
+        const steps = 1 + Math.floor(Math.random() * 3);
+        startRun(steps);
       } else {
         state = "idle";
         frame = 0;
@@ -170,10 +310,7 @@
     }
 
     function scheduleNextAction() {
-      const delay = (direction === "U")
-        ? 1500 + Math.random() * 1000
-        : 1500 + Math.random() * 3500;
-
+      const delay = 1500 + Math.random() * 2500;
       setTimeout(() => {
         direction = directions[Math.floor(Math.random() * directions.length)];
         chooseAction();
