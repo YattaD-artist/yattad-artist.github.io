@@ -97,9 +97,9 @@
 
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
-    let frame = 0;
-    let state = "idle"; // idle, walk, run
+    let state = "idle";
     let direction = "";
+    let frame = 0;
     let isMoving = false;
 
     const directions = ["", "U", "L", "R"];
@@ -155,14 +155,11 @@
       return overlap;
     }
 
-    function smoothWalkStep(dx, dy, speedPerFrame, onFinish) {
-      const totalFrames = 16;
-      let current = 0;
-      const stepSizeX = dx / totalFrames;
-      const stepSizeY = dy / totalFrames;
+    function animateMovement(totalFrames, stepSizeX, stepSizeY, speed, onFinish) {
+      let currentFrame = 0;
 
       function step() {
-        if (current >= totalFrames) {
+        if (currentFrame >= totalFrames) {
           onFinish();
           return;
         }
@@ -172,54 +169,63 @@
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
 
-        frame = current % 16;
+        frame = currentFrame % 16;
         updateSprite();
 
-        current++;
-        setTimeout(step, speedPerFrame);
+        currentFrame++;
+        setTimeout(() => requestAnimationFrame(step), speed);
       }
 
-      step();
+      frame = 0;
+      requestAnimationFrame(step);
     }
 
     function startMove(type, steps) {
-      if (isMoving) return;
+      if (isMoving || direction === "") return;
+
       isMoving = true;
       state = type;
-      updateSprite();
 
       const [vx, vy] = dirVectors[direction];
-      let stepCount = 0;
       const dx = vx * 48;
       const dy = vy * 48;
-      const speed = (type === "run") ? 30 : 70;
+      const speed = type === "run" ? 30 : 70;
+      const totalFrames = 16;
+      const stepSizeX = dx / totalFrames;
+      const stepSizeY = dy / totalFrames;
+      let stepCount = 0;
 
-      function next() {
+      function nextStep() {
         if (stepCount >= steps) {
-          isMoving = false;
           state = "idle";
           frame = 0;
+          isMoving = false;
           updateSprite();
           scheduleNextAction();
           return;
         }
 
         if (checkCollision(dx, dy)) {
-          isMoving = false;
           state = "idle";
           frame = 0;
+          isMoving = false;
           updateSprite();
           scheduleNextAction();
           return;
         }
 
-        smoothWalkStep(dx, dy, speed, () => {
+        animateMovement(totalFrames, stepSizeX, stepSizeY, speed, () => {
           stepCount++;
-          next();
+          nextStep();
         });
       }
 
-      next();
+      // Delay nhẹ để mượt hơn
+      frame = 0;
+      updateSprite();
+      setTimeout(() => {
+        nextStep();
+      }, 100);
     }
 
     function chooseAction() {
@@ -250,6 +256,7 @@
       }, delay);
     }
 
+    // Idle animation riêng, không can thiệp move
     setInterval(() => {
       if (state === "idle") {
         frame = (frame + 1) % 16;
