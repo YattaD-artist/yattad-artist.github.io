@@ -17,13 +17,24 @@ const dirVectors = {
 
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
+const title = document.querySelector("h1");
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
+let posX = 0;
+let posY = 0;
+
+function placeCharacterNextToTitle() {
+  const titleRect = title.getBoundingClientRect();
+  const containerRect = textContainer.getBoundingClientRect();
+  const centerX = containerRect.left + containerRect.width / 2;
+  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
+  posY = containerRect.top + title.offsetTop;
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.width = `${frameSize}px`;
+  character.style.height = `${frameSize}px`;
+}
+
+placeCharacterNextToTitle();
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -111,6 +122,13 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
+function centerTitleAfterMove() {
+  title.style.transition = "all 1s ease";
+  title.style.position = "absolute";
+  title.style.left = "50%";
+  title.style.transform = "translateX(-50%)";
+}
+
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
@@ -118,6 +136,8 @@ function startMove(steps, mode) {
   direction = directions[Math.floor(Math.random() * directions.length)];
   moveFrame = 1;
   updateSprite();
+
+  centerTitleAfterMove();
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -176,20 +196,17 @@ setInterval(() => {
   }
 }, 200);
 
-// Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
-  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
+  scheduleNextAction();
 });
 
-// Mở quyền âm thanh khi có tương tác lần đầu
 document.addEventListener("click", () => {
   const dummy = new Audio("assets/sfx/Click.mp3");
   dummy.volume = 0;
   dummy.play().catch(() => {});
 }, { once: true });
 
-// Phát âm thanh
 const clickSound = new Audio("assets/sfx/Click.mp3");
 clickSound.volume = 0.3;
 
