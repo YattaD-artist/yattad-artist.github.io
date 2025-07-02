@@ -20,15 +20,11 @@ const textContainer = document.getElementById("text-container");
 const title = document.querySelector("h1");
 const paragraph = document.querySelector("p");
 
-// Đặt nhân vật bên trái chữ Y và canh giữa trang
+// Đặt nhân vật bên trái chữ Y và canh giữa trang khi khởi đầu
 function placeCharacterNextToTitle() {
   const titleRect = title.getBoundingClientRect();
-  const containerRect = textContainer.getBoundingClientRect();
-  const centerX = containerRect.left + containerRect.width / 2;
-
-  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
-  posY = titleRect.top;
-
+  posX = titleRect.left - frameSize - 8;
+  posY = titleRect.top + title.offsetHeight / 2 - frameSize / 2;
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
   character.style.width = `${frameSize}px`;
