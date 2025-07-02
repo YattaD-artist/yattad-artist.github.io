@@ -36,6 +36,14 @@ h1 {
   font-size: 2.5em;
   margin: 0;
   padding: 0;
+  position: relative; /* Thêm dòng này */
+}
+
+h1.moving-center {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  transition: all 1s ease;
 }
 
 /* Dòng mô tả phụ bên dưới */
