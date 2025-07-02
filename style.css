@@ -85,10 +85,11 @@ p {
   z-index: 0;
 }
 
-/* Nhân vật pixel */
 #character {
+  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
   pointer-events: none;
+  z-index: 2;
 }
