@@ -6,7 +6,6 @@ let idleFrame = 0;
 let moveFrame = 0;
 
 const frameSize = 62;
-const boundaryMargin = 24;
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
   "": [0, 1],
@@ -16,15 +15,27 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
-const textContainer = document.getElementById("intro-block");
-const title = document.getElementById("title");
+const siteTitle = document.getElementById("site-title");
+const textContainer = document.getElementById("text-container");
 
-let posX = character.offsetLeft;
-let posY = character.offsetTop;
+let posX, posY;
+let initialX, initialY;
 
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.position = "absolute";
+function centerCharacterNextToTitle() {
+  const titleRect = siteTitle.getBoundingClientRect();
+  const centerX = titleRect.left - frameSize - 16;
+  const centerY = titleRect.top + titleRect.height / 2 - frameSize / 2;
+
+  posX = centerX;
+  posY = centerY;
+  initialX = posX;
+  initialY = posY;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.width = `${frameSize}px`;
+  character.style.height = `${frameSize}px`;
+}
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -38,11 +49,13 @@ function preloadImages(callback) {
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
-        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
+        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = () => { if (++loaded >= total) callback(); };
-        img.onerror = () => { if (++loaded >= total) callback(); };
+        img.onload = img.onerror = () => {
+          loaded++;
+          if (loaded === total) callback();
+        };
       }
     }
   }
@@ -50,61 +63,48 @@ function preloadImages(callback) {
 
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
-  const baseName = folder + direction;
-  let frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
-  let frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+  const base = folder + direction;
+  let frameIndex = (state === "run") ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  const frameStr = (state === "run") ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
+  character.src = `assets/character/${folder}/${base}${frameStr}.png`;
 }
 
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-  const charRect = {
-    left: nextX,
-    top: nextY,
-    right: nextX + frameSize,
-    bottom: nextY + frameSize
-  };
+  const charBox = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
+  const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  const screen = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  };
-
+  // 24px padding boundary
   if (
-    charRect.left < boundaryMargin ||
-    charRect.right > screen.width - boundaryMargin ||
-    charRect.top < boundaryMargin ||
-    charRect.bottom > screen.height - boundaryMargin
+    charBox.left < 24 || charBox.right > bounds.width - 24 ||
+    charBox.top < 24 || charBox.bottom > bounds.height - 24
   ) return true;
 
   const textRect = textContainer.getBoundingClientRect();
   return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
+    charBox.right < textRect.left ||
+    charBox.left > textRect.right ||
+    charBox.bottom < textRect.top ||
+    charBox.top > textRect.bottom
   );
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
-  const totalFrames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70;
+  const total = (mode === "run") ? 8 : 16;
+  const speed = (mode === "run") ? 35 : 70;
   let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
+  const stepX = dx / total;
+  const stepY = dy / total;
 
   function step() {
-    if (current >= totalFrames) { onFinish(); return; }
-
+    if (current >= total) return onFinish();
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
     updateSprite();
-
-    if (current === 1) title.classList.add("moving-center"); // chỉ khi bắt đầu di chuyển thật
     current++;
     setTimeout(step, speed);
   }
@@ -116,8 +116,8 @@ function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-  direction = ["U", "L"][Math.floor(Math.random() * 2)];
-  moveFrame = 0;
+  direction = directions[Math.floor(Math.random() * directions.length)];
+  moveFrame = 1;
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
@@ -135,6 +135,7 @@ function startMove(steps, mode) {
 
     const dx = vx * frameSize;
     const dy = vy * frameSize;
+
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -144,11 +145,22 @@ function startMove(steps, mode) {
       return;
     }
 
+    if (!siteTitle.classList.contains("slide-to-center") && movedAwayFromStart()) {
+      siteTitle.classList.add("slide-to-center");
+    }
+
+    moveFrame = 0;
     smoothMove(dx, dy, nextStep, mode);
     stepCount++;
   }
 
   nextStep();
+}
+
+function movedAwayFromStart() {
+  const dx = Math.abs(posX - initialX);
+  const dy = Math.abs(posY - initialY);
+  return dx > 10 || dy > 10;
 }
 
 function scheduleNextAction() {
@@ -169,7 +181,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Idle loop
+// Vòng lặp Idle
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -177,10 +189,9 @@ setInterval(() => {
   }
 }, 200);
 
-// Bắt đầu
-updateSprite();
+// Khởi động
 preloadImages(() => {
-  setTimeout(() => {
-    startMove(1, "walk");
-  }, 3000); // idle chờ 3s
+  centerCharacterNextToTitle();
+  updateSprite();
+  setTimeout(scheduleNextAction, 3000);
 });
