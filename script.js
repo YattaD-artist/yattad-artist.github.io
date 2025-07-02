@@ -115,6 +115,7 @@ function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
+  direction = directions[Math.floor(Math.random() * directions.length)];
   moveFrame = 1;
   updateSprite();
 
@@ -155,7 +156,6 @@ function scheduleNextAction() {
   setTimeout(() => {
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
-    direction = directions[Math.floor(Math.random() * directions.length)];
     if (chance < 0.2) {
       state = "idle";
       idleFrame = 0;
@@ -179,15 +179,5 @@ setInterval(() => {
 // Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
-  scheduleNextAction();
-});
-
-// Khi click chuột, nhân vật chạy xa khỏi vị trí chuột 2 bước
-window.addEventListener("click", (e) => {
-  const dx = posX - e.clientX;
-  const dy = posY - e.clientY;
-  direction = Math.abs(dx) > Math.abs(dy)
-    ? (dx > 0 ? "L" : "R")
-    : (dy > 0 ? "U" : "");
-  startMove(2, "run");
+  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
 });
