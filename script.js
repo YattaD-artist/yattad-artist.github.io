@@ -181,3 +181,20 @@ updateSprite();
 preloadImages(() => {
   scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
 });
+
+// Thêm âm thanh khi hover menu với debounce
+const hoverSound = new Audio("assets/sfx/Click.mp3");
+hoverSound.volume = 0.3;
+let lastHoverTime = 0;
+const hoverDelay = 100; // milliseconds
+
+document.querySelectorAll('.menu a').forEach(link => {
+  link.addEventListener('mouseenter', () => {
+    const now = Date.now();
+    if (now - lastHoverTime > hoverDelay) {
+      hoverSound.currentTime = 0;
+      hoverSound.play().catch(() => {});
+      lastHoverTime = now;
+    }
+  });
+});
