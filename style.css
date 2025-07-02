@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Thiết lập cơ bản */
+/* Thiết lập cơ bản cho trang */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,15 +12,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Khối nội dung chính */
-.container {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding-top: 48px;
-}
-
-/* Đặt nội dung (character + tiêu đề) vào giữa màn hình */
+/* Khối nội dung chính ở giữa màn hình */
 .centered {
   position: absolute;
   top: 50%;
@@ -30,18 +22,28 @@ html, body {
   z-index: 2;
 }
 
-/* Tiêu đề chính */
+/* Dòng tiêu đề và nhân vật cùng hàng */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Tiêu đề chính: YattaD */
 h1 {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
-  margin: 0.2em 0 0;
+  margin: 0;
+  padding: 0;
 }
 
-/* Dòng chào mừng */
+/* Dòng mô tả phụ bên dưới */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
   color: #444;
+  margin-top: 12px;
 }
 
 /* Menu dọc bên trái màn hình */
@@ -70,7 +72,7 @@ p {
   color: #4e5ba6;
 }
 
-/* Nền dạng pixel lưới */
+/* Hình nền dạng pixel */
 .background {
   position: fixed;
   top: 0;
@@ -85,10 +87,8 @@ p {
 
 /* Nhân vật pixel */
 #character {
-  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
-  z-index: 1;
   pointer-events: none;
 }
