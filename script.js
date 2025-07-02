@@ -1,6 +1,5 @@
-// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = ""; // "", U, L, R
+let direction = "";
 let isMoving = false;
 
 let idleFrame = 0;
@@ -172,21 +171,27 @@ setInterval(() => {
   }
 }, 200);
 
-// BẮT ĐẦU: Chờ DOM & preload xong mới khởi động
-window.onload = function () {
+// Khi toàn bộ trang tải xong
+window.onload = () => {
+  const heading = document.querySelector('h1');
+  const headingRect = heading.getBoundingClientRect();
+  const headingComputedStyle = window.getComputedStyle(heading);
+  const headingWidth = parseFloat(headingComputedStyle.width);
+
+  const headingCenterX = headingRect.left + headingRect.width / 2;
+  const headingLeft = headingCenterX - headingWidth / 2;
+
+  posX = headingLeft - 96;
+  posY = headingRect.top;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.width = `${frameSize}px`;
+  character.style.height = `${frameSize}px`;
+  character.style.visibility = "visible";
+
+  updateSprite();
   preloadImages(() => {
-    const heading = document.querySelector('h1');
-    const headingRect = heading.getBoundingClientRect();
-
-    posX = headingRect.left - 96;
-    posY = headingRect.top;
-
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-    character.style.width = `${frameSize}px`;
-    character.style.height = `${frameSize}px`;
-
-    updateSprite();
-    scheduleNextAction(); // Bắt đầu chuyển động
+    scheduleNextAction();
   });
 };
