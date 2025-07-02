@@ -1,5 +1,6 @@
+// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = "";
+let direction = ""; // "", U, L, R
 let isMoving = false;
 
 let idleFrame = 0;
@@ -17,11 +18,10 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-// Vị trí nhân vật: bên trái chữ YattaD, cách 96px
-let posX = textContainer.offsetLeft - 96;
-let posY = textContainer.offsetTop;
+// Đặt vị trí bắt đầu bên trái, ngang hàng với tiêu đề
+let posX = 120;
+let posY = window.innerHeight / 2 - 40;
 
-character.style.position = "absolute";
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 character.style.width = `${frameSize}px`;
@@ -35,7 +35,8 @@ function preloadImages(callback) {
 
   for (const folder of folders) {
     for (const dir of directions) {
-      const prefix = folder + dir;
+      const suffix = dir;
+      const prefix = folder + suffix;
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
@@ -76,20 +77,18 @@ function updateSprite() {
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  // Giới hạn ra khỏi màn hình
-  if (
-    charRect.left < 0 ||
-    charRect.right > bounds.width ||
-    charRect.top < 0 ||
-    charRect.bottom > bounds.height
-  ) return true;
+  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
 
-  // ❌ Bỏ va chạm với phần chữ để kiểm tra hoạt động
-  return false;
+  const textRect = textContainer.getBoundingClientRect();
+  return !(
+    charRect.right < textRect.left ||
+    charRect.left > textRect.right ||
+    charRect.bottom < textRect.top ||
+    charRect.top > textRect.bottom
+  );
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
@@ -100,10 +99,7 @@ function smoothMove(dx, dy, onFinish, mode) {
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) {
-      onFinish();
-      return;
-    }
+    if (current >= totalFrames) { onFinish(); return; }
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
@@ -182,10 +178,8 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động sau khi preload hoàn tất
-window.onload = () => {
-  updateSprite(); // Cập nhật sprite ban đầu
-  preloadImages(() => {
-    scheduleNextAction();
-  });
-};
+// Bắt đầu bằng việc preload sprite trước
+updateSprite();
+preloadImages(() => {
+  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
+});
