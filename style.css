@@ -1,8 +1,8 @@
-/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
+/* Reset */
 html, body {
   margin: 0;
   padding: 0;
@@ -11,7 +11,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Nền dạng pixel */
+/* Nền pixel */
 .background {
   position: fixed;
   top: 0;
@@ -24,7 +24,7 @@ html, body {
   z-index: 0;
 }
 
-/* Menu trái */
+/* Menu dọc bên trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -35,22 +35,19 @@ html, body {
   gap: 32px;
   z-index: 3;
 }
-
 .menu-vertical a {
-  display: block;
   text-decoration: none;
   color: #334;
   font-size: 1.1em;
   font-family: 'Be Vietnam Pro', sans-serif;
   transition: transform 0.2s ease, color 0.2s ease;
 }
-
 .menu-vertical a:hover {
   transform: scale(1.2);
   color: #4e5ba6;
 }
 
-/* Vị trí nhân vật + tiêu đề giữa màn hình */
+/* Khối chính giữa ban đầu */
 .centered {
   position: absolute;
   top: 50%;
@@ -60,7 +57,7 @@ html, body {
   z-index: 2;
 }
 
-/* Nhóm tiêu đề & nhân vật */
+/* Dòng nhân vật và tiêu đề cùng hàng */
 .title-row {
   display: flex;
   align-items: center;
@@ -69,50 +66,34 @@ html, body {
   position: relative;
 }
 
-h1 {
+/* Tiêu đề YattaD */
+#site-title {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
   margin: 0;
   padding: 0;
-  position: relative;
   transition: transform 1s ease;
 }
 
-h1.moving-center {
-  transform: translateX(-50%);
-  left: 50%;
-  position: absolute;
+/* Di chuyển chữ về giữa khi nhân vật rời đi */
+#site-title.slide-to-center {
+  transform: translateX(50px); /* Di chuyển nhẹ sang phải khi Vydra rời đi */
 }
 
-/* Dòng chào mừng cố định */
-#welcome-text {
+/* Dòng chào mừng */
+p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
   color: #444;
   margin-top: 12px;
-  position: relative;
-  z-index: 2;
 }
 
-/* Nhân vật pixel */
+/* Nhân vật */
 #character {
+  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
+  pointer-events: none;
   z-index: 2;
-  pointer-events: none;
-  position: relative;
-}
-
-/* Giới hạn vùng di chuyển với viền bên ngoài */
-body::before {
-  content: "";
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  right: 24px;
-  bottom: 24px;
-  border: 2px dashed rgba(51, 51, 51, 0.2);
-  pointer-events: none;
-  z-index: 1;
 }
