@@ -1,9 +1,7 @@
-/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Tổng thể */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,7 +10,6 @@ html, body {
   overflow: hidden;
 }
 
-/* Khối giữa màn hình */
 .centered {
   position: absolute;
   top: 50%;
@@ -22,32 +19,29 @@ html, body {
   z-index: 2;
 }
 
-/* Tiêu đề và nhân vật cùng hàng */
 .title-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  position: relative;
 }
 
-/* Tiêu đề chính */
 h1 {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
   margin: 0;
   padding: 0;
   position: relative;
+}
+
+h1.moving-center {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
   transition: all 1s ease;
 }
 
-/* Khi chuyển động */
-h1.moving-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Dòng mô tả */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
@@ -55,7 +49,6 @@ p {
   margin-top: 12px;
 }
 
-/* Menu bên trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -81,7 +74,6 @@ p {
   color: #4e5ba6;
 }
 
-/* Nền pixel */
 .background {
   position: fixed;
   top: 0;
@@ -94,8 +86,8 @@ p {
   z-index: 0;
 }
 
-/* Nhân vật */
 #character {
+  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
