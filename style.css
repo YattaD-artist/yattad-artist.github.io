@@ -1,9 +1,9 @@
-/* Import fonts */
+/* 𝗙𝗢𝗡𝗧 */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Thiết lập cơ bản */
+/* 𝗧𝗛𝗜𝗘̂́𝗧 𝗟𝗔̣̂𝗣 𝗖𝗢̛ 𝗕𝗔̉𝗡 */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,7 +12,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Khối nội dung chính ở giữa */
+/* 𝗞𝗛𝗢̂́𝗜 𝗧𝗥𝗨𝗡𝗚 𝗧𝗔̂𝗠: nhân vật + chữ + lời chào */
 .centered {
   position: absolute;
   top: 50%;
@@ -22,22 +22,30 @@ html, body {
   z-index: 2;
 }
 
-/* Tiêu đề và character cùng hàng */
+/* 𝗗𝗨𝗡𝗚 𝗛𝗔̀𝗡𝗚 nhân vật và chữ "YattaD" */
 .title-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 16px; /* khoảng cách giữa nhân vật và chữ */
 }
 
-/* Title */
+/* 𝗧𝗜𝗘̂𝗨 𝗗𝗘̂̀ chính */
 h1 {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
   margin: 0;
 }
 
-/* Intro text */
+/* 𝗧𝗜𝗘̂𝗨 𝗗𝗘̂̀ sẽ di chuyển ra giữa khi nhân vật rời đi */
+h1.moving-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 1s ease;
+}
+
+/* 𝗟𝗢̛̀𝗜 𝗖𝗛𝗔̀𝗢 𝗣𝗛𝗜́𝗔 𝗗𝗨̛𝗢̛́𝗜 */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
@@ -45,7 +53,7 @@ p {
   margin-top: 12px;
 }
 
-/* Menu dọc bên trái */
+/* 𝗠𝗘𝗡𝗨 dọc bên trái màn hình */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -69,7 +77,7 @@ p {
   color: #4e5ba6;
 }
 
-/* Pixel-pattern background */
+/* 𝗡𝗘̂̀𝗡 𝗣𝗜𝗫𝗘𝗟 */
 .background {
   position: fixed;
   top: 0; left: 0;
@@ -80,7 +88,7 @@ p {
   z-index: 0;
 }
 
-/* Character */
+/* 𝗡𝗛𝗔̂𝗡 𝗩𝗔̣̂𝗧 (ảnh sprite) */
 #character {
   position: absolute;
   width: 62px;
@@ -88,12 +96,4 @@ p {
   image-rendering: pixelated;
   pointer-events: none;
   z-index: 2;
-}
-
-/* Sau khi NPC bắt đầu di chuyển, title sẽ lướt sang giữa */
-h1.moving-center {
-  position: absolute;
-  left: 50% !important;
-  transform: translateX(-50%);
-  transition: all 1s ease;
 }
