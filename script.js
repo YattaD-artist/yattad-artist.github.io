@@ -22,6 +22,7 @@ const textContainer = document.getElementById("text-container");
 
 let posX = 0;
 let posY = 0;
+let hasMoved = false;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -95,12 +96,20 @@ function smoothMove(dx, dy, onFinish, mode) {
 
   function step() {
     if (current >= totalFrames) { onFinish(); return; }
+
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
     updateSprite();
+
+    // Khi nhân vật bắt đầu di chuyển thật sự, trigger hiệu ứng cho tiêu đề
+    if (!hasMoved && current === 1) {
+      hasMoved = true;
+      centerTitleAfterMove();
+    }
+
     current++;
     setTimeout(step, speed);
   }
@@ -117,7 +126,6 @@ function startMove(steps, mode) {
   isMoving = true;
   state = mode;
 
-  // Ưu tiên chọn hướng đi lên hoặc sang trái khi di chuyển lần đầu
   if (!title.classList.contains("moving-center")) {
     direction = Math.random() < 0.5 ? "U" : "L";
   } else {
@@ -127,7 +135,6 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  // Khi bắt đầu di chuyển lần đầu tiên, tách nhân vật ra khỏi flow layout và ghi nhớ vị trí ban đầu
   if (!title.classList.contains("moving-center")) {
     const rect = character.getBoundingClientRect();
     posX = rect.left + window.scrollX;
@@ -138,7 +145,6 @@ function startMove(steps, mode) {
     character.style.top = `${posY}px`;
 
     document.body.appendChild(character);
-    centerTitleAfterMove();
   }
 
   const [vx, vy] = dirVectors[direction];
@@ -200,8 +206,7 @@ setInterval(() => {
 
 updateSprite();
 preloadImages(() => {
-  // Ngay sau preload, nhân vật di chuyển luôn
-  const steps = 1 + Math.floor(Math.random() * 2); // Chỉ 1-2 bước đầu tiên
+  const steps = 1 + Math.floor(Math.random() * 2);
   startMove(steps, Math.random() < 0.5 ? "walk" : "run");
 });
 
