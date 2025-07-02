@@ -120,13 +120,15 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  // Gỡ character ra khỏi layout và chuyển sang vị trí tự do
-  characterWrapper.style.position = "absolute";
-  characterWrapper.style.left = character.getBoundingClientRect().left + "px";
-  characterWrapper.style.top = character.getBoundingClientRect().top + "px";
-  document.body.appendChild(character); // giữ nhân vật hoạt động
-
-  centerTitleAfterMove(); // chữ YattaD vào giữa
+  // Chỉ khi bắt đầu di chuyển thì mới tách nhân vật và chuyển chữ YattaD
+  if (!title.classList.contains("moving-center")) {
+    const rect = character.getBoundingClientRect();
+    character.style.position = "absolute";
+    character.style.left = `${rect.left}px`;
+    character.style.top = `${rect.top}px`;
+    document.body.appendChild(character);
+    centerTitleAfterMove();
+  }
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -190,7 +192,6 @@ preloadImages(() => {
   setTimeout(scheduleNextAction, 5000);
 });
 
-// Âm thanh click
 document.addEventListener("click", () => {
   const dummy = new Audio("assets/sfx/Click.mp3");
   dummy.volume = 0;
