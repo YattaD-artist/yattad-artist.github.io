@@ -1,9 +1,7 @@
-/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Thiết lập cơ bản cho trang */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,7 +10,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Khối nội dung chính ở giữa màn hình */
+/* Khối giữa */
 .centered {
   position: absolute;
   top: 50%;
@@ -22,31 +20,31 @@ html, body {
   z-index: 2;
 }
 
-/* Dòng tiêu đề và nhân vật cùng hàng */
+/* Nhóm tiêu đề và nhân vật */
 .title-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  position: relative;
 }
 
-/* Tiêu đề chính: YattaD */
+/* Tiêu đề chính */
 h1 {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 2.5em;
   margin: 0;
   padding: 0;
-  position: relative; /* Thêm dòng này */
-}
-
-h1.moving-center {
-  position: absolute !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
   transition: all 1s ease;
 }
 
-/* Dòng mô tả phụ bên dưới */
+h1.shifted {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Mô tả bên dưới */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
@@ -54,7 +52,7 @@ p {
   margin-top: 12px;
 }
 
-/* Menu dọc bên trái màn hình */
+/* Menu dọc bên trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -80,7 +78,7 @@ p {
   color: #4e5ba6;
 }
 
-/* Hình nền dạng pixel */
+/* Nền pixel */
 .background {
   position: fixed;
   top: 0;
@@ -93,11 +91,12 @@ p {
   z-index: 0;
 }
 
+/* Nhân vật */
 #character {
-  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
   pointer-events: none;
   z-index: 2;
+  position: absolute;
 }
