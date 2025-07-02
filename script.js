@@ -1,5 +1,6 @@
+// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = "";
+let direction = ""; // "", U, L, R
 let isMoving = false;
 
 let idleFrame = 0;
@@ -15,28 +16,15 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
-const siteTitle = document.getElementById("site-title");
+const characterWrapper = document.getElementById("character-wrapper");
+const title = document.getElementById("main-title");
 const textContainer = document.getElementById("text-container");
 
-let posX, posY;
-let initialX, initialY;
+let posX = 0;
+let posY = 0;
+let hasMoved = false;
 
-function centerCharacterNextToTitle() {
-  const titleRect = siteTitle.getBoundingClientRect();
-  const centerX = titleRect.left - frameSize - 16;
-  const centerY = titleRect.top + titleRect.height / 2 - frameSize / 2;
-
-  posX = centerX;
-  posY = centerY;
-  initialX = posX;
-  initialY = posY;
-
-  character.style.left = `${posX}px`;
-  character.style.top = `${posY}px`;
-  character.style.width = `${frameSize}px`;
-  character.style.height = `${frameSize}px`;
-}
-
+// Tải toàn bộ sprite trước khi bắt đầu
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
@@ -52,59 +40,80 @@ function preloadImages(callback) {
         const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = img.onerror = () => {
+        img.onload = () => {
           loaded++;
-          if (loaded === total) callback();
+          if (loaded >= total) callback();
+        };
+        img.onerror = () => {
+          console.warn("Failed to load:", img.src);
+          loaded++;
+          if (loaded >= total) callback();
         };
       }
     }
   }
 }
 
+// Cập nhật hình ảnh theo frame tương ứng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
-  const base = folder + direction;
-  let frameIndex = (state === "run") ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
-  const frameStr = (state === "run") ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
-  character.src = `assets/character/${folder}/${base}${frameStr}.png`;
+  const baseName = folder + direction;
+  let frameIndex, frameStr;
+
+  if (state === "run") {
+    frameIndex = moveFrame % 8;
+    frameStr = `${frameIndex}`;
+  } else {
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
+    frameStr = frameIndex.toString().padStart(2, "0");
+  }
+
+  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
+// Kiểm tra va chạm rìa màn hình hoặc vùng chữ
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-  const charBox = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
+  const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  // 24px padding boundary
-  if (
-    charBox.left < 24 || charBox.right > bounds.width - 24 ||
-    charBox.top < 24 || charBox.bottom > bounds.height - 24
-  ) return true;
+  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height)
+    return true;
 
   const textRect = textContainer.getBoundingClientRect();
   return !(
-    charBox.right < textRect.left ||
-    charBox.left > textRect.right ||
-    charBox.bottom < textRect.top ||
-    charBox.top > textRect.bottom
+    charRect.right < textRect.left ||
+    charRect.left > textRect.right ||
+    charRect.bottom < textRect.top ||
+    charRect.top > textRect.bottom
   );
 }
 
+// Di chuyển mượt với animation từng bước
 function smoothMove(dx, dy, onFinish, mode) {
-  const total = (mode === "run") ? 8 : 16;
-  const speed = (mode === "run") ? 35 : 70;
+  const totalFrames = mode === "run" ? 8 : 16;
+  const speed = mode === "run" ? 35 : 70;
   let current = 0;
-  const stepX = dx / total;
-  const stepY = dy / total;
+  const stepX = dx / totalFrames;
+  const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= total) return onFinish();
+    if (current >= totalFrames) { onFinish(); return; }
+
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
     updateSprite();
+
+    // Trigger hiệu ứng di chuyển chữ khi lần đầu di chuyển
+    if (!hasMoved && current === 1) {
+      hasMoved = true;
+      centerTitleAfterMove();
+    }
+
     current++;
     setTimeout(step, speed);
   }
@@ -112,13 +121,39 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
+// Di chuyển chữ YattaD vào giữa
+function centerTitleAfterMove() {
+  title.classList.add("moving-center");
+}
+
+// Bắt đầu hành động đi/chạy
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-  direction = directions[Math.floor(Math.random() * directions.length)];
+
+  // Hướng đi lần đầu nên ưu tiên lên hoặc trái để tạo chuyển động đẹp
+  if (!title.classList.contains("moving-center")) {
+    direction = Math.random() < 0.5 ? "U" : "L";
+  } else {
+    direction = directions[Math.floor(Math.random() * directions.length)];
+  }
+
   moveFrame = 1;
   updateSprite();
+
+  // Đặt lại vị trí khi tách khỏi bố cục flex
+  if (!title.classList.contains("moving-center")) {
+    const wrapperRect = characterWrapper.getBoundingClientRect();
+    posX = wrapperRect.left + window.scrollX;
+    posY = wrapperRect.top + window.scrollY;
+
+    character.style.position = "absolute";
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+
+    document.body.appendChild(character);
+  }
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -135,7 +170,6 @@ function startMove(steps, mode) {
 
     const dx = vx * frameSize;
     const dy = vy * frameSize;
-
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -143,10 +177,6 @@ function startMove(steps, mode) {
       updateSprite();
       scheduleNextAction();
       return;
-    }
-
-    if (!siteTitle.classList.contains("slide-to-center") && movedAwayFromStart()) {
-      siteTitle.classList.add("slide-to-center");
     }
 
     moveFrame = 0;
@@ -157,12 +187,7 @@ function startMove(steps, mode) {
   nextStep();
 }
 
-function movedAwayFromStart() {
-  const dx = Math.abs(posX - initialX);
-  const dy = Math.abs(posY - initialY);
-  return dx > 10 || dy > 10;
-}
-
+// Tự động điều phối hành vi nhân vật sau mỗi lần hành động
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
@@ -181,7 +206,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Vòng lặp Idle
+// Vòng lặp đứng yên
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -189,9 +214,28 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động
+// Khởi động sau khi preload xong
+updateSprite();
 preloadImages(() => {
-  centerCharacterNextToTitle();
-  updateSprite();
-  setTimeout(scheduleNextAction, 3000);
+  const steps = 1 + Math.floor(Math.random() * 2);
+  startMove(steps, Math.random() < 0.5 ? "walk" : "run");
+});
+
+// Âm thanh menu click
+document.addEventListener("click", () => {
+  const dummy = new Audio("assets/sfx/Click.mp3");
+  dummy.volume = 0;
+  dummy.play().catch(() => {});
+}, { once: true });
+
+const clickSound = new Audio("assets/sfx/Click.mp3");
+clickSound.volume = 0.3;
+
+document.querySelectorAll('.menu a').forEach(link => {
+  link.addEventListener('click', () => {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(err => {
+      console.warn("Âm thanh không phát được:", err);
+    });
+  });
 });
