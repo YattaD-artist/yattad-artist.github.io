@@ -116,7 +116,14 @@ function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-  direction = directions[Math.floor(Math.random() * directions.length)];
+
+  // Ưu tiên chọn hướng đi lên hoặc sang trái khi di chuyển lần đầu
+  if (!title.classList.contains("moving-center")) {
+    direction = Math.random() < 0.5 ? "U" : "L";
+  } else {
+    direction = directions[Math.floor(Math.random() * directions.length)];
+  }
+
   moveFrame = 1;
   updateSprite();
 
@@ -193,7 +200,9 @@ setInterval(() => {
 
 updateSprite();
 preloadImages(() => {
-  setTimeout(scheduleNextAction, 5000);
+  // Ngay sau preload, nhân vật di chuyển luôn
+  const steps = 1 + Math.floor(Math.random() * 2); // Chỉ 1-2 bước đầu tiên
+  startMove(steps, Math.random() < 0.5 ? "walk" : "run");
 });
 
 document.addEventListener("click", () => {
