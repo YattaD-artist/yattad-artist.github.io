@@ -18,8 +18,10 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
+// Đặt vị trí bắt đầu bên trái, ngang hàng với tiêu đề
+let posX = 120;
+let posY = window.innerHeight / 2 - 40;
+
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 character.style.width = `${frameSize}px`;
