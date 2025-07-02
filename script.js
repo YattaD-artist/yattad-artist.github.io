@@ -1,12 +1,12 @@
-// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = ""; // "", U, L, R
+let direction = "";
 let isMoving = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
 
 const frameSize = 62;
+const boundaryMargin = 24;
 const directions = ["", "U", "L", "R"];
 const dirVectors = {
   "": [0, 1],
@@ -16,13 +16,15 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
-const characterWrapper = document.getElementById("character-wrapper");
-const title = document.getElementById("main-title");
-const textContainer = document.getElementById("text-container");
+const textContainer = document.getElementById("intro-block");
+const title = document.getElementById("title");
 
-let posX = 0;
-let posY = 0;
-let hasMoved = false;
+let posX = character.offsetLeft;
+let posY = character.offsetTop;
+
+character.style.left = `${posX}px`;
+character.style.top = `${posY}px`;
+character.style.position = "absolute";
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -36,18 +38,11 @@ function preloadImages(callback) {
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
-        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = () => {
-          loaded++;
-          if (loaded >= total) callback();
-        };
-        img.onerror = () => {
-          console.warn("Failed to load:", img.src);
-          loaded++;
-          if (loaded >= total) callback();
-        };
+        img.onload = () => { if (++loaded >= total) callback(); };
+        img.onerror = () => { if (++loaded >= total) callback(); };
       }
     }
   }
@@ -56,27 +51,32 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const baseName = folder + direction;
-  let frameIndex, frameStr;
-
-  if (state === "run") {
-    frameIndex = moveFrame % 8;
-    frameStr = `${frameIndex}`;
-  } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-    frameStr = frameIndex.toString().padStart(2, "0");
-  }
-
+  let frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  let frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
-  const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
-  const bounds = { width: window.innerWidth, height: window.innerHeight };
+  const charRect = {
+    left: nextX,
+    top: nextY,
+    right: nextX + frameSize,
+    bottom: nextY + frameSize
+  };
 
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height)
-    return true;
+  const screen = {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+
+  if (
+    charRect.left < boundaryMargin ||
+    charRect.right > screen.width - boundaryMargin ||
+    charRect.top < boundaryMargin ||
+    charRect.bottom > screen.height - boundaryMargin
+  ) return true;
 
   const textRect = textContainer.getBoundingClientRect();
   return !(
@@ -104,12 +104,7 @@ function smoothMove(dx, dy, onFinish, mode) {
     moveFrame = current;
     updateSprite();
 
-    // Khi nhân vật bắt đầu di chuyển thật sự, trigger hiệu ứng cho tiêu đề
-    if (!hasMoved && current === 1) {
-      hasMoved = true;
-      centerTitleAfterMove();
-    }
-
+    if (current === 1) title.classList.add("moving-center"); // chỉ khi bắt đầu di chuyển thật
     current++;
     setTimeout(step, speed);
   }
@@ -117,35 +112,13 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
-function centerTitleAfterMove() {
-  title.classList.add("moving-center");
-}
-
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-
-  if (!title.classList.contains("moving-center")) {
-    direction = Math.random() < 0.5 ? "U" : "L";
-  } else {
-    direction = directions[Math.floor(Math.random() * directions.length)];
-  }
-
-  moveFrame = 1;
+  direction = ["U", "L"][Math.floor(Math.random() * 2)];
+  moveFrame = 0;
   updateSprite();
-
-  if (!title.classList.contains("moving-center")) {
-    const rect = character.getBoundingClientRect();
-    posX = rect.left + window.scrollX;
-    posY = rect.top + window.scrollY;
-
-    character.style.position = "absolute";
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-
-    document.body.appendChild(character);
-  }
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -171,7 +144,6 @@ function startMove(steps, mode) {
       return;
     }
 
-    moveFrame = 0;
     smoothMove(dx, dy, nextStep, mode);
     stepCount++;
   }
@@ -197,6 +169,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
+// Idle loop
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -204,26 +177,10 @@ setInterval(() => {
   }
 }, 200);
 
+// Bắt đầu
 updateSprite();
 preloadImages(() => {
-  const steps = 1 + Math.floor(Math.random() * 2);
-  startMove(steps, Math.random() < 0.5 ? "walk" : "run");
-});
-
-document.addEventListener("click", () => {
-  const dummy = new Audio("assets/sfx/Click.mp3");
-  dummy.volume = 0;
-  dummy.play().catch(() => {});
-}, { once: true });
-
-const clickSound = new Audio("assets/sfx/Click.mp3");
-clickSound.volume = 0.3;
-
-document.querySelectorAll('.menu a').forEach(link => {
-  link.addEventListener('click', () => {
-    clickSound.currentTime = 0;
-    clickSound.play().catch(err => {
-      console.warn("Âm thanh không phát được:", err);
-    });
-  });
+  setTimeout(() => {
+    startMove(1, "walk");
+  }, 3000); // idle chờ 3s
 });
