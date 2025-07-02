@@ -18,14 +18,8 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-// Đặt vị trí bắt đầu bên trái, ngang hàng với tiêu đề
-let posX = 120;
-let posY = window.innerHeight / 2 - 40;
-
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
+let posX = 0;
+let posY = 0;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -178,8 +172,21 @@ setInterval(() => {
   }
 }, 200);
 
-// Bắt đầu bằng việc preload sprite trước
-updateSprite();
-preloadImages(() => {
-  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
-});
+// BẮT ĐẦU: Chờ DOM & preload xong mới khởi động
+window.onload = function () {
+  preloadImages(() => {
+    const heading = document.querySelector('h1');
+    const headingRect = heading.getBoundingClientRect();
+
+    posX = headingRect.left - 96;
+    posY = headingRect.top;
+
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    character.style.width = `${frameSize}px`;
+    character.style.height = `${frameSize}px`;
+
+    updateSprite();
+    scheduleNextAction(); // Bắt đầu chuyển động
+  });
+};
