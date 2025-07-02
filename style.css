@@ -1,9 +1,8 @@
-/* Font */
+/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Giao diện nền */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,50 +11,20 @@ html, body {
   overflow: hidden;
 }
 
-/* Trung tâm ban đầu của nội dung */
-.centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 2;
+/* Nền dạng pixel */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('assets/Dat.png');
+  background-size: 98px 98px;
+  opacity: 0.3;
+  z-index: 0;
 }
 
-/* Nhóm tiêu đề và nhân vật */
-.title-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-/* Tiêu đề YattaD */
-h1 {
-  font-family: 'Pixelify Sans', sans-serif;
-  font-size: 2.5em;
-  margin: 0;
-  padding: 0;
-  position: relative;
-}
-
-/* Khi nhân vật di chuyển, chữ YattaD tự dịch chuyển ra giữa */
-h1.moving-center {
-  position: absolute !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  transition: all 1s ease;
-}
-
-/* Dòng chào mừng */
-p {
-  font-family: 'VT323', monospace;
-  font-size: 1.5em;
-  color: #444;
-  margin-top: 12px;
-}
-
-/* Menu bên trái */
+/* Menu trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -81,24 +50,69 @@ p {
   color: #4e5ba6;
 }
 
-/* Nền pixel */
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('assets/Dat.png');
-  background-size: 98px 98px;
-  opacity: 0.3;
-  z-index: 0;
+/* Vị trí nhân vật + tiêu đề giữa màn hình */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
 }
 
-/* Nhân vật */
+/* Nhóm tiêu đề & nhân vật */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+}
+
+h1 {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 2.5em;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  transition: transform 1s ease;
+}
+
+h1.moving-center {
+  transform: translateX(-50%);
+  left: 50%;
+  position: absolute;
+}
+
+/* Dòng chào mừng cố định */
+#welcome-text {
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
+  color: #444;
+  margin-top: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Nhân vật pixel */
 #character {
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
-  pointer-events: none;
   z-index: 2;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Giới hạn vùng di chuyển với viền bên ngoài */
+body::before {
+  content: "";
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  border: 2px dashed rgba(51, 51, 51, 0.2);
+  pointer-events: none;
+  z-index: 1;
 }
