@@ -18,8 +18,9 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
+// Đặt nhân vật gần chữ Y khi load lần đầu
+let posX = window.innerWidth / 2 - 100;
+let posY = window.innerHeight / 2 - 40;
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
 character.style.width = `${frameSize}px`;
@@ -156,6 +157,7 @@ function scheduleNextAction() {
   setTimeout(() => {
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
+    direction = directions[Math.floor(Math.random() * directions.length)];
     if (chance < 0.2) {
       state = "idle";
       idleFrame = 0;
@@ -179,7 +181,7 @@ setInterval(() => {
 // Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
-  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
+  scheduleNextAction();
 });
 
 // Mở quyền âm thanh khi có tương tác lần đầu
