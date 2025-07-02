@@ -18,17 +18,9 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-// Lấy vị trí của chữ "YattaD" rồi đặt nhân vật cách trái 96px
-const heading = document.querySelector('h1');
-const headingRect = heading.getBoundingClientRect();
-let posX = headingRect.left - 96;
-let posY = headingRect.top; // Giữ cùng hàng dọc với dòng chữ
-
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
-
+// Đặt vị trí bắt đầu bên trái, ngang hàng với tiêu đề
+let posX = 120;
+let posY = window.innerHeight / 2 - 40;
 
 character.style.left = `${posX}px`;
 character.style.top = `${posY}px`;
@@ -187,19 +179,7 @@ setInterval(() => {
 }, 200);
 
 // Bắt đầu bằng việc preload sprite trước
+updateSprite();
 preloadImages(() => {
-  const heading = document.querySelector('h1');
-  const headingRect = heading.getBoundingClientRect();
-  posX = headingRect.left - 96;
-  posY = headingRect.top;
-
-  character.style.left = `${posX}px`;
-  character.style.top = `${posY}px`;
-  character.style.width = `${frameSize}px`;
-  character.style.height = `${frameSize}px`;
-
-  updateSprite();
-  scheduleNextAction(); // Bắt đầu hành động
-});
-
+  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
 });
