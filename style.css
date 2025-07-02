@@ -1,7 +1,9 @@
+/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
+/* Tổng thể */
 html, body {
   margin: 0;
   padding: 0;
@@ -10,7 +12,7 @@ html, body {
   overflow: hidden;
 }
 
-/* Khối giữa */
+/* Khối giữa màn hình */
 .centered {
   position: absolute;
   top: 50%;
@@ -20,13 +22,12 @@ html, body {
   z-index: 2;
 }
 
-/* Nhóm tiêu đề và nhân vật */
+/* Tiêu đề và nhân vật cùng hàng */
 .title-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  position: relative;
 }
 
 /* Tiêu đề chính */
@@ -35,16 +36,18 @@ h1 {
   font-size: 2.5em;
   margin: 0;
   padding: 0;
+  position: relative;
   transition: all 1s ease;
 }
 
-h1.shifted {
+/* Khi chuyển động */
+h1.moving-center {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* Mô tả bên dưới */
+/* Dòng mô tả */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
@@ -52,7 +55,7 @@ p {
   margin-top: 12px;
 }
 
-/* Menu dọc bên trái */
+/* Menu bên trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -98,5 +101,4 @@ p {
   image-rendering: pixelated;
   pointer-events: none;
   z-index: 2;
-  position: absolute;
 }
