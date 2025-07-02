@@ -1,6 +1,5 @@
-// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = ""; // "", U, L, R
+let direction = ""; 
 let isMoving = false;
 
 let idleFrame = 0;
@@ -17,24 +16,18 @@ const dirVectors = {
 
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
-const title = document.querySelector("h1");
+const title = document.getElementById("title");
 
 let posX = 0;
 let posY = 0;
 
 function placeCharacterNextToTitle() {
   const titleRect = title.getBoundingClientRect();
-  const containerRect = textContainer.getBoundingClientRect();
-  const centerX = containerRect.left + containerRect.width / 2;
-  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
-  posY = containerRect.top + title.offsetTop;
+  posX = titleRect.left - frameSize - 12;
+  posY = titleRect.top;
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
-  character.style.width = `${frameSize}px`;
-  character.style.height = `${frameSize}px`;
 }
-
-placeCharacterNextToTitle();
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -44,23 +37,15 @@ function preloadImages(callback) {
 
   for (const folder of folders) {
     for (const dir of directions) {
-      const suffix = dir;
-      const prefix = folder + suffix;
+      const prefix = folder + dir;
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
-        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = () => {
-          loaded++;
-          if (loaded >= total) callback();
-        };
-        img.onerror = () => {
-          console.warn("Failed to load: ", img.src);
-          loaded++;
-          if (loaded >= total) callback();
-        };
+        img.onload = () => { if (++loaded >= total) callback(); };
+        img.onerror = () => { if (++loaded >= total) callback(); };
       }
     }
   }
@@ -69,17 +54,8 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const baseName = folder + direction;
-
-  let frameIndex, frameStr;
-
-  if (state === "run") {
-    frameIndex = moveFrame % 8;
-    frameStr = `${frameIndex}`;
-  } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-    frameStr = frameIndex.toString().padStart(2, "0");
-  }
-
+  const frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  const frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
@@ -88,15 +64,15 @@ function checkCollision(dx, dy) {
   const nextY = posY + dy;
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
-
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
-
   const textRect = textContainer.getBoundingClientRect();
-  return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
+
+  return (
+    charRect.left < 0 || charRect.right > bounds.width ||
+    charRect.top < 0 || charRect.bottom > bounds.height ||
+    !(charRect.right < textRect.left ||
+      charRect.left > textRect.right ||
+      charRect.bottom < textRect.top ||
+      charRect.top > textRect.bottom)
   );
 }
 
@@ -108,7 +84,7 @@ function smoothMove(dx, dy, onFinish, mode) {
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) { onFinish(); return; }
+    if (current >= totalFrames) return onFinish();
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
@@ -122,9 +98,8 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
-function centerTitleAfterMove() {
-title.classList.add("moving-center");
-
+function moveTitleToCenter() {
+  title.classList.add("shifted");
 }
 
 function startMove(steps, mode) {
@@ -135,7 +110,7 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  centerTitleAfterMove();
+  moveTitleToCenter();
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -152,6 +127,7 @@ function startMove(steps, mode) {
 
     const dx = vx * frameSize;
     const dy = vy * frameSize;
+
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -195,8 +171,11 @@ setInterval(() => {
 }, 200);
 
 updateSprite();
+placeCharacterNextToTitle();
 preloadImages(() => {
-  scheduleNextAction();
+  setTimeout(() => {
+    scheduleNextAction();
+  }, 5000); // đứng yên 5s
 });
 
 document.addEventListener("click", () => {
@@ -207,12 +186,9 @@ document.addEventListener("click", () => {
 
 const clickSound = new Audio("assets/sfx/Click.mp3");
 clickSound.volume = 0.3;
-
 document.querySelectorAll('.menu a').forEach(link => {
   link.addEventListener('click', () => {
     clickSound.currentTime = 0;
-    clickSound.play().catch(err => {
-      console.warn("Âm thanh không phát được:", err);
-    });
+    clickSound.play().catch(() => {});
   });
 });
