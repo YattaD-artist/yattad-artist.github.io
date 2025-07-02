@@ -123,10 +123,8 @@ function smoothMove(dx, dy, onFinish, mode) {
 }
 
 function centerTitleAfterMove() {
-  title.style.transition = "all 1s ease";
-  title.style.position = "absolute";
-  title.style.left = "50%";
-  title.style.transform = "translateX(-50%)";
+title.classList.add("moving-center");
+
 }
 
 function startMove(steps, mode) {
