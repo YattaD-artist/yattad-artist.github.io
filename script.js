@@ -16,15 +16,15 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
-const characterWrapper = document.getElementById("character-wrapper");
-const title = document.getElementById("main-title");
 const textContainer = document.getElementById("text-container");
 
-let posX = 0;
-let posY = 0;
-let hasMoved = false;
+let posX = window.innerWidth / 2;
+let posY = window.innerHeight / 2 + 100;
+character.style.left = `${posX}px`;
+character.style.top = `${posY}px`;
+character.style.width = `${frameSize}px`;
+character.style.height = `${frameSize}px`;
 
-// Tải toàn bộ sprite trước khi bắt đầu
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
@@ -33,7 +33,8 @@ function preloadImages(callback) {
 
   for (const folder of folders) {
     for (const dir of directions) {
-      const prefix = folder + dir;
+      const suffix = dir;
+      const prefix = folder + suffix;
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
@@ -45,7 +46,7 @@ function preloadImages(callback) {
           if (loaded >= total) callback();
         };
         img.onerror = () => {
-          console.warn("Failed to load:", img.src);
+          console.warn("Failed to load: ", img.src);
           loaded++;
           if (loaded >= total) callback();
         };
@@ -54,10 +55,10 @@ function preloadImages(callback) {
   }
 }
 
-// Cập nhật hình ảnh theo frame tương ứng
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const baseName = folder + direction;
+
   let frameIndex, frameStr;
 
   if (state === "run") {
@@ -71,15 +72,13 @@ function updateSprite() {
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
-// Kiểm tra va chạm rìa màn hình hoặc vùng chữ
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height)
-    return true;
+  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
 
   const textRect = textContainer.getBoundingClientRect();
   return !(
@@ -90,7 +89,6 @@ function checkCollision(dx, dy) {
   );
 }
 
-// Di chuyển mượt với animation từng bước
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
@@ -100,20 +98,12 @@ function smoothMove(dx, dy, onFinish, mode) {
 
   function step() {
     if (current >= totalFrames) { onFinish(); return; }
-
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
     updateSprite();
-
-    // Trigger hiệu ứng di chuyển chữ khi lần đầu di chuyển
-    if (!hasMoved && current === 1) {
-      hasMoved = true;
-      centerTitleAfterMove();
-    }
-
     current++;
     setTimeout(step, speed);
   }
@@ -121,39 +111,13 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
-// Di chuyển chữ YattaD vào giữa
-function centerTitleAfterMove() {
-  title.classList.add("moving-center");
-}
-
-// Bắt đầu hành động đi/chạy
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
   state = mode;
-
-  // Hướng đi lần đầu nên ưu tiên lên hoặc trái để tạo chuyển động đẹp
-  if (!title.classList.contains("moving-center")) {
-    direction = Math.random() < 0.5 ? "U" : "L";
-  } else {
-    direction = directions[Math.floor(Math.random() * directions.length)];
-  }
-
+  direction = directions[Math.floor(Math.random() * directions.length)];
   moveFrame = 1;
   updateSprite();
-
-  // Đặt lại vị trí khi tách khỏi bố cục flex
-  if (!title.classList.contains("moving-center")) {
-    const wrapperRect = characterWrapper.getBoundingClientRect();
-    posX = wrapperRect.left + window.scrollX;
-    posY = wrapperRect.top + window.scrollY;
-
-    character.style.position = "absolute";
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-
-    document.body.appendChild(character);
-  }
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -187,7 +151,6 @@ function startMove(steps, mode) {
   nextStep();
 }
 
-// Tự động điều phối hành vi nhân vật sau mỗi lần hành động
 function scheduleNextAction() {
   const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
@@ -206,7 +169,6 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Vòng lặp đứng yên
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -214,28 +176,8 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động sau khi preload xong
+// Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
-  const steps = 1 + Math.floor(Math.random() * 2);
-  startMove(steps, Math.random() < 0.5 ? "walk" : "run");
-});
-
-// Âm thanh menu click
-document.addEventListener("click", () => {
-  const dummy = new Audio("assets/sfx/Click.mp3");
-  dummy.volume = 0;
-  dummy.play().catch(() => {});
-}, { once: true });
-
-const clickSound = new Audio("assets/sfx/Click.mp3");
-clickSound.volume = 0.3;
-
-document.querySelectorAll('.menu a').forEach(link => {
-  link.addEventListener('click', () => {
-    clickSound.currentTime = 0;
-    clickSound.play().catch(err => {
-      console.warn("Âm thanh không phát được:", err);
-    });
-  });
+  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
 });
