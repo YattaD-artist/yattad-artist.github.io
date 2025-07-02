@@ -1,9 +1,9 @@
-/* 𝗙𝗢𝗡𝗧 */
+/* Import fonts */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* 𝗧𝗛𝗜𝗘̂́𝗧 𝗟𝗔̣̂𝗣 𝗖𝗢̛ 𝗕𝗔̉𝗡 */
+/* Cấu hình cơ bản */
 html, body {
   margin: 0;
   padding: 0;
@@ -12,7 +12,7 @@ html, body {
   overflow: hidden;
 }
 
-/* 𝗞𝗛𝗢̂́𝗜 𝗧𝗥𝗨𝗡𝗚 𝗧𝗔̂𝗠: nhân vật + chữ + lời chào */
+/* Định vị toàn bộ nội dung vào giữa màn hình */
 .centered {
   position: absolute;
   top: 50%;
@@ -22,30 +22,31 @@ html, body {
   z-index: 2;
 }
 
-/* 𝗗𝗨𝗡𝗚 𝗛𝗔̀𝗡𝗚 nhân vật và chữ "YattaD" */
+/* Tiêu đề và nhân vật cùng hàng, căn giữa */
 .title-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px; /* khoảng cách giữa nhân vật và chữ */
+  gap: 16px;
 }
 
-/* 𝗧𝗜𝗘̂𝗨 𝗗𝗘̂̀ chính */
-h1 {
-  font-family: 'Pixelify Sans', sans-serif;
-  font-size: 2.5em;
-  margin: 0;
-}
-
-/* 𝗧𝗜𝗘̂𝗨 𝗗𝗘̂̀ sẽ di chuyển ra giữa khi nhân vật rời đi */
-h1.moving-center {
+/* Khi nhân vật đã rời vị trí, h1 sẽ vào giữa độc lập */
+.moving-center {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   transition: all 1s ease;
 }
 
-/* 𝗟𝗢̛̀𝗜 𝗖𝗛𝗔̀𝗢 𝗣𝗛𝗜́𝗔 𝗗𝗨̛𝗢̛́𝗜 */
+/* Tiêu đề chính */
+h1 {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 2.5em;
+  margin: 0;
+  padding: 0;
+}
+
+/* Dòng mô tả */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.5em;
@@ -53,7 +54,22 @@ p {
   margin-top: 12px;
 }
 
-/* 𝗠𝗘𝗡𝗨 dọc bên trái màn hình */
+/* Bọc nhân vật bên trái chữ YattaD */
+#character-wrapper {
+  width: 62px;
+  height: 62px;
+}
+
+/* Nhân vật */
+#character {
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Menu dọc bên trái */
 .menu-vertical {
   position: fixed;
   top: 50%;
@@ -69,6 +85,7 @@ p {
   text-decoration: none;
   color: #334;
   font-size: 1.1em;
+  font-family: 'Be Vietnam Pro', sans-serif;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -77,23 +94,15 @@ p {
   color: #4e5ba6;
 }
 
-/* 𝗡𝗘̂̀𝗡 𝗣𝗜𝗫𝗘𝗟 */
+/* Nền pixel */
 .background {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background-image: url('assets/Dat.png');
   background-size: 98px 98px;
   opacity: 0.3;
   z-index: 0;
-}
-
-/* 𝗡𝗛𝗔̂𝗡 𝗩𝗔̣̂𝗧 (ảnh sprite) */
-#character {
-  position: absolute;
-  width: 62px;
-  height: 62px;
-  image-rendering: pixelated;
-  pointer-events: none;
-  z-index: 2;
 }
