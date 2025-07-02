@@ -17,14 +17,25 @@ const dirVectors = {
 
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
+const title = document.querySelector("h1");
+const paragraph = document.querySelector("p");
 
-// Đặt nhân vật gần chữ Y khi load lần đầu
-let posX = window.innerWidth / 2 - 100;
-let posY = window.innerHeight / 2 - 40;
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
+// Đặt nhân vật bên trái chữ Y và canh giữa trang
+function placeCharacterNextToTitle() {
+  const titleRect = title.getBoundingClientRect();
+  const containerRect = textContainer.getBoundingClientRect();
+  const centerX = containerRect.left + containerRect.width / 2;
+
+  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
+  posY = titleRect.top;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.width = `${frameSize}px`;
+  character.style.height = `${frameSize}px`;
+}
+
+placeCharacterNextToTitle();
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -98,7 +109,10 @@ function smoothMove(dx, dy, onFinish, mode) {
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) { onFinish(); return; }
+    if (current >= totalFrames) {
+      onFinish();
+      return;
+    }
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
@@ -112,6 +126,17 @@ function smoothMove(dx, dy, onFinish, mode) {
   step();
 }
 
+function moveTitleToCenter() {
+  title.style.transition = "all 1s ease";
+  paragraph.style.transition = "all 1s ease";
+  title.style.transform = "translateX(-50%)";
+  paragraph.style.transform = "translateX(-50%)";
+  title.style.left = "50%";
+  paragraph.style.left = "50%";
+  title.style.position = "absolute";
+  paragraph.style.position = "absolute";
+}
+
 function startMove(steps, mode) {
   if (isMoving) return;
   isMoving = true;
@@ -119,6 +144,8 @@ function startMove(steps, mode) {
   direction = directions[Math.floor(Math.random() * directions.length)];
   moveFrame = 1;
   updateSprite();
+
+  moveTitleToCenter();
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -178,20 +205,17 @@ setInterval(() => {
   }
 }, 200);
 
-// Bắt đầu bằng việc preload sprite trước
 updateSprite();
 preloadImages(() => {
   scheduleNextAction();
 });
 
-// Mở quyền âm thanh khi có tương tác lần đầu
 document.addEventListener("click", () => {
   const dummy = new Audio("assets/sfx/Click.mp3");
   dummy.volume = 0;
   dummy.play().catch(() => {});
 }, { once: true });
 
-// Phát âm thanh
 const clickSound = new Audio("assets/sfx/Click.mp3");
 clickSound.volume = 0.3;
 
