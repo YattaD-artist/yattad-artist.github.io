@@ -120,12 +120,16 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  // Chỉ khi bắt đầu di chuyển thì mới tách nhân vật và chuyển chữ YattaD
+  // Khi bắt đầu di chuyển lần đầu tiên, tách nhân vật ra khỏi flow layout và ghi nhớ vị trí ban đầu
   if (!title.classList.contains("moving-center")) {
     const rect = character.getBoundingClientRect();
+    posX = rect.left + window.scrollX;
+    posY = rect.top + window.scrollY;
+
     character.style.position = "absolute";
-    character.style.left = `${rect.left}px`;
-    character.style.top = `${rect.top}px`;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+
     document.body.appendChild(character);
     centerTitleAfterMove();
   }
