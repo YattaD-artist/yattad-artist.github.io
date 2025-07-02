@@ -1,6 +1,5 @@
-// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = ""; // "", U, L, R
+let direction = "";
 let isMoving = false;
 
 let idleFrame = 0;
@@ -16,100 +15,105 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
+const menu = document.querySelector(".menu-vertical");
 const textContainer = document.getElementById("text-container");
 
-// Đặt vị trí bắt đầu bên trái, ngang hàng với tiêu đề
-let posX = 120;
-let posY = window.innerHeight / 2 - 40;
-
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
+// Khởi tạo vị trí và ẩn ban đầu
+let posX = 0;
+let posY = 0;
+character.style.visibility = "hidden";
+character.style.position = "absolute";
 character.style.width = `${frameSize}px`;
 character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-  let loaded = 0;
-  let total = 0;
+  let loaded = 0, total = 0;
 
-  for (const folder of folders) {
-    for (const dir of directions) {
-      const suffix = dir;
-      const prefix = folder + suffix;
-      const count = counts[folder];
-      total += count;
-      for (let i = 0; i < count; i++) {
-        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+  folders.forEach(folder => {
+    directions.forEach(dir => {
+      const prefix = folder + dir;
+      total += counts[folder];
+      for (let i = 0; i < counts[folder]; i++) {
+        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = () => {
+        img.onload = img.onerror = () => {
           loaded++;
-          if (loaded >= total) callback();
-        };
-        img.onerror = () => {
-          console.warn("Failed to load: ", img.src);
-          loaded++;
-          if (loaded >= total) callback();
+          if (loaded === total) callback();
         };
       }
-    }
-  }
+    });
+  });
 }
 
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
-  const baseName = folder + direction;
+  const base = folder + direction;
+  const idx = state === "run"
+    ? moveFrame % 8
+    : state === "idle"
+      ? idleFrame
+      : moveFrame % 16;
+  const frame = state === "run"
+    ? `${idx}`
+    : idx.toString().padStart(2, "0");
+  character.src = `assets/character/${folder}/${base}${frame}.png`;
+}
 
-  let frameIndex, frameStr;
-
-  if (state === "run") {
-    frameIndex = moveFrame % 8;
-    frameStr = `${frameIndex}`;
-  } else {
-    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-    frameStr = frameIndex.toString().padStart(2, "0");
-  }
-
-  character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+function rectsOverlap(r1, r2) {
+  return !(r1.right < r2.left ||
+           r1.left > r2.right ||
+           r1.bottom < r2.top ||
+           r1.top > r2.bottom);
 }
 
 function checkCollision(dx, dy) {
-  const nextX = posX + dx;
-  const nextY = posY + dy;
-  const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
+  const next = {
+    left: posX + dx,
+    top: posY + dy,
+    right: posX + dx + frameSize,
+    bottom: posY + dy + frameSize
+  };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
+  // 1. Không ra khỏi màn hình
+  if (next.left < 0 || next.top < 0 ||
+      next.right > bounds.width || next.bottom > bounds.height) {
+    return true;
+  }
 
+  // 2. Không chạm menu
+  const menuRect = menu.getBoundingClientRect();
+  if (rectsOverlap(next, menuRect)) return true;
+
+  // 3. Không chạm phần nội dung chính
   const textRect = textContainer.getBoundingClientRect();
-  return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
-  );
+  if (rectsOverlap(next, textRect)) return true;
+
+  // OK
+  return false;
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
-  const totalFrames = mode === "run" ? 8 : 16;
+  const frames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
-  let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
+  let i = 0;
+  const stepX = dx / frames;
+  const stepY = dy / frames;
 
   function step() {
-    if (current >= totalFrames) { onFinish(); return; }
+    if (i >= frames) return onFinish();
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
-    moveFrame = current;
+    moveFrame = i;
     updateSprite();
-    current++;
+    i++;
     setTimeout(step, speed);
   }
-
   step();
 }
 
@@ -122,18 +126,16 @@ function startMove(steps, mode) {
   updateSprite();
 
   const [vx, vy] = dirVectors[direction];
-  let stepCount = 0;
+  let count = 0;
 
-  function nextStep() {
-    if (stepCount >= steps) {
+  function next() {
+    if (count >= steps) {
       isMoving = false;
       state = "idle";
       idleFrame = 0;
       updateSprite();
-      scheduleNextAction();
-      return;
+      return scheduleNextAction();
     }
-
     const dx = vx * frameSize;
     const dy = vy * frameSize;
     if (checkCollision(dx, dy)) {
@@ -141,20 +143,15 @@ function startMove(steps, mode) {
       state = "idle";
       idleFrame = 0;
       updateSprite();
-      scheduleNextAction();
-      return;
+      return scheduleNextAction();
     }
-
-    moveFrame = 0;
-    smoothMove(dx, dy, nextStep, mode);
-    stepCount++;
+    smoothMove(dx, dy, next, mode);
+    count++;
   }
-
-  nextStep();
+  next();
 }
 
 function scheduleNextAction() {
-  const delay = 1000 + Math.random() * 2500;
   setTimeout(() => {
     const chance = Math.random();
     const steps = 1 + Math.floor(Math.random() * 3);
@@ -168,9 +165,10 @@ function scheduleNextAction() {
     } else {
       startMove(steps, "run");
     }
-  }, delay);
+  }, 1000 + Math.random() * 2500);
 }
 
+// Idle animation
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -178,8 +176,18 @@ setInterval(() => {
   }
 }, 200);
 
-// Bắt đầu bằng việc preload sprite trước
-updateSprite();
-preloadImages(() => {
-  scheduleNextAction(); // Chỉ bắt đầu hành động sau khi preload hoàn tất
-});
+// Khi trang & sprite đã sẵn sàng
+window.onload = () => {
+  // Tính vị trí khởi đầu: cách trái chữ YattaD 96px
+  const heading = document.querySelector("h1");
+  const hr = heading.getBoundingClientRect();
+  posX = hr.left - 96;
+  posY = hr.top;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.visibility = "visible";
+
+  updateSprite();
+  preloadImages(scheduleNextAction);
+};
