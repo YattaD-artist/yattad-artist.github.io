@@ -17,8 +17,15 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-let posX = 0;
-let posY = 0;
+// Vị trí nhân vật: bên trái chữ YattaD, cách 96px
+let posX = textContainer.offsetLeft - 96;
+let posY = textContainer.offsetTop;
+
+character.style.position = "absolute";
+character.style.left = `${posX}px`;
+character.style.top = `${posY}px`;
+character.style.width = `${frameSize}px`;
+character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -28,8 +35,7 @@ function preloadImages(callback) {
 
   for (const folder of folders) {
     for (const dir of directions) {
-      const suffix = dir;
-      const prefix = folder + suffix;
+      const prefix = folder + dir;
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
@@ -70,18 +76,20 @@ function updateSprite() {
 function checkCollision(dx, dy) {
   const nextX = posX + dx;
   const nextY = posY + dy;
+
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
 
-  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
+  // Giới hạn ra khỏi màn hình
+  if (
+    charRect.left < 0 ||
+    charRect.right > bounds.width ||
+    charRect.top < 0 ||
+    charRect.bottom > bounds.height
+  ) return true;
 
-  const textRect = textContainer.getBoundingClientRect();
-  return !(
-    charRect.right < textRect.left ||
-    charRect.left > textRect.right ||
-    charRect.bottom < textRect.top ||
-    charRect.top > textRect.bottom
-  );
+  // ❌ Bỏ va chạm với phần chữ để kiểm tra hoạt động
+  return false;
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
@@ -92,7 +100,10 @@ function smoothMove(dx, dy, onFinish, mode) {
   const stepY = dy / totalFrames;
 
   function step() {
-    if (current >= totalFrames) { onFinish(); return; }
+    if (current >= totalFrames) {
+      onFinish();
+      return;
+    }
     posX += stepX;
     posY += stepY;
     character.style.left = `${posX}px`;
@@ -171,26 +182,9 @@ setInterval(() => {
   }
 }, 200);
 
-// Khi toàn bộ trang tải xong
+// Khởi động sau khi preload hoàn tất
 window.onload = () => {
-  const heading = document.querySelector('h1');
-  const headingRect = heading.getBoundingClientRect();
-  const headingComputedStyle = window.getComputedStyle(heading);
-  const headingWidth = parseFloat(headingComputedStyle.width);
-
-  const headingCenterX = headingRect.left + headingRect.width / 2;
-  const headingLeft = headingCenterX - headingWidth / 2;
-
-  posX = headingLeft - 96;
-  posY = headingRect.top;
-
-  character.style.left = `${posX}px`;
-  character.style.top = `${posY}px`;
-  character.style.width = `${frameSize}px`;
-  character.style.height = `${frameSize}px`;
-  character.style.visibility = "visible";
-
-  updateSprite();
+  updateSprite(); // Cập nhật sprite ban đầu
   preloadImages(() => {
     scheduleNextAction();
   });
