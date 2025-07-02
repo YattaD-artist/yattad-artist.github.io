@@ -1,50 +1,69 @@
+// Trạng thái nhân vật: idle, walk, run
 let state = "idle";
-let direction = "";
+let direction = ""; // "", U, L, R
 let isMoving = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
-const frameSize = 62;
 
+const frameSize = 62;
 const directions = ["", "U", "L", "R"];
-const dirVectors = { "": [0, 1], "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
+const dirVectors = {
+  "": [0, 1],
+  "U": [0, -1],
+  "L": [-1, 0],
+  "R": [1, 0]
+};
 
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
-const title = document.getElementById("main-title");
+const title = document.querySelector("h1");
+const introText = document.querySelector("p");
 
-let posX = 0, posY = 0;
-let hasMoved = false;
+let posX = 0;
+let posY = 0;
 
 function placeCharacterNextToTitle() {
   const titleRect = title.getBoundingClientRect();
   const containerRect = textContainer.getBoundingClientRect();
-  const centerX = containerRect.left + containerRect.width / 2;
-  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
-  posY = containerRect.top + title.offsetTop;
-  character.style.position = "absolute";
+  const titleCenterX = containerRect.left + (containerRect.width / 2);
+  const titleTop = containerRect.top + title.offsetTop;
+
+  posX = titleCenterX - title.offsetWidth / 2 - frameSize - 8;
+  posY = titleTop;
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
   character.style.width = `${frameSize}px`;
   character.style.height = `${frameSize}px`;
 }
 
+placeCharacterNextToTitle();
+
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-  let loaded = 0, total = 0;
+  let loaded = 0;
+  let total = 0;
 
   for (const folder of folders) {
     for (const dir of directions) {
-      const prefix = folder + dir;
+      const suffix = dir;
+      const prefix = folder + suffix;
       const count = counts[folder];
       total += count;
       for (let i = 0; i < count; i++) {
-        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
+        const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = () => { if (++loaded >= total) callback(); };
-        img.onerror = () => { console.warn("Failed to load:", img.src); if (++loaded >= total) callback(); };
+        img.onload = () => {
+          loaded++;
+          if (loaded >= total) callback();
+        };
+        img.onerror = () => {
+          console.warn("Failed to load: ", img.src);
+          loaded++;
+          if (loaded >= total) callback();
+        };
       }
     }
   }
@@ -53,27 +72,48 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const baseName = folder + direction;
-  let frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
-  let frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
+
+  let frameIndex, frameStr;
+
+  if (state === "run") {
+    frameIndex = moveFrame % 8;
+    frameStr = `${frameIndex}`;
+  } else {
+    frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
+    frameStr = frameIndex.toString().padStart(2, "0");
+  }
+
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
 function checkCollision(dx, dy) {
-  const nextX = posX + dx, nextY = posY + dy;
+  const nextX = posX + dx;
+  const nextY = posY + dy;
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
+
   if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
+
   const textRect = textContainer.getBoundingClientRect();
-  return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
+  return !(
+    charRect.right < textRect.left ||
+    charRect.left > textRect.right ||
+    charRect.bottom < textRect.top ||
+    charRect.top > textRect.bottom
+  );
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
-  let current = 0, stepX = dx / totalFrames, stepY = dy / totalFrames;
+  let current = 0;
+  const stepX = dx / totalFrames;
+  const stepY = dy / totalFrames;
+
   function step() {
-    if (current >= totalFrames) return onFinish();
-    posX += stepX; posY += stepY;
+    if (current >= totalFrames) { onFinish(); return; }
+    posX += stepX;
+    posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
@@ -81,14 +121,12 @@ function smoothMove(dx, dy, onFinish, mode) {
     current++;
     setTimeout(step, speed);
   }
+
   step();
 }
 
-function centerTitle() {
-  if (!hasMoved) {
-    title.classList.add("moving-center");
-    hasMoved = true;
-  }
+function centerTitleAfterMove() {
+  title.classList.add("moving-center");
 }
 
 function startMove(steps, mode) {
@@ -99,7 +137,7 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  centerTitle(); // chỉ thực hiện 1 lần
+  centerTitleAfterMove();
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -113,7 +151,9 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
-    const dx = vx * frameSize, dy = vy * frameSize;
+
+    const dx = vx * frameSize;
+    const dy = vy * frameSize;
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -122,6 +162,7 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
+
     moveFrame = 0;
     smoothMove(dx, dy, nextStep, mode);
     stepCount++;
@@ -148,7 +189,6 @@ function scheduleNextAction() {
   }, delay);
 }
 
-// Vòng lặp idle
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -156,16 +196,11 @@ setInterval(() => {
   }
 }, 200);
 
-// Khởi động
-placeCharacterNextToTitle();
 updateSprite();
 preloadImages(() => {
-  setTimeout(() => {
-    scheduleNextAction();
-  }, 5000); // Đứng yên 5 giây
+  setTimeout(scheduleNextAction, 5000);
 });
 
-// Kích hoạt âm thanh
 document.addEventListener("click", () => {
   const dummy = new Audio("assets/sfx/Click.mp3");
   dummy.volume = 0;
