@@ -1,39 +1,38 @@
 let state = "idle";
-let direction = ""; 
+let direction = "";
 let isMoving = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
-
 const frameSize = 62;
+
 const directions = ["", "U", "L", "R"];
-const dirVectors = {
-  "": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
-};
+const dirVectors = { "": [0, 1], "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
 
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
-const title = document.getElementById("title");
+const title = document.getElementById("main-title");
 
-let posX = 0;
-let posY = 0;
+let posX = 0, posY = 0;
+let hasMoved = false;
 
 function placeCharacterNextToTitle() {
   const titleRect = title.getBoundingClientRect();
-  posX = titleRect.left - frameSize - 12;
-  posY = titleRect.top;
+  const containerRect = textContainer.getBoundingClientRect();
+  const centerX = containerRect.left + containerRect.width / 2;
+  posX = centerX - title.offsetWidth / 2 - frameSize - 8;
+  posY = containerRect.top + title.offsetTop;
+  character.style.position = "absolute";
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
+  character.style.width = `${frameSize}px`;
+  character.style.height = `${frameSize}px`;
 }
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-  let loaded = 0;
-  let total = 0;
+  let loaded = 0, total = 0;
 
   for (const folder of folders) {
     for (const dir of directions) {
@@ -45,7 +44,7 @@ function preloadImages(callback) {
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
         img.onload = () => { if (++loaded >= total) callback(); };
-        img.onerror = () => { if (++loaded >= total) callback(); };
+        img.onerror = () => { console.warn("Failed to load:", img.src); if (++loaded >= total) callback(); };
       }
     }
   }
@@ -54,39 +53,27 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const baseName = folder + direction;
-  const frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
-  const frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
+  let frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  let frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
 }
 
 function checkCollision(dx, dy) {
-  const nextX = posX + dx;
-  const nextY = posY + dy;
+  const nextX = posX + dx, nextY = posY + dy;
   const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
+  if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
   const textRect = textContainer.getBoundingClientRect();
-
-  return (
-    charRect.left < 0 || charRect.right > bounds.width ||
-    charRect.top < 0 || charRect.bottom > bounds.height ||
-    !(charRect.right < textRect.left ||
-      charRect.left > textRect.right ||
-      charRect.bottom < textRect.top ||
-      charRect.top > textRect.bottom)
-  );
+  return !(charRect.right < textRect.left || charRect.left > textRect.right || charRect.bottom < textRect.top || charRect.top > textRect.bottom);
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
   const totalFrames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
-  let current = 0;
-  const stepX = dx / totalFrames;
-  const stepY = dy / totalFrames;
-
+  let current = 0, stepX = dx / totalFrames, stepY = dy / totalFrames;
   function step() {
     if (current >= totalFrames) return onFinish();
-    posX += stepX;
-    posY += stepY;
+    posX += stepX; posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
     moveFrame = current;
@@ -94,12 +81,14 @@ function smoothMove(dx, dy, onFinish, mode) {
     current++;
     setTimeout(step, speed);
   }
-
   step();
 }
 
-function moveTitleToCenter() {
-  title.classList.add("shifted");
+function centerTitle() {
+  if (!hasMoved) {
+    title.classList.add("moving-center");
+    hasMoved = true;
+  }
 }
 
 function startMove(steps, mode) {
@@ -110,7 +99,7 @@ function startMove(steps, mode) {
   moveFrame = 1;
   updateSprite();
 
-  moveTitleToCenter();
+  centerTitle(); // chỉ thực hiện 1 lần
 
   const [vx, vy] = dirVectors[direction];
   let stepCount = 0;
@@ -124,10 +113,7 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
-
-    const dx = vx * frameSize;
-    const dy = vy * frameSize;
-
+    const dx = vx * frameSize, dy = vy * frameSize;
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -136,7 +122,6 @@ function startMove(steps, mode) {
       scheduleNextAction();
       return;
     }
-
     moveFrame = 0;
     smoothMove(dx, dy, nextStep, mode);
     stepCount++;
@@ -163,6 +148,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
+// Vòng lặp idle
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -170,14 +156,16 @@ setInterval(() => {
   }
 }, 200);
 
-updateSprite();
+// Khởi động
 placeCharacterNextToTitle();
+updateSprite();
 preloadImages(() => {
   setTimeout(() => {
     scheduleNextAction();
-  }, 5000); // đứng yên 5s
+  }, 5000); // Đứng yên 5 giây
 });
 
+// Kích hoạt âm thanh
 document.addEventListener("click", () => {
   const dummy = new Audio("assets/sfx/Click.mp3");
   dummy.volume = 0;
@@ -186,9 +174,12 @@ document.addEventListener("click", () => {
 
 const clickSound = new Audio("assets/sfx/Click.mp3");
 clickSound.volume = 0.3;
+
 document.querySelectorAll('.menu a').forEach(link => {
   link.addEventListener('click', () => {
     clickSound.currentTime = 0;
-    clickSound.play().catch(() => {});
+    clickSound.play().catch(err => {
+      console.warn("Âm thanh không phát được:", err);
+    });
   });
 });
