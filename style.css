@@ -1,8 +1,9 @@
+/* Fonts import */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-/* Reset */
+/* Cấu hình cơ bản */
 html, body {
   margin: 0;
   padding: 0;
@@ -11,7 +12,76 @@ html, body {
   overflow: hidden;
 }
 
-/* Nền pixel */
+/* Vị trí trung tâm ban đầu của khối chính */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+}
+
+/* Nhóm tiêu đề gồm nhân vật và chữ YattaD */
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Tiêu đề chính */
+h1 {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 2.5em;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Khi nhân vật rời đi, dòng YattaD chuyển động nhẹ sang giữa */
+h1.moving-center {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  transition: all 1s ease;
+}
+
+/* Dòng mô tả chào mừng */
+p {
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
+  color: #444;
+  margin-top: 12px;
+}
+
+/* Menu dọc trái */
+.menu-vertical {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  z-index: 3;
+}
+
+.menu-vertical a {
+  display: block;
+  text-decoration: none;
+  color: #334;
+  font-size: 1.1em;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.menu-vertical a:hover {
+  transform: scale(1.2);
+  color: #4e5ba6;
+}
+
+/* Nền dạng pixel */
 .background {
   position: fixed;
   top: 0;
@@ -24,73 +94,8 @@ html, body {
   z-index: 0;
 }
 
-/* Menu dọc bên trái */
-.menu-vertical {
-  position: fixed;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  z-index: 3;
-}
-.menu-vertical a {
-  text-decoration: none;
-  color: #334;
-  font-size: 1.1em;
-  font-family: 'Be Vietnam Pro', sans-serif;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-.menu-vertical a:hover {
-  transform: scale(1.2);
-  color: #4e5ba6;
-}
-
-/* Khối chính giữa ban đầu */
-.centered {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 2;
-}
-
-/* Dòng nhân vật và tiêu đề cùng hàng */
-.title-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  position: relative;
-}
-
-/* Tiêu đề YattaD */
-#site-title {
-  font-family: 'Pixelify Sans', sans-serif;
-  font-size: 2.5em;
-  margin: 0;
-  padding: 0;
-  transition: transform 1s ease;
-}
-
-/* Di chuyển chữ về giữa khi nhân vật rời đi */
-#site-title.slide-to-center {
-  transform: translateX(50px); /* Di chuyển nhẹ sang phải khi Vydra rời đi */
-}
-
-/* Dòng chào mừng */
-p {
-  font-family: 'VT323', monospace;
-  font-size: 1.5em;
-  color: #444;
-  margin-top: 12px;
-}
-
-/* Nhân vật */
+/* Nhân vật pixel */
 #character {
-  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
