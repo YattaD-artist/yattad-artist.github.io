@@ -1,12 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YattaD</title>
+
+  <!-- Font từ Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     html, body {
       margin: 0;
@@ -18,15 +22,7 @@
       width: 100%;
       display: flex;
     }
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
+
     .menu-vertical {
       position: fixed;
       left: 20px;
@@ -37,6 +33,7 @@
       gap: 16px;
       z-index: 3;
     }
+
     .menu-vertical a {
       text-decoration: none;
       color: #334;
@@ -44,105 +41,94 @@
       font-family: 'VT323', monospace;
       transition: transform 0.2s ease, color 0.2s ease;
     }
+
     .menu-vertical a:hover {
       transform: scale(1.1);
       color: #4e5ba6;
     }
+
     .container {
       margin: auto;
       text-align: center;
       z-index: 2;
-      width: 100vw;
     }
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .hero-logo-wrap {
-      position: relative;
-      height: 110px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      width: 100%;
-    }
-    .hero-logo {
-      display: flex;
-      align-items: flex-end;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      will-change: transform;
-      z-index: 2;
-    }
-    .hero-logo-text {
+
+    h1 {
       font-family: 'Pixelify Sans', sans-serif;
       font-size: 3em;
       margin: 0;
-      white-space: nowrap;
     }
-    .hero-desc {
+
+    p {
       font-family: 'VT323', monospace;
       font-size: 1.6em;
       color: #444;
       margin-top: 0.4em;
-      margin-bottom: 0;
-      z-index: 1;
     }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
     #character {
       width: 62px;
       height: 62px;
       image-rendering: pixelated;
       pointer-events: none;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
       position: relative;
-      left: 0;
-      top: 0;
-      z-index: 3;
-      margin-right: 8px;
     }
-    #character.absolute {
-      position: absolute !important;
-      transition: left 0.1s, top 0.1s;
-      margin-right: 0;
+
+    .hero-logo #character {
+      position: relative !important;
+      top: unset !important;
+      left: unset !important;
+      visibility: visible;
     }
-    @media (max-width: 600px) {
-      .hero-logo-text {
-        font-size: 2em;
-      }
-      .hero-logo-wrap {
-        height: 80px;
-      }
+
+    .container header p {
+      margin: 0;
     }
   </style>
-</head>
-<body>
-  <div class="background"></div>
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
-  <div class="container">
-    <header class="hero">
-      <div class="hero-logo-wrap">
-        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-        <div class="hero-logo" id="heroLogo">
-          <h1 class="hero-logo-text" id="logoText">YattaD</h1>
-        </div>
-      </div>
-      <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
-  </div>
+
   <script>
-    const directions = ["", "U", "L", "R"];
-    const dirVectors = { "": [0, 1], "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
+    let state = "idle";
+    let direction = "";
+    let isMoving = false;
+    let idleFrame = 0;
+    let moveFrame = 0;
     const frameSize = 62;
-    let state = "idle", direction = "", idleFrame = 0, moveFrame = 0;
-    let character, heroLogo, logoText, heroDesc, posX = 0, posY = 0, isMoving = false;
+
+    const directions = ["", "U", "L", "R"];
+    const dirVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
+    };
+
+    let character, menu, textContainer;
+    let posX = 0, posY = 0;
 
     function preloadImages(callback) {
       const folders = ["Idle", "Walk", "Run"];
@@ -151,12 +137,12 @@
 
       folders.forEach(folder => {
         directions.forEach(dir => {
+          const prefix = folder + dir;
           total += counts[folder];
           for (let i = 0; i < counts[folder]; i++) {
-            const frame = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
-            const src = `assets/character/${folder}/${folder}${dir}${frame}.png`;
+            const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
             const img = new Image();
-            img.src = src;
+            img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
             img.onload = img.onerror = () => {
               if (++loaded === total) callback();
             };
@@ -167,36 +153,74 @@
 
     function updateSprite() {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
-      const base = `${folder}${direction}`;
-      const idx = state === "run" ? moveFrame % 8 : idleFrame % 16;
+      const base = folder + direction;
+      const idx = state === "run" ? moveFrame % 8 :
+                  state === "idle" ? idleFrame :
+                  moveFrame % 16;
       const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${base}${frame}.png`;
     }
 
+    function rectsOverlap(r1, r2) {
+      return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+    }
+
     function checkCollision(dx, dy) {
-      const next = { left: posX + dx, top: posY + dy, right: posX + dx + frameSize, bottom: posY + dy + frameSize };
-      const w = window.innerWidth, h = window.innerHeight;
-      return next.left < 0 || next.top < 0 || next.right > w || next.bottom > h;
+      const next = {
+        left: posX + dx,
+        top: posY + dy,
+        right: posX + dx + frameSize,
+        bottom: posY + dy + frameSize
+      };
+      const bounds = { width: window.innerWidth, height: window.innerHeight };
+      if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+      if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
+      if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
+      return false;
     }
 
     function smoothMove(dx, dy, onFinish, mode) {
       const frames = mode === "run" ? 8 : 16;
       const speed = mode === "run" ? 35 : 70;
-      let i = 0;
-      const stepX = dx / frames, stepY = dy / frames;
+      let i = 0, stepX = dx / frames, stepY = dy / frames;
 
       function step() {
-        if (i >= frames) return onFinish?.();
+        if (i >= frames) return onFinish();
         posX += stepX;
         posY += stepY;
         character.style.left = `${posX}px`;
         character.style.top = `${posY}px`;
-        moveFrame++;
+        moveFrame = i;
         updateSprite();
         i++;
         setTimeout(step, speed);
       }
       step();
+    }
+
+    function startMove(steps, mode) {
+      if (isMoving) return;
+      isMoving = true;
+      state = mode;
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      moveFrame = 1;
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let count = 0;
+
+      function next() {
+        if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
+          isMoving = false;
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          return scheduleNextAction();
+        }
+        smoothMove(vx * frameSize, vy * frameSize, next, mode);
+        count++;
+      }
+      next();
     }
 
     function scheduleNextAction() {
@@ -208,13 +232,10 @@
           idleFrame = 0;
           updateSprite();
           scheduleNextAction();
+        } else if (chance < 0.65) {
+          startMove(steps, "walk");
         } else {
-          direction = directions[Math.floor(Math.random() * directions.length)];
-          const [dx, dy] = dirVectors[direction].map(v => v * frameSize);
-          if (checkCollision(dx, dy)) return scheduleNextAction();
-          state = chance < 0.65 ? "walk" : "run";
-          moveFrame = 0;
-          smoothMove(dx, dy, scheduleNextAction, state);
+          startMove(steps, "run");
         }
       }, 1000 + Math.random() * 2500);
     }
@@ -228,21 +249,51 @@
 
     window.onload = () => {
       character = document.getElementById("character");
-      heroLogo = document.getElementById("heroLogo");
-      logoText = document.getElementById("logoText");
-      heroDesc = document.getElementById("heroDesc");
+      menu = document.querySelector(".menu-vertical");
+      textContainer = document.getElementById("text-container");
+
+      character.style.width = `${frameSize}px`;
+      character.style.height = `${frameSize}px`;
+      updateSprite();
 
       preloadImages(() => {
-        const rect = logoText.getBoundingClientRect();
-        posX = rect.left - 72;
-        posY = rect.top;
-        character.classList.add("absolute");
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-        updateSprite();
-        scheduleNextAction();
+        setTimeout(() => {
+          const heading = document.querySelector(".hero-logo h1");
+          const hr = heading.getBoundingClientRect();
+          posX = hr.left - 96;
+          posY = hr.top;
+
+          character.style.position = "absolute";
+          character.style.left = `${posX}px`;
+          character.style.top = `${posY}px`;
+          character.style.zIndex = 1;
+
+          updateSprite();
+          scheduleNextAction();
+        }, 3000);
       });
     };
   </script>
+</head>
+
+<body>
+  <div class="background"></div>
+
+  <nav class="menu-vertical">
+    <a href="about.html">Giới thiệu</a>
+    <a href="illustrations.html">Minh Họa</a>
+    <a href="concepts.html">Thiết kế</a>
+    <a href="comics.html">Truyện Tranh</a>
+  </nav>
+
+  <div class="container" id="text-container">
+    <header class="hero">
+      <div class="hero-logo">
+        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+        <h1>YattaD</h1>
+      </div>
+      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
+    </header>
+  </div>
 </body>
 </html>
