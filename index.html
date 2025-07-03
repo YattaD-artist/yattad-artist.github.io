@@ -20,6 +20,8 @@
       height: 100%;
       width: 100%;
       display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .menu-vertical {
@@ -47,7 +49,6 @@
     }
 
     .container {
-      margin: auto;
       text-align: center;
       z-index: 2;
       position: relative;
@@ -85,8 +86,6 @@
       image-rendering: pixelated;
       pointer-events: none;
       position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
       transition: transform 1s ease;
     }
 
@@ -254,7 +253,7 @@
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
           const hr = heading.getBoundingClientRect();
-          posX = hr.left - 96;
+          posX = hr.left + 70; // Đặt vị trí ban đầu của nhân vật bên phải chữ YattaD
           posY = hr.top;
 
           character.style.position = "absolute";
@@ -266,9 +265,11 @@
 
           // Bắt đầu hiệu ứng sau 3 giây
           setTimeout(() => {
-            character.style.transform = "translate(-50%, -20px)"; // Nhân vật di chuyển lên
+            character.style.transform = "translateX(300px)"; // Nhân vật di chuyển
             heading.style.transform = "translateX(-50%)"; // Chữ YattaD trượt về giữa
-            scheduleNextAction();
+            setTimeout(() => {
+              scheduleNextAction(); // Bắt đầu di chuyển sau khi hiệu ứng hoàn tất
+            }, 1000);
           }, 3000);
         }, 3000);
       });
