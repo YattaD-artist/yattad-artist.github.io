@@ -259,6 +259,12 @@
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
           document.body.appendChild(character);
+
+          // Di chuyển nhân vật 1 ô sang phải trước khi tính lại vị trí chữ
+          posX += frameSize;
+          character.style.left = `${posX}px`;
+          character.style.top = `${posY}px`;
+          document.body.appendChild(character);
           if (!heading) return;
           const hr = heading.getBoundingClientRect();
           posX = hr.left - 96;
