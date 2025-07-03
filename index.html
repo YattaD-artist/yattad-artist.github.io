@@ -2,44 +2,30 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>YattaD</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
+  <!-- Font từ Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* === Cấu trúc & giao diện tổng thể === */
     html, body {
       margin: 0;
       padding: 0;
       font-family: 'Be Vietnam Pro', sans-serif;
       background-color: #f8f8ff;
+      overflow: hidden;
       height: 100%;
       width: 100%;
-      overflow: hidden;
+      display: flex;
     }
 
-    #playground {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
-
+    /* === Menu điều hướng dọc cố định bên trái === */
     .menu-vertical {
-      position: absolute;
+      position: fixed;
       left: 20px;
       top: 50%;
       transform: translateY(-50%);
@@ -62,11 +48,11 @@
       color: #4e5ba6;
     }
 
+    /* === Khung chứa tiêu đề chính giữa === */
     .container {
       margin: auto;
       text-align: center;
       z-index: 2;
-      position: relative;
     }
 
     h1 {
@@ -82,45 +68,39 @@
       margin-top: 0.4em;
     }
 
+    /* === Hình nền pixel dạng lưới === */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    /* === Nhân vật hoạt hình pixel === */
     #character {
-      image-rendering: pixelated;
-      z-index: 1;
-      pointer-events: none;
-      visibility: hidden;
       position: absolute;
       width: 62px;
       height: 62px;
+      image-rendering: pixelated;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
-</head>
-<body>
-  <div id="playground">
-    <div class="background"></div>
-
-    <nav class="menu-vertical">
-      <a href="about.html">Giới thiệu</a>
-      <a href="illustrations.html">Minh Họa</a>
-      <a href="concepts.html">Thiết kế</a>
-      <a href="comics.html">Truyện Tranh</a>
-    </nav>
-
-    <div class="container" id="text-container">
-      <h1>YattaD</h1>
-      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-    </div>
-
-    <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
-  </div>
 
   <script>
+    // === BIẾN TRẠNG THÁI ===
     let state = "idle";
     let direction = "";
     let isMoving = false;
-
     let idleFrame = 0;
     let moveFrame = 0;
-
     const frameSize = 62;
+
     const directions = ["", "U", "L", "R"];
     const dirVectors = {
       "": [0, 1],
@@ -129,16 +109,12 @@
       "R": [1, 0]
     };
 
-    const character = document.getElementById("character");
-    const menu = document.querySelector(".menu-vertical");
-    const textContainer = document.getElementById("text-container");
-
-    let posX = 0;
-    let posY = 0;
+    let character, menu, textContainer;
+    let posX = 0, posY = 0;
 
     function preloadImages(callback) {
       const folders = ["Idle", "Walk", "Run"];
-      const counts = { Idle: 16, Walk: 16, Run: 8 };
+      const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
       let loaded = 0, total = 0;
 
       folders.forEach(folder => {
@@ -150,8 +126,7 @@
             const img = new Image();
             img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
             img.onload = img.onerror = () => {
-              loaded++;
-              if (loaded === total) callback();
+              if (++loaded === total) callback();
             };
           }
         });
@@ -162,14 +137,14 @@
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const base = folder + direction;
       const idx = state === "run" ? moveFrame % 8 :
-                  state === "idle" ? idleFrame : moveFrame % 16;
+                  state === "idle" ? idleFrame :
+                  moveFrame % 16;
       const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${base}${frame}.png`;
     }
 
     function rectsOverlap(r1, r2) {
-      return !(r1.right < r2.left || r1.left > r2.right ||
-               r1.bottom < r2.top || r1.top > r2.bottom);
+      return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
     }
 
     function checkCollision(dx, dy) {
@@ -179,16 +154,11 @@
         right: posX + dx + frameSize,
         bottom: posY + dy + frameSize
       };
+      const bounds = { width: window.innerWidth, height: window.innerHeight };
+      if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
 
-      const bounds = document.getElementById("playground").getBoundingClientRect();
-      if (next.left < bounds.left || next.top < bounds.top ||
-          next.right > bounds.right || next.bottom > bounds.bottom) return true;
-
-      const menuRect = menu.getBoundingClientRect();
-      if (rectsOverlap(next, menuRect)) return true;
-
-      const textRect = textContainer.getBoundingClientRect();
-      if (rectsOverlap(next, textRect)) return true;
+      if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
+      if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
 
       return false;
     }
@@ -196,9 +166,7 @@
     function smoothMove(dx, dy, onFinish, mode) {
       const frames = mode === "run" ? 8 : 16;
       const speed = mode === "run" ? 35 : 70;
-      let i = 0;
-      const stepX = dx / frames;
-      const stepY = dy / frames;
+      let i = 0, stepX = dx / frames, stepY = dy / frames;
 
       function step() {
         if (i >= frames) return onFinish();
@@ -256,6 +224,7 @@
       }, 1000 + Math.random() * 2500);
     }
 
+    // Hoạt ảnh khi nhân vật ở trạng thái đứng yên
     setInterval(() => {
       if (state === "idle") {
         idleFrame = (idleFrame + 1) % 16;
@@ -264,12 +233,19 @@
     }, 200);
 
     window.onload = () => {
+      character = document.getElementById("character");
+      menu = document.querySelector(".menu-vertical");
+      textContainer = document.getElementById("text-container");
+
+      character.style.visibility = "hidden";
+      character.style.position = "absolute";
+      character.style.width = `${frameSize}px`;
+      character.style.height = `${frameSize}px`;
+
       const heading = document.querySelector("h1");
       const hr = heading.getBoundingClientRect();
-      const playground = document.getElementById("playground").getBoundingClientRect();
-
-      posX = hr.left - playground.left - 96;
-      posY = hr.top - playground.top;
+      posX = hr.left - 96;
+      posY = hr.top;
 
       character.style.left = `${posX}px`;
       character.style.top = `${posY}px`;
@@ -279,5 +255,29 @@
       preloadImages(scheduleNextAction);
     };
   </script>
+</head>
+
+<body>
+  <!-- Nền gạch pixel -->
+  <div class="background"></div>
+
+  <!-- Menu trái: Điều hướng chính -->
+  <nav class="menu-vertical">
+    <a href="about.html">Giới thiệu</a>
+    <a href="illustrations.html">Minh Họa</a>
+    <a href="concepts.html">Thiết kế</a>
+    <a href="comics.html">Truyện Tranh</a>
+  </nav>
+
+  <!-- Phần nội dung trung tâm -->
+  <div class="container" id="text-container">
+    <header>
+      <h1>YattaD</h1>
+      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
+    </header>
+  </div>
+
+  <!-- Nhân vật hoạt hình -->
+  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 </body>
 </html>
