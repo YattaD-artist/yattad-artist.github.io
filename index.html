@@ -8,26 +8,28 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Nền lưới ô pixel -->
-  <div class="background"></div>
+  <!-- Khung nền hoạt động (giới hạn chuyển động nhân vật) -->
+  <div id="playground">
+    <div class="background"></div>
 
-  <!-- Menu điều hướng bên trái -->
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
+    <!-- Menu điều hướng bên trái -->
+    <nav class="menu-vertical">
+      <a href="about.html">Giới thiệu</a>
+      <a href="illustrations.html">Minh Họa</a>
+      <a href="concepts.html">Thiết kế</a>
+      <a href="comics.html">Truyện Tranh</a>
+    </nav>
 
-  <!-- Nội dung chính ở giữa -->
-  <div class="container" id="text-container">
-    <header>
-      <h1>YattaD</h1>
-      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
+    <!-- Nội dung chính ở giữa -->
+    <div class="container" id="text-container">
+      <header>
+        <h1>YattaD</h1>
+        <p>Chào mừng đến với trang web cá nhân của YattaD</p>
+      </header>
+    </div>
+
+    <!-- Nhân vật hoạt hình pixel -->
+    <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
   </div>
-
-  <!-- Nhân vật hoạt hình pixel -->
-  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 </body>
 </html>
