@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,7 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    /* === Cấu trúc & giao diện tổng thể === */
     html, body {
       margin: 0;
       padding: 0;
@@ -23,7 +23,6 @@
       display: flex;
     }
 
-    /* === Menu điều hướng dọc cố định bên trái === */
     .menu-vertical {
       position: fixed;
       left: 20px;
@@ -48,7 +47,6 @@
       color: #4e5ba6;
     }
 
-    /* === Khung chứa tiêu đề chính giữa === */
     .container {
       margin: auto;
       text-align: center;
@@ -58,7 +56,7 @@
     h1 {
       font-family: 'Pixelify Sans', sans-serif;
       font-size: 3em;
-      margin: 0.2em 0 0;
+      margin: 0;
     }
 
     p {
@@ -68,7 +66,6 @@
       margin-top: 0.4em;
     }
 
-    /* === Hình nền pixel dạng lưới === */
     .background {
       position: fixed;
       top: 0;
@@ -81,19 +78,40 @@
       z-index: 0;
     }
 
-    /* === Nhân vật hoạt hình pixel === */
     #character {
-      position: absolute;
       width: 62px;
       height: 62px;
       image-rendering: pixelated;
-      z-index: 1;
       pointer-events: none;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .hero-logo #character {
+      position: relative !important;
+      top: unset !important;
+      left: unset !important;
+      visibility: visible;
+    }
+
+    .container header p {
+      margin: 0;
     }
   </style>
 
   <script>
-    // === BIẾN TRẠNG THÁI ===
     let state = "idle";
     let direction = "";
     let isMoving = false;
@@ -156,10 +174,8 @@
       };
       const bounds = { width: window.innerWidth, height: window.innerHeight };
       if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
-
       if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
       if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
-
       return false;
     }
 
@@ -224,7 +240,6 @@
       }, 1000 + Math.random() * 2500);
     }
 
-    // Hoạt ảnh khi nhân vật ở trạng thái đứng yên
     setInterval(() => {
       if (state === "idle") {
         idleFrame = (idleFrame + 1) % 16;
@@ -237,31 +252,33 @@
       menu = document.querySelector(".menu-vertical");
       textContainer = document.getElementById("text-container");
 
-      character.style.visibility = "hidden";
-      character.style.position = "absolute";
       character.style.width = `${frameSize}px`;
       character.style.height = `${frameSize}px`;
-
-      const heading = document.querySelector("h1");
-      const hr = heading.getBoundingClientRect();
-      posX = hr.left - 96;
-      posY = hr.top;
-
-      character.style.left = `${posX}px`;
-      character.style.top = `${posY}px`;
-      character.style.visibility = "visible";
-
       updateSprite();
-      preloadImages(scheduleNextAction);
+
+      preloadImages(() => {
+        setTimeout(() => {
+          const heading = document.querySelector(".hero-logo h1");
+          const hr = heading.getBoundingClientRect();
+          posX = hr.left - 96;
+          posY = hr.top;
+
+          character.style.position = "absolute";
+          character.style.left = `${posX}px`;
+          character.style.top = `${posY}px`;
+          character.style.zIndex = 1;
+
+          updateSprite();
+          scheduleNextAction();
+        }, 3000);
+      });
     };
   </script>
 </head>
 
 <body>
-  <!-- Nền gạch pixel -->
   <div class="background"></div>
 
-  <!-- Menu trái: Điều hướng chính -->
   <nav class="menu-vertical">
     <a href="about.html">Giới thiệu</a>
     <a href="illustrations.html">Minh Họa</a>
@@ -269,15 +286,14 @@
     <a href="comics.html">Truyện Tranh</a>
   </nav>
 
-  <!-- Phần nội dung trung tâm -->
   <div class="container" id="text-container">
-    <header>
-      <h1>YattaD</h1>
+    <header class="hero">
+      <div class="hero-logo">
+        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+        <h1>YattaD</h1>
+      </div>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
   </div>
-
-  <!-- Nhân vật hoạt hình -->
-  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 </body>
 </html>
