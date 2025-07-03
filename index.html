@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
+  <!-- Nền pixel -->
   <div class="background"></div>
 
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
+  <!-- Khối nhân vật + chữ YattaD -->
+  <div id="logo-block">
+    <img id="character" src="assets/character/Idle/Idle00.png" alt="YattaD NPC" />
+    <div id="logo-text">YattaD</div>
+  </div>
 
-  <div class="container">
-    <div class="logo-block" id="logo-block">
-      <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra"/>
-      <h1 id="logo-text">YattaD</h1>
-    </div>
-    <p class="tagline">Chào mừng đến với trang web cá nhân của YattaD</p>
+  <!-- Nội dung chính -->
+  <div class="container" id="text-container">
+    <header>
+      <p class="tagline">Chào mừng đến với trang web cá nhân của YattaD</p>
+    </header>
+
+    <nav class="menu-vertical">
+      <a href="about.html">Giới thiệu</a>
+      <a href="illustrations.html">Minh Họa</a>
+      <a href="concepts.html">Thiết kế</a>
+      <a href="comics.html">Truyện Tranh</a>
+    </nav>
   </div>
 </body>
 </html>
