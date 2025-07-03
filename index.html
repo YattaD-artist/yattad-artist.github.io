@@ -277,19 +277,32 @@ function updateSprite() {
       })();
     }
 
-    window.onload = () => {
-      character=document.getElementById("character");
-      heroLogo=document.getElementById("heroLogo");
-      heroDesc=document.getElementById("heroDesc");
-      preloadImages(()=>{
-        updateSprite();
-        startIdleAnimation();
-        setTimeout(()=>{
-          moveCharacterOutOfLogo();
-          autoMoveOutOfLogo(()=>scheduleNextAction());
-        },3000);
-      });
-    };
+window.onload = () => {
+  character = document.getElementById("character");
+  heroLogo  = document.getElementById("heroLogo");
+  logoText  = document.getElementById("logoText");
+  heroDesc  = document.getElementById("heroDesc");
+
+  preloadImages(() => {
+    updateSprite();
+    startIdleAnimation();
+
+    setTimeout(() => {
+      // → Chỉnh lại vị trí xuất hiện lần đầu
+      const heading = document.getElementById("logoText").getBoundingClientRect();
+      posX = heading.left - frameSize - 32;
+      posY = heading.top;
+      character.classList.add("absolute");
+      character.style.left = `${posX}px`;
+      character.style.top  = `${posY}px`;
+
+      // Giữ nguyên phần tách nhân vật và di chuyển
+      moveCharacterOutOfLogo();
+      autoMoveOutOfLogo(() => scheduleNextAction());
+    }, 3000);
+  });
+};
+
   </script>
 </body>
 </html>
