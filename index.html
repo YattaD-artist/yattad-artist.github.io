@@ -7,130 +7,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: 'Be Vietnam Pro', sans-serif;
       background-color: #f8f8ff;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
+      overflow: hidden; height: 100%; width: 100%;
       display: flex;
     }
     .background {
-      position: fixed;
-      top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       width: 100vw; height: 100vh;
       background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
+      background-size: 98px 98px; opacity: 0.3; z-index: 0;
     }
     .menu-vertical {
-      position: fixed;
-      left: 20px;
-      top: 50%;
+      position: fixed; left: 20px; top: 50%;
       transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      z-index: 3;
+      display: flex; flex-direction: column; gap: 16px; z-index: 3;
     }
     .menu-vertical a {
-      text-decoration: none;
-      color: #334;
-      font-size: 1.3em;
-      font-family: 'VT323', monospace;
-      transition: transform 0.2s ease, color 0.2s ease;
+      text-decoration: none; color: #334;
+      font-size: 1.3em; font-family: 'VT323', monospace;
+      transition: transform .2s, color .2s;
     }
     .menu-vertical a:hover {
-      transform: scale(1.1);
-      color: #4e5ba6;
+      transform: scale(1.1); color: #4e5ba6;
     }
     .container {
-      margin: auto;
-      text-align: center;
-      z-index: 2;
-      width: 100vw;
+      margin: auto; text-align: center; z-index: 2; width: 100vw;
     }
     .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       min-height: 100vh;
     }
     .hero-logo-wrap {
-      position: relative;
-      height: 110px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      width: 100%;
-    }
-    .hero-logo {
-      display: flex;
-      align-items: flex-end;
-      position: absolute;
-      left: 50%;
-      transform: translateX(calc(-50% ));
-      transition: transform 1.2s ease-in-out;
-      will-change: transform;
-      z-index: 2;
-      justify-content: flex-start;
-    }
-    .hero-logo.centered {
-      transform: translateX(calc(-50% + 62px));
-    }
-    .hero-logo.moved {
-      transform: translateX(-50%);
+      position: relative; height: 110px;
+      display: flex; align-items: flex-end;
+      justify-content: center; width: 100%;
     }
     .hero-logo-text {
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 3em;
-      margin: 0;
-      white-space: nowrap;
+      font-size: 3em; margin: 0; white-space: nowrap;
+      z-index: 2;
     }
     .hero-desc {
       font-family: 'VT323', monospace;
-      font-size: 1.6em;
-      color: #444;
-      margin-top: 0.4em;
-      margin-bottom: 0;
-      z-index: 1;
+      font-size: 1.6em; color: #444;
+      margin: .4em 0 0; z-index: 1;
     }
     #character {
-      width: 62px;
-      height: 62px;
-      image-rendering: pixelated;
-      pointer-events: none;
-      position: relative;
-      left: 0;
-      top: 0;
-      z-index: 3;
+      width: 62px; height: 62px;
+      image-rendering: pixelated; pointer-events: none;
+      position: relative; z-index: 3; margin-right: 8px;
       transition: opacity 0s;
-      margin-right: 8px;
     }
     #character.absolute {
       position: absolute !important;
-      transition: left 0.1s, top 0.1s;
+      transition: left .1s, top .1s;
       margin-right: 0;
-    }
-    .hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    @media (max-width: 600px) {
-      .hero-logo-text {
-        font-size: 2em;
-      }
-      .hero-logo-wrap {
-        height: 80px;
-      }
     }
   </style>
 </head>
+
 <body>
   <div class="background"></div>
   <nav class="menu-vertical">
@@ -139,78 +80,64 @@
     <a href="concepts.html">Thiết kế</a>
     <a href="comics.html">Truyện Tranh</a>
   </nav>
+
   <div class="container">
     <header class="hero">
       <div class="hero-logo-wrap">
         <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-        <div class="hero-logo centered" id="heroLogo">
-          <h1 class="hero-logo-text" id="logoText">YattaD</h1>
-        </div>
+        <h1 class="hero-logo-text" id="logoText">YattaD</h1>
       </div>
       <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
   </div>
 
   <script>
-    const directions = ["U","L","R"], dirVectors = {"U":[0,-1],"L":[-1,0],"R":[1,0]};
+    const directions = ["U","L","R"],
+          dirVectors = {"U":[0,-1],"L":[-1,0],"R":[1,0]};
     let state="idle", direction="", idleFrame=0, moveFrame=0;
-    let character, heroLogo, heroDesc, posX=0, posY=0, isMoving=false;
+    let character, logoText, heroDesc, posX=0, posY=0, isMoving=false;
     const frameSize=62;
 
     function preloadImages(cb) {
-      const folders=["Idle","Walk","Run"], allDirs=["","U","L","R"], counts={Idle:16,Walk:16,Run:8};
+      const folders=["Idle","Walk","Run"],
+            allDirs=["","U","L","R"],
+            counts={Idle:16,Walk:16,Run:8};
       let loaded=0, total=0;
       folders.forEach(f => {
-        const dirs = f==="Idle"?allDirs:directions;
-        total += dirs.length*counts[f];
+        const dirs = f==="Idle" ? allDirs : directions;
+        total += dirs.length * counts[f];
         dirs.forEach(d => {
           for(let i=0;i<counts[f];i++){
-            const frame = f==="Run"?String(i):i.toString().padStart(2,"0");
+            const frm = f==="Run"?String(i):i.toString().padStart(2,"0");
             const img = new Image();
-            img.src = `assets/character/${f}/${f}${d}${frame}.png`;
-            img.onload=img.onerror=()=>{ if(++loaded===total) cb(); };
+            img.src = `assets/character/${f}/${f}${d}${frm}.png`;
+            img.onload = img.onerror = () => {
+              if(++loaded === total) cb();
+            };
           }
         });
       });
     }
 
-function updateSprite() {
-  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
-  const base = folder + direction;
-
-  // Xác định chỉ số frame:
-  let idx;
-  if (state === "run") {
-    idx = moveFrame % 8;
-  } else if (state === "walk") {
-    idx = moveFrame % 16;
-  } else {
-    idx = idleFrame % 16;
-  }
-
-  // Định dạng frame string:
-  const frame = state === "run" 
-    ? `${idx}` 
-    : idx.toString().padStart(2, "0");
-
-  // Cập nhật src
-  character.src = `assets/character/${folder}/${base}${frame}.png`;
-}
-
+    function updateSprite() {
+      const fld = state.charAt(0).toUpperCase() + state.slice(1),
+            base = fld + direction;
+      let idx;
+      if(state==="run") idx = moveFrame % 8;
+      else if(state==="walk") idx = moveFrame % 16;
+      else idx = idleFrame % 16;
+      const frm = state==="run"?String(idx):idx.toString().padStart(2,"0");
+      character.src = `assets/character/${fld}/${base}${frm}.png`;
+    }
 
     function moveCharacterOutOfLogo() {
-      const rect = character.getBoundingClientRect();
-      posX=rect.left; posY=rect.top;
+      const rect = document.getElementById("logoText").getBoundingClientRect();
+      posX = rect.left - frameSize - 32;
+      posY = rect.top;
       character.classList.add("absolute");
-      character.style.left=`${posX}px`; character.style.top=`${posY}px`;
+      character.style.left = `${posX}px`;
+      character.style.top  = `${posY}px`;
       document.body.appendChild(character);
-      const startX=posX;
-      const obs = setInterval(() => {
-        if(Math.abs(posX-startX)>=frameSize){
-          heroLogo.classList.replace("centered","moved");
-          clearInterval(obs);
-        }
-      },100);
     }
 
     function autoMoveOutOfLogo(cb) {
@@ -219,57 +146,60 @@ function updateSprite() {
     }
 
     function smoothMove(dx,dy,onFinish,mode) {
-      const frames=mode==="run"?8:16, speed=mode==="run"?35:70;
+      const frames = mode==="run"?8:16,
+            speed  = mode==="run"?35:70;
       let i=0, stepX=dx/frames, stepY=dy/frames;
       (function step(){
         if(i>=frames) return onFinish?.();
         posX+=stepX; posY+=stepY;
-        character.style.left=`${posX}px`; character.style.top=`${posY}px`;
+        character.style.left=`${posX}px`;
+        character.style.top =`${posY}px`;
         moveFrame++; updateSprite(); i++;
-        setTimeout(step,speed);
+        setTimeout(step, speed);
       })();
     }
 
-    function checkCollision(dx,dy){
-      const next={left:posX+dx,top:posY+dy,right:posX+dx+frameSize,bottom:posY+dy+frameSize},
-            w=window.innerWidth,h=window.innerHeight;
-      if(next.left<0||next.top<0||next.right>w||next.bottom>h) return true;
-      const lr=heroLogo.getBoundingClientRect(),
-            dr=heroDesc.getBoundingClientRect(),
-            colL=!(next.right<lr.left||next.left>lr.right||next.bottom<lr.top||next.top>lr.bottom),
-            colD=!(next.right<dr.left||next.left>dr.right||next.bottom<dr.top||next.top>dr.bottom);
-      return colL||colD;
+    function checkCollision(dx,dy) {
+      const next = {
+        left: posX+dx, top: posY+dy,
+        right: posX+dx+frameSize,
+        bottom: posY+dy+frameSize
+      },
+      w = window.innerWidth, h = window.innerHeight;
+      return next.left<0||next.top<0||next.right>w||next.bottom>h;
     }
 
     function startIdleAnimation(){
-      setInterval(()=>{ if(state==="idle"){ idleFrame++; updateSprite(); } },200);
+      setInterval(()=>{
+        if(state==="idle"){ idleFrame++; updateSprite(); }
+      }, 200);
     }
 
     function scheduleNextAction(){
       setTimeout(()=>{
-        const c=Math.random(), steps=1+Math.floor(Math.random()*3);
+        const c = Math.random(), steps = 1 + Math.floor(Math.random()*3);
         if(c<0.2){ state="idle"; direction=""; updateSprite(); scheduleNextAction(); }
         else if(c<0.65) startMove(steps,"walk");
         else startMove(steps,"run");
-      },1000+Math.random()*2500);
+      }, 1000 + Math.random()*2500);
     }
 
-    function startMove(steps, mode){
+    function startMove(steps,mode) {
       if(isMoving) return;
       isMoving=true;
       const avail = directions.filter(d=>{
-        const [vx,vy]=dirVectors[d];
-        return !checkCollision(vx*frameSize,vy*frameSize);
+        const [vx,vy] = dirVectors[d];
+        return !checkCollision(vx*frameSize, vy*frameSize);
       });
-      if(avail.length===0){
+      if(!avail.length){
         isMoving=false; state="idle"; updateSprite(); scheduleNextAction();
         return;
       }
       direction = avail[Math.floor(Math.random()*avail.length)];
-      state=mode; moveFrame=1; updateSprite();
-      let count=0, [vx,vy]=dirVectors[direction];
+      state = mode; moveFrame = 1; updateSprite();
+      let count=0, [vx,vy] = dirVectors[direction];
       (function next(){
-        if(count++>=steps||checkCollision(vx*frameSize,vy*frameSize)){
+        if(count++>=steps || checkCollision(vx*frameSize, vy*frameSize)){
           isMoving=false; state="idle"; updateSprite(); scheduleNextAction();
           return;
         }
@@ -277,32 +207,18 @@ function updateSprite() {
       })();
     }
 
-window.onload = () => {
-  character = document.getElementById("character");
-  heroLogo  = document.getElementById("heroLogo");
-  logoText  = document.getElementById("logoText");
-  heroDesc  = document.getElementById("heroDesc");
-
-  preloadImages(() => {
-    updateSprite();
-    startIdleAnimation();
-
-    setTimeout(() => {
-      // → Chỉnh lại vị trí xuất hiện lần đầu
-      const heading = document.getElementById("logoText").getBoundingClientRect();
-      posX = heading.left - frameSize - 32;
-      posY = heading.top;
-      character.classList.add("absolute");
-      character.style.left = `${posX}px`;
-      character.style.top  = `${posY}px`;
-
-      // Giữ nguyên phần tách nhân vật và di chuyển
-      moveCharacterOutOfLogo();
-      autoMoveOutOfLogo(() => scheduleNextAction());
-    }, 3000);
-  });
-};
-
+    window.onload = () => {
+      character = document.getElementById("character");
+      logoText  = document.getElementById("logoText");
+      heroDesc  = document.getElementById("heroDesc");
+      preloadImages(() => {
+        updateSprite(); startIdleAnimation();
+        setTimeout(()=>{
+          moveCharacterOutOfLogo();
+          autoMoveOutOfLogo(()=>scheduleNextAction());
+        }, 3000);
+      });
+    };
   </script>
 </body>
 </html>
