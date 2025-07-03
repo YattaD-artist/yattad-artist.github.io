@@ -50,12 +50,14 @@
       margin: auto;
       text-align: center;
       z-index: 2;
+      position: relative;
     }
 
     h1 {
       font-family: 'Pixelify Sans', sans-serif;
       font-size: 3em;
       margin: 0;
+      transition: transform 0.5s ease;
     }
 
     p {
@@ -82,6 +84,10 @@
       height: 62px;
       image-rendering: pixelated;
       pointer-events: none;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: transform 1s ease;
     }
 
     .hero {
@@ -96,14 +102,6 @@
       gap: 16px;
       margin-bottom: 12px;
       position: relative;
-    }
-
-    .hero-logo #character {
-  visibility: visible;
-}
-
-    .container header p {
-      margin: 0;
     }
   </style>
 
@@ -148,7 +146,6 @@
     }
 
     function updateSprite() {
-      if (!character) return;
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const base = folder + direction;
       const idx = state === "run" ? moveFrame % 8 :
@@ -171,9 +168,8 @@
       };
       const bounds = { width: window.innerWidth, height: window.innerHeight };
       if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
-      if (menu && rectsOverlap(next, menu.getBoundingClientRect())) return true;
-      const logo = document.querySelector(".hero-logo");
-      if (logo && rectsOverlap(next, logo.getBoundingClientRect())) return true;
+      if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
+      if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
       return false;
     }
 
@@ -214,7 +210,6 @@
           idleFrame = 0;
           updateSprite();
           return scheduleNextAction();
-          document.getElementById("text-container").style.visibility = "visible";
         }
         smoothMove(vx * frameSize, vy * frameSize, next, mode);
         count++;
@@ -251,7 +246,6 @@
       menu = document.querySelector(".menu-vertical");
       textContainer = document.getElementById("text-container");
 
-      if (!character) return;
       character.style.width = `${frameSize}px`;
       character.style.height = `${frameSize}px`;
       updateSprite();
@@ -259,12 +253,6 @@
       preloadImages(() => {
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
-document.body.appendChild(character);
-// Ép reflow để chữ YattaD căn giữa lại khi nhân vật rời khỏi logo
-const logo = document.querySelector(".hero-logo");
-logo.offsetWidth; // Force reflow
-logo.style.justifyContent = "center";
-          if (!heading) return;
           const hr = heading.getBoundingClientRect();
           posX = hr.left - 96;
           posY = hr.top;
@@ -275,7 +263,13 @@ logo.style.justifyContent = "center";
           character.style.zIndex = 1;
 
           updateSprite();
-          scheduleNextAction();
+
+          // Bắt đầu hiệu ứng sau 3 giây
+          setTimeout(() => {
+            character.style.transform = "translate(-50%, -20px)"; // Nhân vật di chuyển lên
+            heading.style.transform = "translateX(-50%)"; // Chữ YattaD trượt về giữa
+            scheduleNextAction();
+          }, 3000);
         }, 3000);
       });
     };
@@ -292,7 +286,7 @@ logo.style.justifyContent = "center";
     <a href="comics.html">Truyện Tranh</a>
   </nav>
 
-  <div class="container" id="text-container" style="visibility: hidden;">
+  <div class="container" id="text-container">
     <header class="hero">
       <div class="hero-logo">
         <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
