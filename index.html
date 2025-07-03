@@ -1,437 +1,194 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YattaD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #f8f8ff;
-            overflow: hidden;
-            height: 100%;
-            width: 100%;
-            display: flex;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YattaD Hero Logo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: url('assets/Dat.png');
-            background-size: 98px 98px;
-            opacity: 0.3;
-            z-index: 0;
-        }
+    body {
+      background-color: #111;
+      color: white;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        .menu-vertical {
-            position: fixed;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            z-index: 3;
-        }
+    .hero-logo-wrap {
+      position: relative;
+      height: 110px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      width: 100%;
+    }
 
-        .menu-vertical a {
-            text-decoration: none;
-            color: #334;
-            font-size: 1.3em;
-            font-family: 'VT323', monospace;
-            transition: transform 0.2s ease, color 0.2s ease;
-        }
+    #character {
+      width: 62px;
+      height: 62px;
+      image-rendering: pixelated;
+      pointer-events: none;
+      position: relative;
+      z-index: 3;
+      margin-right: 16px;
+    }
 
-        .menu-vertical a:hover {
-            transform: scale(1.1);
-            color: #4e5ba6;
-        }
+    #character.absolute {
+      position: absolute !important;
+      transition: left 0.1s, top 0.1s;
+      margin-right: 0;
+    }
 
-        .container {
-            margin: auto;
-            text-align: center;
-            z-index: 2;
-            width: 100vw;
-        }
+    .hero-logo {
+      display: flex;
+      align-items: flex-end;
+      position: absolute;
+      left: 50%;
+      transform: translateX(calc(-50% + 31px)); /* Bù nửa nhân vật */
+      transition: transform 1.2s ease-in-out;
+      will-change: transform;
+      z-index: 2;
+      justify-content: flex-start;
+    }
 
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+    .hero-logo.centered {
+      transform: translateX(calc(-50% + 31px));
+    }
 
-        .hero-logo-wrap {
-            position: relative;
-            height: 110px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            width: 100%;
-        }
+    .hero-logo.moved {
+      transform: translateX(-50%);
+    }
 
-        .hero-logo {
-            display: flex;
-            align-items: flex-end;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: transform 1.2s ease-in-out;
-            will-change: transform;
-            z-index: 2;
-            justify-content: flex-start;
-        }
-
-        .hero-logo.centered {
-            transform: translateX(-50%);
-        }
-
-        .hero-logo.moved {
-            transform: translateX(calc(-50% - 39px));
-        }
-
-        .hero-logo-text {
-            font-family: 'Pixelify Sans', sans-serif;
-            font-size: 3em;
-            margin: 0;
-            white-space: nowrap;
-        }
-
-        .hero-desc {
-            font-family: 'VT323', monospace;
-            font-size: 1.6em;
-            color: #444;
-            margin-top: 0.4em;
-            margin-bottom: 0;
-            z-index: 1;
-        }
-
-        #character {
-            width: 62px;
-            height: 62px;
-            image-rendering: pixelated;
-            pointer-events: none;
-            position: relative;
-            left: 0;
-            top: 0;
-            z-index: 3;
-            transition: opacity 0.2s;
-            margin-right: 16px;
-        }
-
-        #character.absolute {
-            position: absolute !important;
-            transition: left 0.1s, top 0.1s;
-            margin-right: 0;
-        }
-
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        @media (max-width: 600px) {
-            .hero-logo-text {
-                font-size: 2em;
-            }
-
-            .hero-logo-wrap {
-                height: 80px;
-            }
-        }
-    </style>
+    .hero-logo-text {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="background"></div>
-
-    <nav class="menu-vertical">
-        <a href="about.html">Giới thiệu</a>
-        <a href="illustrations.html">Minh Họa</a>
-        <a href="concepts.html">Thiết kế</a>
-        <a href="comics.html">Truyện Tranh</a>
-    </nav>
-
-    <div class="container">
-        <header class="hero">
-            <div class="hero-logo-wrap">
-                <div class="hero-logo centered" id="heroLogo">
-                    <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-                    <h1 class="hero-logo-text" id="logoText">YattaD</h1>
-                </div>
-            </div>
-            <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
-        </header>
+  <div class="hero-logo-wrap">
+    <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+    <div class="hero-logo centered" id="heroLogo">
+      <h1 class="hero-logo-text" id="logoText">YattaD</h1>
     </div>
+  </div>
 
-    <script>
-        // --- Logic chuyển động & canh chỉnh ---
-        let state = "idle";
-        let direction = "";
-        let isMoving = false;
-        let idleFrame = 0;
-        let moveFrame = 0;
-        const frameSize = 62;
-        const directions = ["U", "L", "R"];
-        const dirVectors = {
-            "U": [0, -1],
-            "L": [-1, 0],
-            "R": [1, 0]
+  <script>
+    let character, heroLogo, logoText;
+    let posX = 0, posY = 0;
+    let frameSize = 62;
+    let idleFrame = 0;
+    let state = "idle";
+    let direction = "";
+    const idleFrames = 4;
+    const moveSpeed = 5;
+
+    function setLogoAndCharacterInitPos() {
+      // Khởi tạo vị trí ban đầu của nhân vật
+      character.classList.remove('absolute');
+      character.style.left = '';
+      character.style.top = '';
+    }
+
+    function preloadImages(callback) {
+      let imagesToLoad = idleFrames;
+      for (let i = 0; i < idleFrames; i++) {
+        const img = new Image();
+        img.src = `assets/character/Idle/Idle0${i}.png`;
+        img.onload = () => {
+          imagesToLoad--;
+          if (imagesToLoad === 0) callback();
         };
+      }
+    }
 
-        let character, heroLogo, logoText, heroDesc;
-        let posX = 0, posY = 0;
-        let isFirstMove = true;
+    function updateSprite() {
+      if (state === "idle") {
+        character.src = `assets/character/Idle/Idle0${idleFrame % idleFrames}.png`;
+      }
+    }
 
-        function preloadImages(callback) {
-            const folders = ["Idle", "Walk", "Run"];
-            const allDirs = ["", "U", "L", "R"];
-            const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-            let loaded = 0;
-            let totalImages = 0;
-            let callbackCalled = false;
-
-            folders.forEach(folder => {
-                const dirsForFolder = folder === 'Idle' ? allDirs : directions;
-                dirsForFolder.forEach(() => {
-                    totalImages += counts[folder];
-                });
-            });
-
-            folders.forEach(folder => {
-                const dirsForFolder = folder === 'Idle' ? allDirs : directions;
-                dirsForFolder.forEach(dir => {
-                    const prefix = folder + dir;
-                    for (let i = 0; i < counts[folder]; i++) {
-                        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
-                        const img = new Image();
-                        img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-                        img.onload = img.onerror = () => {
-                            loaded++;
-                            if (loaded >= totalImages && !callbackCalled) {
-                                callbackCalled = true;
-                                callback();
-                            }
-                        };
-                    }
-                });
-            });
+    function startIdleAnimation() {
+      setInterval(() => {
+        if (state === "idle") {
+          idleFrame++;
+          updateSprite();
         }
+      }, 200);
+    }
 
-        function updateSprite() {
-            const folder = state.charAt(0).toUpperCase() + state.slice(1);
-            const base = folder + direction;
-            const idx = state === "run" ? moveFrame % 8 :
-                state === "idle" ? idleFrame % 16 :
-                moveFrame % 16;
-            const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
-            if (character) character.src = `assets/character/${folder}/${base}${frame}.png`;
+    function moveCharacterOutOfLogo() {
+      let charRect = character.getBoundingClientRect();
+      posX = charRect.left;
+      posY = charRect.top;
+      character.classList.add('absolute');
+      character.style.left = `${posX}px`;
+      character.style.top = `${posY}px`;
+      character.style.zIndex = 2;
+      document.body.appendChild(character);
+
+      // Theo dõi khi nhân vật rời khỏi vị trí ban đầu
+      const initialX = posX;
+      const observer = setInterval(() => {
+        const distance = Math.abs(posX - initialX);
+        if (distance >= frameSize) {
+          heroLogo.classList.add('moved');
+          heroLogo.classList.remove('centered');
+          clearInterval(observer);
         }
+      }, 100);
+    }
 
-        function rectsOverlap(r1, r2) {
-            if (!r1 || !r2) return false;
-            return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+    function autoMoveOutOfLogo(onFinish) {
+      const steps = 8;
+      const stepSize = 4;
+      let moved = 0;
+      function step() {
+        if (moved >= steps) {
+          onFinish();
+          return;
         }
+        posX += stepSize;
+        character.style.left = `${posX}px`;
+        moved++;
+        setTimeout(step, 40);
+      }
+      step();
+    }
 
-        function checkCollision(dx, dy) {
-            let next = {
-                left: posX + dx,
-                top: posY + dy,
-                right: posX + dx + frameSize,
-                bottom: posY + dy + frameSize
-            };
-            
-            const bounds = { width: window.innerWidth, height: window.innerHeight };
-            if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+    function mainIdleAuto() {
+      setTimeout(() => {
+        moveCharacterOutOfLogo();
+        autoMoveOutOfLogo(() => {
+          // callback khi xong
+        });
+      }, 3000);
+    }
 
-            let curHeroLogoRect = heroLogo.getBoundingClientRect();
-            let curHeroDescRect = heroDesc.getBoundingClientRect();
-            if (rectsOverlap(next, curHeroLogoRect)) return true;
-            if (rectsOverlap(next, curHeroDescRect)) return true;
+    window.onload = () => {
+      character = document.getElementById("character");
+      heroLogo = document.getElementById("heroLogo");
+      logoText = document.getElementById("logoText");
 
-            return false;
-        }
+      setTimeout(() => {
+        setLogoAndCharacterInitPos();
+      }, 10);
 
-        function smoothMove(dx, dy, onFinish, mode) {
-            const frames = mode === "run" ? 8 : 16;
-            const speed = mode === "run" ? 35 : 70;
-            let i = 0, stepX = dx / frames, stepY = dy / frames;
-            function step() {
-                if (i >= frames) {
-                    if (onFinish) onFinish();
-                    return;
-                }
-                posX += stepX;
-                posY += stepY;
-                character.style.left = `${posX}px`;
-                character.style.top = `${posY}px`;
-                moveFrame = i;
-                updateSprite();
-                i++;
-                setTimeout(step, speed);
-            }
-            step();
-        }
-        
-        function autoMoveOutOfLogo(onFinish) {
-            const forcedDirection = "L";  // Di chuyển ngược lại
-            const [vx, vy] = dirVectors[forcedDirection];
-            state = "walk";
-            direction = forcedDirection;
-            moveFrame = 1;
-            updateSprite();
-            smoothMove(vx * frameSize, vy * frameSize, onFinish, "walk");
-        }
+      preloadImages(() => {
+        updateSprite();
+        startIdleAnimation();
+        mainIdleAuto();
+      });
+    };
+  </script>
 
-        function setLogoAndCharacterInitPos() {
-            const descRect = heroDesc.getBoundingClientRect();
-            const heroLogoRect = heroLogo.getBoundingClientRect();
-            const margin = 18;
-            const wrapRect = document.querySelector('.hero-logo-wrap').getBoundingClientRect();
-            const logoHeight = heroLogoRect.height;
-            const newTop = descRect.top - logoHeight - margin - wrapRect.top;
-            heroLogo.style.top = `${newTop}px`;
-            character.style.position = "relative";
-            character.style.left = "0px";
-            character.style.top = "0px";
-        }
-
-        function moveCharacterOutOfLogo() {
-            const currentLogoWidth = heroLogo.getBoundingClientRect().width;
-            heroLogo.style.width = `${currentLogoWidth}px`;
-            
-            let charRect = character.getBoundingClientRect();
-            posX = charRect.left;
-            posY = charRect.top;
-            character.classList.add('absolute');
-            character.style.left = `${posX}px`;
-            character.style.top = `${posY}px`;
-            character.style.zIndex = 2;
-            document.body.appendChild(character);
-        }
-
-        function startIdleAnimation() {
-            setInterval(() => {
-                if (state === "idle") {
-                    idleFrame++;
-                    updateSprite();
-                }
-            }, 200);
-        }
-
-        function mainIdleAuto() {
-            setTimeout(() => {
-                moveCharacterOutOfLogo();
-
-                autoMoveOutOfLogo(() => {
-                    scheduleNextAction();
-                });
-
-                setTimeout(() => {
-                    heroLogo.classList.add('moved');
-                    heroLogo.classList.remove('centered');
-                }, 50);
-
-            }, 3000);
-        }
-
-        function scheduleNextAction() {
-            setTimeout(() => {
-                const chance = Math.random();
-                const steps = 1 + Math.floor(Math.random() * 3);
-                if (chance < 0.2) {
-                    state = "idle";
-                    direction = "";
-                    updateSprite();
-                    scheduleNextAction();
-                } else if (chance < 0.65) {
-                    startMove(steps, "walk");
-                } else {
-                    startMove(steps, "run");
-                }
-            }, 1000 + Math.random() * 2500);
-        }
-
-        function startMove(steps, mode) {
-            if (isMoving) return;
-            isMoving = true;
-            
-            let availableDirs;
-            if (isFirstMove) {
-                const preferredDirs = ["L", "U"];
-                availableDirs = preferredDirs.filter(dir => {
-                    let [vx, vy] = dirVectors[dir];
-                    return !checkCollision(vx * frameSize, vy * frameSize);
-                });
-                if (availableDirs.length === 0) {
-                     availableDirs = ["R"].filter(dir => {
-                        let [vx, vy] = dirVectors[dir];
-                        return !checkCollision(vx * frameSize, vy * frameSize);
-                    });
-                }
-            } else {
-                 availableDirs = directions.filter(dir => {
-                    let [vx, vy] = dirVectors[dir];
-                    return !checkCollision(vx * frameSize, vy * frameSize);
-                });
-            }
-
-            if (availableDirs.length === 0) {
-                isMoving = false;
-                state = "idle";
-                direction = "";
-                updateSprite();
-                scheduleNextAction();
-                return;
-            }
-            direction = availableDirs[Math.floor(Math.random() * availableDirs.length)];
-            state = mode;
-            moveFrame = 1;
-            updateSprite();
-            const [vx, vy] = dirVectors[direction];
-            let count = 0;
-
-            function next() {
-                if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
-                    if (isFirstMove) isFirstMove = false;
-                    isMoving = false;
-                    state = "idle";
-                    updateSprite();
-                    scheduleNextAction();
-                    return;
-                }
-                smoothMove(vx * frameSize, vy * frameSize, next, mode);
-                count++;
-            }
-            next();
-        }
-
-        window.onload = () => {
-            character = document.getElementById("character");
-            heroLogo = document.getElementById("heroLogo");
-            logoText = document.getElementById("logoText");
-            heroDesc = document.getElementById("heroDesc");
-            
-            setTimeout(() => {
-                setLogoAndCharacterInitPos();
-            }, 10);
-
-            preloadImages(() => {
-                direction = "";
-                updateSprite();
-                startIdleAnimation();
-                mainIdleAuto();
-            });
-        };
-    </script>
 </body>
 </html>
