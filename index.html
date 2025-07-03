@@ -83,15 +83,20 @@
             display: flex;
             align-items: flex-end;
             position: absolute;
-            left: calc(50% - 31px); /* Vị trí khởi đầu của chữ YattaD */
+            left: 50%;
             transform: translateX(-50%);
             transition: transform 1.2s ease-in-out;
+            will-change: transform;
             z-index: 2;
             justify-content: flex-start;
         }
 
+        .hero-logo.centered {
+            transform: translateX(-50%);
+        }
+
         .hero-logo.moved {
-            transform: translateX(calc(-50% - 62px)); /* Lướt sang trái */
+            transform: translateX(calc(-50% - 39px));
         }
 
         .hero-logo-text {
@@ -116,14 +121,17 @@
             image-rendering: pixelated;
             pointer-events: none;
             position: relative;
-            left: -10px; /* Điều chỉnh vị trí sang trái */
+            left: 0;
             top: 0;
             z-index: 3;
             transition: opacity 0.2s;
+            margin-right: 16px;
         }
 
         #character.absolute {
             position: absolute !important;
+            transition: left 0.1s, top 0.1s;
+            margin-right: 0;
         }
 
         .hidden {
@@ -166,6 +174,7 @@
     </div>
 
     <script>
+        // --- Logic chuyển động & canh chỉnh ---
         let state = "idle";
         let direction = "";
         let isMoving = false;
@@ -228,6 +237,11 @@
             if (character) character.src = `assets/character/${folder}/${base}${frame}.png`;
         }
 
+        function rectsOverlap(r1, r2) {
+            if (!r1 || !r2) return false;
+            return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+        }
+
         function checkCollision(dx, dy) {
             let next = {
                 left: posX + dx,
@@ -278,7 +292,23 @@
             smoothMove(vx * frameSize, vy * frameSize, onFinish, "walk");
         }
 
+        function setLogoAndCharacterInitPos() {
+            const descRect = heroDesc.getBoundingClientRect();
+            const heroLogoRect = heroLogo.getBoundingClientRect();
+            const margin = 18;
+            const wrapRect = document.querySelector('.hero-logo-wrap').getBoundingClientRect();
+            const logoHeight = heroLogoRect.height;
+            const newTop = descRect.top - logoHeight - margin - wrapRect.top;
+            heroLogo.style.top = `${newTop}px`;
+            character.style.position = "relative";
+            character.style.left = "0px";
+            character.style.top = "0px";
+        }
+
         function moveCharacterOutOfLogo() {
+            const currentLogoWidth = heroLogo.getBoundingClientRect().width;
+            heroLogo.style.width = `${currentLogoWidth}px`;
+            
             let charRect = character.getBoundingClientRect();
             posX = charRect.left;
             posY = charRect.top;
@@ -303,12 +333,13 @@
                 moveCharacterOutOfLogo();
 
                 autoMoveOutOfLogo(() => {
-                    heroLogo.classList.add('moved');
-                    setTimeout(() => {
-                        heroLogo.classList.remove('moved'); // Trả về vị trí ban đầu
-                    }, 1200); // Thời gian để lướt về
                     scheduleNextAction();
                 });
+
+                setTimeout(() => {
+                    heroLogo.classList.add('moved');
+                    heroLogo.classList.remove('centered');
+                }, 50);
 
             }, 3000);
         }
@@ -334,10 +365,25 @@
             if (isMoving) return;
             isMoving = true;
             
-            let availableDirs = directions.filter(dir => {
-                let [vx, vy] = dirVectors[dir];
-                return !checkCollision(vx * frameSize, vy * frameSize);
-            });
+            let availableDirs;
+            if (isFirstMove) {
+                const preferredDirs = ["L", "U"];
+                availableDirs = preferredDirs.filter(dir => {
+                    let [vx, vy] = dirVectors[dir];
+                    return !checkCollision(vx * frameSize, vy * frameSize);
+                });
+                if (availableDirs.length === 0) {
+                     availableDirs = ["R"].filter(dir => {
+                        let [vx, vy] = dirVectors[dir];
+                        return !checkCollision(vx * frameSize, vy * frameSize);
+                    });
+                }
+            } else {
+                 availableDirs = directions.filter(dir => {
+                    let [vx, vy] = dirVectors[dir];
+                    return !checkCollision(vx * frameSize, vy * frameSize);
+                });
+            }
 
             if (availableDirs.length === 0) {
                 isMoving = false;
@@ -356,6 +402,7 @@
 
             function next() {
                 if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
+                    if (isFirstMove) isFirstMove = false;
                     isMoving = false;
                     state = "idle";
                     direction = "";
@@ -376,8 +423,7 @@
             heroDesc = document.getElementById("heroDesc");
             
             setTimeout(() => {
-                heroLogo.style.left = `calc(50% - 31px)`; // Vị trí khởi đầu của chữ YattaD
-                heroLogo.style.transform = "translateX(-50%)"; // Đảm bảo logo ở giữa
+                setLogoAndCharacterInitPos();
             }, 10);
 
             preloadImages(() => {
