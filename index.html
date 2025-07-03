@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -152,6 +151,7 @@
     }
 
     function updateSprite() {
+      if (!character) return;
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const base = folder + direction;
       const idx = state === "run" ? moveFrame % 8 :
@@ -174,8 +174,9 @@
       };
       const bounds = { width: window.innerWidth, height: window.innerHeight };
       if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
-      if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
-      if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
+      if (menu && rectsOverlap(next, menu.getBoundingClientRect())) return true;
+      const logo = document.querySelector(".hero-logo");
+      if (logo && rectsOverlap(next, logo.getBoundingClientRect())) return true;
       return false;
     }
 
@@ -252,6 +253,7 @@
       menu = document.querySelector(".menu-vertical");
       textContainer = document.getElementById("text-container");
 
+      if (!character) return;
       character.style.width = `${frameSize}px`;
       character.style.height = `${frameSize}px`;
       updateSprite();
@@ -259,6 +261,7 @@
       preloadImages(() => {
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
+          if (!heading) return;
           const hr = heading.getBoundingClientRect();
           posX = hr.left - 96;
           posY = hr.top;
