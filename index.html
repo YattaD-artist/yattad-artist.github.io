@@ -91,12 +91,12 @@
             justify-content: flex-start;
         }
 
-        .hero-logo.centered {
-            transform: translateX(-50%);
-        }
-
-        .hero-logo.moved {
-            transform: translateX(calc(-50% - 39px));
+.hero-logo.centered {
+    transform: translateX(calc(-50% + 62px)); /* Trừ nửa kích thước nhân vật */
+}
+.hero-logo.moved {
+    transform: translateX(-50%);
+}
         }
 
         .hero-logo-text {
@@ -148,6 +148,8 @@
                 height: 80px;
             }
         }
+
+
     </style>
 </head>
 <body>
