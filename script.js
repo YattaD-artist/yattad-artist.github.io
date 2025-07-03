@@ -18,7 +18,6 @@ const character = document.getElementById("character");
 const menu = document.querySelector(".menu-vertical");
 const textContainer = document.getElementById("text-container");
 
-// Khởi tạo vị trí và ẩn ban đầu
 let posX = 0;
 let posY = 0;
 character.style.visibility = "hidden";
@@ -51,22 +50,13 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const base = folder + direction;
-  const idx = state === "run"
-    ? moveFrame % 8
-    : state === "idle"
-      ? idleFrame
-      : moveFrame % 16;
-  const frame = state === "run"
-    ? `${idx}`
-    : idx.toString().padStart(2, "0");
+  const idx = state === "run" ? moveFrame % 8 : state === "idle" ? idleFrame : moveFrame % 16;
+  const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${base}${frame}.png`;
 }
 
 function rectsOverlap(r1, r2) {
-  return !(r1.right < r2.left ||
-           r1.left > r2.right ||
-           r1.bottom < r2.top ||
-           r1.top > r2.bottom);
+  return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
 }
 
 function checkCollision(dx, dy) {
@@ -76,23 +66,14 @@ function checkCollision(dx, dy) {
     right: posX + dx + frameSize,
     bottom: posY + dy + frameSize
   };
+
   const bounds = { width: window.innerWidth, height: window.innerHeight };
-
-  // 1. Không ra khỏi màn hình
-  if (next.left < 0 || next.top < 0 ||
-      next.right > bounds.width || next.bottom > bounds.height) {
+  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height)
     return true;
-  }
 
-  // 2. Không chạm menu
-  const menuRect = menu.getBoundingClientRect();
-  if (rectsOverlap(next, menuRect)) return true;
+  if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
+  if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
 
-  // 3. Không chạm phần nội dung chính
-  const textRect = textContainer.getBoundingClientRect();
-  if (rectsOverlap(next, textRect)) return true;
-
-  // OK
   return false;
 }
 
@@ -168,7 +149,6 @@ function scheduleNextAction() {
   }, 1000 + Math.random() * 2500);
 }
 
-// Idle animation
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -176,13 +156,11 @@ setInterval(() => {
   }
 }, 200);
 
-// Khi trang & sprite đã sẵn sàng
 window.onload = () => {
-  // Tính vị trí khởi đầu: cách trái chữ YattaD 96px
   const heading = document.querySelector("h1");
   const hr = heading.getBoundingClientRect();
   posX = hr.left - 96;
-  posY = hr.top;
+  posY = hr.bottom - frameSize;
 
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
