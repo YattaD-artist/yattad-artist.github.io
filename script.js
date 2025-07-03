@@ -1,10 +1,10 @@
 let state = "idle";
 let direction = "";
 let isMoving = false;
-let hasMoved = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
+let hasMoved = false;
 
 const frameSize = 62;
 const directions = ["", "U", "L", "R"];
@@ -17,15 +17,11 @@ const dirVectors = {
 
 const character = document.getElementById("character");
 const menu = document.querySelector(".menu-vertical");
-const heading = document.getElementById("title-heading");
-const textContainer = document.getElementById("text-container");
+const logoText = document.getElementById("logo-text");
+const logoBlock = document.getElementById("logo-block");
 
 let posX = 0;
 let posY = 0;
-character.style.visibility = "hidden";
-character.style.position = "absolute";
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -78,15 +74,15 @@ function checkCollision(dx, dy) {
     bottom: posY + dy + frameSize
   };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
-
-  if (next.left < 0 || next.top < 0 ||
-      next.right > bounds.width || next.bottom > bounds.height) return true;
+  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) {
+    return true;
+  }
 
   const menuRect = menu.getBoundingClientRect();
   if (rectsOverlap(next, menuRect)) return true;
 
-  const titleRect = heading.getBoundingClientRect();
-  if (rectsOverlap(next, titleRect)) return true;
+  const logoRect = logoText.getBoundingClientRect();
+  if (rectsOverlap(next, logoRect)) return true;
 
   return false;
 }
@@ -102,8 +98,7 @@ function smoothMove(dx, dy, onFinish, mode) {
     if (i >= frames) return onFinish();
     posX += stepX;
     posY += stepY;
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
+    character.style.transform = `translate(${posX}px, ${posY}px)`;
     moveFrame = i;
     updateSprite();
     i++;
@@ -123,11 +118,6 @@ function startMove(steps, mode) {
   const [vx, vy] = dirVectors[direction];
   let count = 0;
 
-  if (!hasMoved) {
-    hasMoved = true;
-    centerTitle(); // Trigger slide-in effect
-  }
-
   function next() {
     if (count >= steps) {
       isMoving = false;
@@ -136,10 +126,8 @@ function startMove(steps, mode) {
       updateSprite();
       return scheduleNextAction();
     }
-
     const dx = vx * frameSize;
     const dy = vy * frameSize;
-
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -147,9 +135,12 @@ function startMove(steps, mode) {
       updateSprite();
       return scheduleNextAction();
     }
-
     smoothMove(dx, dy, next, mode);
     count++;
+    if (!hasMoved && Math.abs(posX) > 150) {
+      hasMoved = true;
+      centerLogoBlock();
+    }
   }
   next();
 }
@@ -171,9 +162,8 @@ function scheduleNextAction() {
   }, 1000 + Math.random() * 2500);
 }
 
-// Chuyển tiêu đề về giữa sau khi nhân vật di chuyển
-function centerTitle() {
-  heading.style.transform = `translateX(${window.innerWidth / 2 - heading.getBoundingClientRect().left - heading.offsetWidth / 2}px)`;
+function centerLogoBlock() {
+  logoBlock.style.left = "50%";
 }
 
 setInterval(() => {
@@ -184,14 +174,10 @@ setInterval(() => {
 }, 200);
 
 window.onload = () => {
-  const hr = heading.getBoundingClientRect();
-  posX = hr.left - 96;
-  posY = hr.bottom + 8;
-
-  character.style.left = `${posX}px`;
-  character.style.top = `${posY}px`;
-  character.style.visibility = "visible";
-
-  updateSprite();
-  preloadImages(scheduleNextAction);
+  preloadImages(() => {
+    logoBlock.style.left = "calc(50% - 150px)";
+    character.style.transform = `translate(${posX}px, ${posY}px)`;
+    updateSprite();
+    scheduleNextAction();
+  });
 };
