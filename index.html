@@ -63,7 +63,7 @@
         }
         .hero-logo-wrap {
             position: relative;
-            height: 110px; /* Đảm bảo đủ cao để chuyển động */
+            height: 110px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -85,6 +85,7 @@
             transform: translateX(-50%);
         }
         .hero-logo.moved {
+            /* lướt nhẹ vào giữa */
             left: 50%;
             transform: translateX(-50%);
         }
@@ -107,17 +108,20 @@
             height: 62px;
             image-rendering: pixelated;
             pointer-events: none;
-            position: absolute;
+            position: relative;
             left: 0;
             top: 0;
             z-index: 3;
             transition: opacity 0.2s;
         }
+        #character.absolute {
+            position: absolute !important;
+            transition: left 0.1s, top 0.1s;
+        }
         .hidden {
             opacity: 0;
             pointer-events: none;
         }
-
         @media (max-width: 600px) {
             .hero-logo-text { font-size: 2em; }
             .hero-logo-wrap { height: 80px; }
@@ -137,7 +141,6 @@
     <div class="container">
         <header class="hero">
             <div class="hero-logo-wrap">
-                <!-- Hero logo và nhân vật sẽ được canh chỉnh động -->
                 <div class="hero-logo centered" id="heroLogo">
                     <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
                     <h1 class="hero-logo-text" id="logoText">YattaD</h1>
@@ -165,9 +168,9 @@
 
     let character, heroLogo, logoText;
     let posX = 0, posY = 0;
-    let initialCharX = 0, initialCharY = 0;
-    let logoMoved = false;
-    let heroLogoRect;
+    let heroLogoRect, charRect;
+    let isLogoMoved = false;
+    let initialCharRect, initialCharX = 0, initialCharY = 0;
 
     function preloadImages(callback) {
         const folders = ["Idle", "Walk", "Run"];
@@ -203,19 +206,22 @@
         return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
     }
 
+    // Sử dụng vùng tránh chính xác là vùng .hero-logo
     function checkCollision(dx, dy) {
-        const next = {
+        let next = {
             left: posX + dx,
             top: posY + dy,
             right: posX + dx + frameSize,
             bottom: posY + dy + frameSize
         };
-        // Chỉ tránh .hero-logo
-        const logoRect = heroLogo.getBoundingClientRect();
-        if (rectsOverlap(next, logoRect)) return true;
         // Biên ngoài màn hình
         const bounds = { width: window.innerWidth, height: window.innerHeight };
         if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+
+        // Tránh vùng chữ
+        let curHeroLogoRect = heroLogo.getBoundingClientRect();
+        if (rectsOverlap(next, curHeroLogoRect)) return true;
+
         return false;
     }
 
@@ -237,32 +243,102 @@
         step();
     }
 
-    function startMove(steps, mode) {
-        if (isMoving) return;
-        isMoving = true;
-        state = mode;
-        direction = directions[Math.floor(Math.random() * directions.length)];
-        moveFrame = 1;
-        updateSprite();
-        const [vx, vy] = dirVectors[direction];
-        let count = 0;
-        function next() {
-            if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
-                isMoving = false;
-                state = "idle";
-                idleFrame = 0;
-                updateSprite();
-                // Khi nhân vật vừa rời khỏi vị trí ban đầu, lướt chữ YattaD vào giữa
-                if (!logoMoved) {
-                    logoMoved = true;
-                    setTimeout(centerLogo, 250);
-                }
-                return scheduleNextAction();
+    // Chỉ cho nhân vật đi sang trái hoặc phải để rời khỏi vùng chữ
+    function autoMoveOutOfLogo(onFinish) {
+        // Kiểm tra vùng logo và nhân vật
+        let logoRect = heroLogo.getBoundingClientRect();
+        let charRect = character.getBoundingClientRect();
+        posX = charRect.left;
+        posY = charRect.top;
+        // Ưu tiên đi sang phải nếu có chỗ, nếu không thì sang trái
+        let tryDirections = [];
+        if (charRect.left <= logoRect.left) tryDirections = ["R", "L"];
+        else if (charRect.right >= logoRect.right) tryDirections = ["L", "R"];
+        else tryDirections = ["R", "L"]; // Nếu ở giữa thì mặc định đi phải
+
+        function tryMove(dirIndex) {
+            if (dirIndex >= tryDirections.length) {
+                // Không đi được, dừng
+                if (onFinish) onFinish();
+                return;
             }
-            smoothMove(vx * frameSize, vy * frameSize, next, mode);
-            count++;
+            let dir = tryDirections[dirIndex];
+            let [vx, vy] = dirVectors[dir];
+            // Kiểm tra nếu không va chạm thì đi
+            if (!checkCollision(vx * frameSize, vy * frameSize)) {
+                state = "walk";
+                direction = dir;
+                moveFrame = 1;
+                updateSprite();
+                smoothMove(vx * frameSize, vy * frameSize, () => {
+                    // Sau khi đi xong 1 bước, kiểm tra đã ra khỏi chưa
+                    let curCharRect = character.getBoundingClientRect();
+                    if (!rectsOverlap(curCharRect, logoRect)) {
+                        if (onFinish) onFinish();
+                    } else {
+                        // Chưa ra khỏi, đi tiếp
+                        autoMoveOutOfLogo(onFinish);
+                    }
+                }, "walk");
+            } else {
+                // Không đi được hướng này, thử hướng còn lại
+                tryMove(dirIndex + 1);
+            }
         }
-        next();
+        tryMove(0);
+    }
+
+    function setLogoAndCharacterInitPos() {
+        // Căn giữa logo (text + nhân vật) trên dòng mô tả
+        const desc = document.querySelector('.hero-desc');
+        const descRect = desc.getBoundingClientRect();
+        heroLogoRect = heroLogo.getBoundingClientRect();
+        const margin = 18;
+        const wrapRect = document.querySelector('.hero-logo-wrap').getBoundingClientRect();
+        const logoHeight = heroLogoRect.height;
+        const newTop = descRect.top - logoHeight - margin - wrapRect.top;
+        heroLogo.style.top = `${newTop}px`;
+        character.style.position = "relative";
+        character.style.left = "0px";
+        character.style.top = "0px";
+    }
+
+    function moveCharacterOutOfLogo() {
+        // Đưa nhân vật ra khỏi hero-logo, chuyển sang position absolute
+        let charRect = character.getBoundingClientRect();
+        posX = charRect.left;
+        posY = charRect.top;
+        character.classList.add('absolute');
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+        character.style.zIndex = 2;
+        document.body.appendChild(character);
+    }
+
+    function startIdleAnimation() {
+        setInterval(() => {
+            if (state === "idle") {
+                idleFrame = (idleFrame + 1) % 16;
+                updateSprite();
+            }
+        }, 200);
+    }
+
+    function mainIdleAuto() {
+        // Sau 3s, nhân vật bước ra khỏi logo
+        setTimeout(() => {
+            moveCharacterOutOfLogo();
+            // Cho nhân vật tự bước đi ra khỏi vùng chữ
+            autoMoveOutOfLogo(() => {
+                // Khi đã ra khỏi vùng chữ, mới chuyển chữ YattaD vào giữa
+                heroLogo.classList.add('moved');
+                heroLogo.classList.remove('centered');
+                // Bắt đầu chuyển động tự do cho nhân vật
+                setTimeout(() => {
+                    scheduleNextAction();
+                }, 800);
+            });
+        }, 3000);
     }
 
     function scheduleNextAction() {
@@ -282,96 +358,53 @@
         }, 1000 + Math.random() * 2500);
     }
 
-    setInterval(() => {
-        if (state === "idle") {
-            idleFrame = (idleFrame + 1) % 16;
+    function startMove(steps, mode) {
+        if (isMoving) return;
+        isMoving = true;
+        // Chỉ được đi khi không va chạm với logo!
+        let availableDirs = directions.filter(dir => {
+            if (dir === "") return false; // Không đi xuống
+            let [vx, vy] = dirVectors[dir];
+            return !checkCollision(vx * frameSize, vy * frameSize);
+        });
+        if (availableDirs.length === 0) {
+            isMoving = false;
+            state = "idle";
+            idleFrame = 0;
             updateSprite();
+            scheduleNextAction();
+            return;
         }
-    }, 200);
-
-    function centerLogo() {
-        // Bỏ nhân vật ra khỏi hero-logo (tách khỏi chữ)
-        character.style.transition = "left 0.8s cubic-bezier(.77,0,.18,1), top 0.8s cubic-bezier(.77,0,.18,1)";
-        heroLogo.classList.add('moved');
-        heroLogo.classList.remove('centered');
-        // Đặt lại vị trí heroLogo vào giữa thật sự (không còn dịch sang trái cho nhân vật nữa)
-    }
-
-    function setLogoAndCharacterInitPos() {
-        // Căn giữa logo (text + nhân vật) trên dòng mô tả
-        // Lấy vị trí dòng "Chào mừng..."
-        const desc = document.querySelector('.hero-desc');
-        const descRect = desc.getBoundingClientRect();
-        heroLogoRect = heroLogo.getBoundingClientRect();
-
-        // Vị trí top của hero-logo để cách dòng chữ chào mừng một khoảng
-        const margin = 18; // px
-        const wrapRect = document.querySelector('.hero-logo-wrap').getBoundingClientRect();
-        const logoHeight = heroLogoRect.height;
-
-        // Đặt hero-logo sao cho tâm nằm trên tâm dòng mô tả, dịch lên trên
-        const newTop = descRect.top - logoHeight - margin - wrapRect.top;
-
-        heroLogo.style.top = `${newTop}px`;
-
-        // Đặt vị trí nhân vật tương đối với logo, nằm sát trái (vị trí "logo bộ")
-        character.style.position = "relative";
-        character.style.left = "0px";
-        character.style.top = "0px";
-    }
-
-    function moveCharacterOutOfLogo() {
-        // Đặt nhân vật ra khỏi logo, chuyển sang position absolute trên màn hình
-        // Lấy vị trí nhân vật hiện tại so với viewport
-        const logoRect = heroLogo.getBoundingClientRect();
-        const characterRect = character.getBoundingClientRect();
-        // Tính posX, posY theo absolute
-        posX = characterRect.left;
-        posY = characterRect.top;
-        character.style.position = "absolute";
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-        character.style.zIndex = 2;
-
-        // Ẩn nhân vật khỏi hero-logo, để lướt tiếp
-        setTimeout(() => {
-            heroLogo.removeChild(character);
-            document.body.appendChild(character);
-        }, 50);
-
-        // Sau khi logo lướt vào giữa, nhân vật sẽ tự động di chuyển tiếp
+        direction = availableDirs[Math.floor(Math.random() * availableDirs.length)];
+        state = mode;
+        moveFrame = 1;
+        updateSprite();
+        const [vx, vy] = dirVectors[direction];
+        let count = 0;
+        function next() {
+            if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
+                isMoving = false;
+                state = "idle";
+                idleFrame = 0;
+                updateSprite();
+                scheduleNextAction();
+                return;
+            }
+            smoothMove(vx * frameSize, vy * frameSize, next, mode);
+            count++;
+        }
+        next();
     }
 
     window.onload = () => {
         character = document.getElementById("character");
         heroLogo = document.getElementById("heroLogo");
         logoText = document.getElementById("logoText");
-
-        // Bước 1: Đặt vị trí logo và nhân vật như một khối duy nhất
-        setTimeout(() => {
-            setLogoAndCharacterInitPos();
-        }, 10);
-
-        // Bước 2: Preload sprite rồi chạy
+        setTimeout(() => { setLogoAndCharacterInitPos(); }, 10);
         preloadImages(() => {
-            setTimeout(() => {
-                // Bước 3: Sau 3s, tách nhân vật và logo
-                moveCharacterOutOfLogo();
-                // Lướt logo vào giữa
-                setTimeout(() => {
-                    heroLogo.classList.add('centered');
-                    heroLogo.classList.remove('moved');
-                }, 60);
-                // Bắt đầu cho nhân vật tự động di chuyển
-                setTimeout(() => {
-                    // Đặt lại posX, posY đúng tọa độ nhân vật hiện tại
-                    const charRect = character.getBoundingClientRect();
-                    posX = charRect.left;
-                    posY = charRect.top;
-                    updateSprite();
-                    scheduleNextAction();
-                }, 400);
-            }, 3000);
+            updateSprite();
+            startIdleAnimation();
+            mainIdleAuto();
         });
     };
     </script>
