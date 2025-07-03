@@ -4,221 +4,287 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
+
+  <!-- Font từ Google -->
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       font-family: 'Be Vietnam Pro', sans-serif;
       background-color: #f8f8ff;
-      overflow: hidden; height: 100%; width: 100%;
-      display: flex;
+      overflow: hidden;
     }
-    .background {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px; opacity: 0.3; z-index: 0;
-    }
-    .menu-vertical {
-      position: fixed; left: 20px; top: 50%;
-      transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 16px; z-index: 3;
-    }
-    .menu-vertical a {
-      text-decoration: none; color: #334;
-      font-size: 1.3em; font-family: 'VT323', monospace;
-      transition: transform .2s, color .2s;
-    }
-    .menu-vertical a:hover {
-      transform: scale(1.1); color: #4e5ba6;
-    }
+
     .container {
-      margin: auto; text-align: center; z-index: 2; width: 100vw;
-    }
-    .hero {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      min-height: 100vh;
-    }
-    .hero-logo-wrap {
-      position: relative; height: 110px;
-      display: flex; align-items: flex-end;
-      justify-content: center; width: 100%;
-    }
-    .hero-logo-text {
-      font-family: 'Pixelify Sans', sans-serif;
-      font-size: 3em; margin: 0; white-space: nowrap;
+      position: relative;
       z-index: 2;
+      text-align: center;
+      padding-top: 48px;
     }
-    .hero-desc {
+
+    h1 {
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 2.5em;
+      margin: 0.2em 0 0;
+    }
+
+    p {
       font-family: 'VT323', monospace;
-      font-size: 1.6em; color: #444;
-      margin: .4em 0 0; z-index: 1;
+      font-size: 1.5em;
+      color: #444;
     }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.1em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+      font-family: 'VT323', monospace;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
     #character {
-      width: 62px; height: 62px;
-      image-rendering: pixelated; pointer-events: none;
-      position: relative; z-index: 3; margin-right: 8px;
-      transition: opacity 0s;
-    }
-    #character.absolute {
-      position: absolute !important;
-      transition: left .1s, top .1s;
-      margin-right: 0;
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      image-rendering: pixelated;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
 </head>
-
 <body>
+  <!-- Nền pixel -->
   <div class="background"></div>
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
 
-  <div class="container">
-    <header class="hero">
-      <div class="hero-logo-wrap">
-        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-        <h1 class="hero-logo-text" id="logoText">YattaD</h1>
-      </div>
-      <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
+  <!-- Nội dung trang -->
+  <div class="container" id="text-container">
+    <header>
+      <h1>YattaD</h1>
+      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
+
+    <nav class="menu">
+      <a href="about.html">Giới thiệu</a>
+      <a href="illustrations.html">Minh Họa</a>
+      <a href="concepts.html">Thiết kế</a>
+      <a href="comics.html">Truyện Tranh</a>
+    </nav>
   </div>
 
-  <script>
-    const directions = ["U","L","R"],
-          dirVectors = {"U":[0,-1],"L":[-1,0],"R":[1,0]};
-    let state="idle", direction="", idleFrame=0, moveFrame=0;
-    let character, logoText, heroDesc, posX=0, posY=0, isMoving=false;
-    const frameSize=62;
+  <!-- Nhân vật pixel -->
+  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 
-    function preloadImages(cb) {
-      const folders=["Idle","Walk","Run"],
-            allDirs=["","U","L","R"],
-            counts={Idle:16,Walk:16,Run:8};
-      let loaded=0, total=0;
-      folders.forEach(f => {
-        const dirs = f==="Idle" ? allDirs : directions;
-        total += dirs.length * counts[f];
-        dirs.forEach(d => {
-          for(let i=0;i<counts[f];i++){
-            const frm = f==="Run"?String(i):i.toString().padStart(2,"0");
+  <script>
+    // Trạng thái nhân vật: idle, walk, run
+    let state = "idle";
+    let direction = ""; // "", U, L, R
+    let isMoving = false;
+
+    let idleFrame = 0;
+    let moveFrame = 0;
+
+    const frameSize = 62;
+    const directions = ["", "U", "L", "R"];
+    const dirVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
+    };
+
+    const character = document.getElementById("character");
+    const textContainer = document.getElementById("text-container");
+
+    let posX = window.innerWidth / 2;
+    let posY = window.innerHeight / 2 + 100;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    character.style.width = `${frameSize}px`;
+    character.style.height = `${frameSize}px`;
+
+    function preloadImages(callback) {
+      const folders = ["Idle", "Walk", "Run"];
+      const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
+      let loaded = 0;
+      let total = 0;
+
+      for (const folder of folders) {
+        for (const dir of directions) {
+          const suffix = dir;
+          const prefix = folder + suffix;
+          const count = counts[folder];
+          total += count;
+          for (let i = 0; i < count; i++) {
+            const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
             const img = new Image();
-            img.src = `assets/character/${f}/${f}${d}${frm}.png`;
-            img.onload = img.onerror = () => {
-              if(++loaded === total) cb();
+            img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
+            img.onload = () => {
+              loaded++;
+              if (loaded >= total) callback();
+            };
+            img.onerror = () => {
+              console.warn("Failed to load: ", img.src);
+              loaded++;
+              if (loaded >= total) callback();
             };
           }
-        });
-      });
+        }
+      }
     }
 
     function updateSprite() {
-      const fld = state.charAt(0).toUpperCase() + state.slice(1),
-            base = fld + direction;
-      let idx;
-      if(state==="run") idx = moveFrame % 8;
-      else if(state==="walk") idx = moveFrame % 16;
-      else idx = idleFrame % 16;
-      const frm = state==="run"?String(idx):idx.toString().padStart(2,"0");
-      character.src = `assets/character/${fld}/${base}${frm}.png`;
-    }
+      const folder = state.charAt(0).toUpperCase() + state.slice(1);
+      const baseName = folder + direction;
 
-    function moveCharacterOutOfLogo() {
-      const rect = document.getElementById("logoText").getBoundingClientRect();
-      posX = rect.left - frameSize - 32;
-      posY = rect.top;
-      character.classList.add("absolute");
-      character.style.left = `${posX}px`;
-      character.style.top  = `${posY}px`;
-      document.body.appendChild(character);
-    }
+      let frameIndex, frameStr;
 
-    function autoMoveOutOfLogo(cb) {
-      direction="L"; state="walk"; moveFrame=0; updateSprite();
-      smoothMove(-frameSize,0,cb,"walk");
-    }
-
-    function smoothMove(dx,dy,onFinish,mode) {
-      const frames = mode==="run"?8:16,
-            speed  = mode==="run"?35:70;
-      let i=0, stepX=dx/frames, stepY=dy/frames;
-      (function step(){
-        if(i>=frames) return onFinish?.();
-        posX+=stepX; posY+=stepY;
-        character.style.left=`${posX}px`;
-        character.style.top =`${posY}px`;
-        moveFrame++; updateSprite(); i++;
-        setTimeout(step, speed);
-      })();
-    }
-
-    function checkCollision(dx,dy) {
-      const next = {
-        left: posX+dx, top: posY+dy,
-        right: posX+dx+frameSize,
-        bottom: posY+dy+frameSize
-      },
-      w = window.innerWidth, h = window.innerHeight;
-      return next.left<0||next.top<0||next.right>w||next.bottom>h;
-    }
-
-    function startIdleAnimation(){
-      setInterval(()=>{
-        if(state==="idle"){ idleFrame++; updateSprite(); }
-      }, 200);
-    }
-
-    function scheduleNextAction(){
-      setTimeout(()=>{
-        const c = Math.random(), steps = 1 + Math.floor(Math.random()*3);
-        if(c<0.2){ state="idle"; direction=""; updateSprite(); scheduleNextAction(); }
-        else if(c<0.65) startMove(steps,"walk");
-        else startMove(steps,"run");
-      }, 1000 + Math.random()*2500);
-    }
-
-    function startMove(steps,mode) {
-      if(isMoving) return;
-      isMoving=true;
-      const avail = directions.filter(d=>{
-        const [vx,vy] = dirVectors[d];
-        return !checkCollision(vx*frameSize, vy*frameSize);
-      });
-      if(!avail.length){
-        isMoving=false; state="idle"; updateSprite(); scheduleNextAction();
-        return;
+      if (state === "run") {
+        frameIndex = moveFrame % 8;
+        frameStr = `${frameIndex}`;
+      } else {
+        frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
+        frameStr = frameIndex.toString().padStart(2, "0");
       }
-      direction = avail[Math.floor(Math.random()*avail.length)];
-      state = mode; moveFrame = 1; updateSprite();
-      let count=0, [vx,vy] = dirVectors[direction];
-      (function next(){
-        if(count++>=steps || checkCollision(vx*frameSize, vy*frameSize)){
-          isMoving=false; state="idle"; updateSprite(); scheduleNextAction();
+
+      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+    }
+
+    function checkCollision(dx, dy) {
+      const nextX = posX + dx;
+      const nextY = posY + dy;
+      const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
+      const bounds = { width: window.innerWidth, height: window.innerHeight };
+
+      if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
+
+      const textRect = textContainer.getBoundingClientRect();
+      return !(
+        charRect.right < textRect.left ||
+        charRect.left > textRect.right ||
+        charRect.bottom < textRect.top ||
+        charRect.top > textRect.bottom
+      );
+    }
+
+    function smoothMove(dx, dy, onFinish, mode) {
+      const totalFrames = mode === "run" ? 8 : 16;
+      const speed = mode === "run" ? 35 : 70;
+      let current = 0;
+      const stepX = dx / totalFrames;
+      const stepY = dy / totalFrames;
+
+      function step() {
+        if (current >= totalFrames) { onFinish(); return; }
+        posX += stepX;
+        posY += stepY;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+        moveFrame = current;
+        updateSprite();
+        current++;
+        setTimeout(step, speed);
+      }
+
+      step();
+    }
+
+    function startMove(steps, mode) {
+      if (isMoving) return;
+      isMoving = true;
+      state = mode;
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      moveFrame = 1;
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let stepCount = 0;
+
+      function nextStep() {
+        if (stepCount >= steps) {
+          isMoving = false;
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          scheduleNextAction();
           return;
         }
-        smoothMove(vx*frameSize,vy*frameSize,next,mode);
-      })();
+
+        const dx = vx * frameSize;
+        const dy = vy * frameSize;
+        if (checkCollision(dx, dy)) {
+          isMoving = false;
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          scheduleNextAction();
+          return;
+        }
+
+        moveFrame = 0;
+        smoothMove(dx, dy, nextStep, mode);
+        stepCount++;
+      }
+
+      nextStep();
     }
 
-    window.onload = () => {
-      character = document.getElementById("character");
-      logoText  = document.getElementById("logoText");
-      heroDesc  = document.getElementById("heroDesc");
-      preloadImages(() => {
-        updateSprite(); startIdleAnimation();
-        setTimeout(()=>{
-          moveCharacterOutOfLogo();
-          autoMoveOutOfLogo(()=>scheduleNextAction());
-        }, 3000);
-      });
-    };
+    function scheduleNextAction() {
+      const delay = 1000 + Math.random() * 2500;
+      setTimeout(() => {
+        const chance = Math.random();
+        const steps = 1 + Math.floor(Math.random() * 3);
+        if (chance < 0.2) {
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          scheduleNextAction();
+        } else if (chance < 0.65) {
+          startMove(steps, "walk");
+        } else {
+          startMove(steps, "run");
+        }
+      }, delay);
+    }
+
+    setInterval(() => {
+      if (state === "idle") {
+        idleFrame = (idleFrame + 1) % 16;
+        updateSprite();
+      }
+    }, 200);
+
+    updateSprite();
+    preloadImages(() => {
+      scheduleNextAction();
+    });
   </script>
 </body>
 </html>
