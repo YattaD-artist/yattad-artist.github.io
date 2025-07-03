@@ -8,8 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        html,
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             font-family: 'Be Vietnam Pro', sans-serif;
@@ -83,15 +82,12 @@
         .hero-logo {
             display: flex;
             align-items: flex-end;
-            /* [KHẮC PHỤC] Thay gap bằng margin trên nhân vật để kiểm soát layout tốt hơn */
-            /* gap: 16px; */
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
             transition: transform 1.2s ease-in-out;
             will-change: transform;
             z-index: 2;
-            /* Thêm để đảm bảo text không bị nhảy khi container có width cố định */
             justify-content: flex-start;
         }
 
@@ -102,7 +98,6 @@
         .hero-logo.moved {
             transform: translateX(calc(-50% - 39px));
         }
-
 
         .hero-logo-text {
             font-family: 'Pixelify Sans', sans-serif;
@@ -130,14 +125,12 @@
             top: 0;
             z-index: 3;
             transition: opacity 0.2s;
-            /* [KHẮC PHỤC] Dùng margin thay cho gap */
             margin-right: 16px;
         }
 
         #character.absolute {
             position: absolute !important;
             transition: left 0.1s, top 0.1s;
-            /* Bỏ margin khi đã ra ngoài */
             margin-right: 0;
         }
 
@@ -178,7 +171,6 @@
             </div>
             <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
         </header>
-    }
     </div>
 
     <script>
@@ -291,7 +283,7 @@
         }
         
         function autoMoveOutOfLogo(onFinish) {
-            const forcedDirection = "R";
+            const forcedDirection = "L";  // Di chuyển ngược lại
             const [vx, vy] = dirVectors[forcedDirection];
             state = "walk";
             direction = forcedDirection;
@@ -336,22 +328,14 @@
             }, 200);
         }
 
-        // [KHẮC PHỤC] "Biên đạo" lại toàn bộ chuỗi hành động
         function mainIdleAuto() {
             setTimeout(() => {
-                // 1. Chuẩn bị sân khấu: Di chuyển nhân vật ra khỏi cấu trúc DOM của logo
-                // và khóa chiều rộng của logo để nó không bị co lại gây giật.
                 moveCharacterOutOfLogo();
 
-                // 2. Ra lệnh đồng thời:
-                // a. Nhân vật bắt đầu bước đi một bước.
                 autoMoveOutOfLogo(() => {
-                    // Sau khi bước xong, bắt đầu lịch trình di chuyển tự do.
                     scheduleNextAction();
                 });
 
-                // b. Chữ YattaD bắt đầu trượt vào vị trí.
-                // Một delay cực nhỏ (0-50ms) để trình duyệt "thở" và áp dụng transition mượt mà.
                 setTimeout(() => {
                     heroLogo.classList.add('moved');
                     heroLogo.classList.remove('centered');
