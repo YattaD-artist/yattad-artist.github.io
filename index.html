@@ -99,11 +99,8 @@
     }
 
     .hero-logo #character {
-      position: relative !important;
-      top: unset !important;
-      left: unset !important;
-      visibility: visible;
-    }
+  visibility: visible;
+}
 
     .container header p {
       margin: 0;
@@ -261,6 +258,7 @@
       preloadImages(() => {
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
+          document.body.appendChild(character);
           if (!heading) return;
           const hr = heading.getBoundingClientRect();
           posX = hr.left - 96;
