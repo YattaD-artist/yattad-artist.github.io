@@ -83,7 +83,7 @@
             display: flex;
             align-items: flex-end;
             position: absolute;
-            left: 50%;
+            left: calc(50% - 31px); /* Vị trí khởi đầu của chữ YattaD */
             transform: translateX(-50%);
             transition: transform 1.2s ease-in-out;
             z-index: 2;
@@ -303,7 +303,6 @@
                 moveCharacterOutOfLogo();
 
                 autoMoveOutOfLogo(() => {
-                    // Tính toán lại vị trí logo
                     heroLogo.classList.add('moved');
                     setTimeout(() => {
                         heroLogo.classList.remove('moved'); // Trả về vị trí ban đầu
@@ -377,7 +376,7 @@
             heroDesc = document.getElementById("heroDesc");
             
             setTimeout(() => {
-                heroLogo.style.left = `calc(50% - 31px)`; // Căn chỉnh logo
+                heroLogo.style.left = `calc(50% - 31px)`; // Vị trí khởi đầu của chữ YattaD
                 heroLogo.style.transform = "translateX(-50%)"; // Đảm bảo logo ở giữa
             }, 10);
 
