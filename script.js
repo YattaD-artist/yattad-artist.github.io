@@ -1,9 +1,9 @@
 let state = "idle";
 let direction = "";
 let isMoving = false;
+
 let idleFrame = 0;
 let moveFrame = 0;
-let hasMoved = false;
 
 const frameSize = 62;
 const directions = ["", "U", "L", "R"];
@@ -15,13 +15,16 @@ const dirVectors = {
 };
 
 const character = document.getElementById("character");
-const logoText = document.getElementById("logo-text");
-const logoBlock = document.getElementById("logo-block");
+const menu = document.querySelector(".menu-vertical");
 const textContainer = document.getElementById("text-container");
 
-let posX = window.innerWidth / 2;
-let posY = 100;
-character.style.transform = `translate(0px, 0px)`;
+// Khởi tạo vị trí và ẩn ban đầu
+let posX = 0;
+let posY = 0;
+character.style.visibility = "hidden";
+character.style.position = "absolute";
+character.style.width = `${frameSize}px`;
+character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -48,9 +51,22 @@ function preloadImages(callback) {
 function updateSprite() {
   const folder = state.charAt(0).toUpperCase() + state.slice(1);
   const base = folder + direction;
-  const idx = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
-  const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
+  const idx = state === "run"
+    ? moveFrame % 8
+    : state === "idle"
+      ? idleFrame
+      : moveFrame % 16;
+  const frame = state === "run"
+    ? `${idx}`
+    : idx.toString().padStart(2, "0");
   character.src = `assets/character/${folder}/${base}${frame}.png`;
+}
+
+function rectsOverlap(r1, r2) {
+  return !(r1.right < r2.left ||
+           r1.left > r2.right ||
+           r1.bottom < r2.top ||
+           r1.top > r2.bottom);
 }
 
 function checkCollision(dx, dy) {
@@ -61,18 +77,23 @@ function checkCollision(dx, dy) {
     bottom: posY + dy + frameSize
   };
   const bounds = { width: window.innerWidth, height: window.innerHeight };
-  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height)
+
+  // 1. Không ra khỏi màn hình
+  if (next.left < 0 || next.top < 0 ||
+      next.right > bounds.width || next.bottom > bounds.height) {
     return true;
+  }
 
+  // 2. Không chạm menu
+  const menuRect = menu.getBoundingClientRect();
+  if (rectsOverlap(next, menuRect)) return true;
+
+  // 3. Không chạm phần nội dung chính
   const textRect = textContainer.getBoundingClientRect();
-  const overlap = !(
-    next.right < textRect.left ||
-    next.left > textRect.right ||
-    next.bottom < textRect.top ||
-    next.top > textRect.bottom
-  );
+  if (rectsOverlap(next, textRect)) return true;
 
-  return overlap;
+  // OK
+  return false;
 }
 
 function smoothMove(dx, dy, onFinish, mode) {
@@ -86,7 +107,8 @@ function smoothMove(dx, dy, onFinish, mode) {
     if (i >= frames) return onFinish();
     posX += stepX;
     posY += stepY;
-    character.style.transform = `translate(${posX - window.innerWidth / 2}px, ${posY - 100}px)`;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
     moveFrame = i;
     updateSprite();
     i++;
@@ -125,19 +147,8 @@ function startMove(steps, mode) {
     }
     smoothMove(dx, dy, next, mode);
     count++;
-    if (!hasMoved && Math.abs(posX - window.innerWidth / 2) >= frameSize) {
-      hasMoved = true;
-      detachLogoText();
-    }
   }
   next();
-}
-
-function detachLogoText() {
-  logoBlock.removeChild(character);
-  logoText.style.position = "absolute";
-  logoText.style.left = "50%";
-  logoText.style.transform = "translateX(-50%)";
 }
 
 function scheduleNextAction() {
@@ -154,9 +165,10 @@ function scheduleNextAction() {
     } else {
       startMove(steps, "run");
     }
-  }, 3000);
+  }, 1000 + Math.random() * 2500);
 }
 
+// Idle animation
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -164,9 +176,18 @@ setInterval(() => {
   }
 }, 200);
 
+// Khi trang & sprite đã sẵn sàng
 window.onload = () => {
-  preloadImages(() => {
-    updateSprite();
-    scheduleNextAction();
-  });
+  // Tính vị trí khởi đầu: cách trái chữ YattaD 96px
+  const heading = document.querySelector("h1");
+  const hr = heading.getBoundingClientRect();
+  posX = hr.left - 96;
+  posY = hr.top;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.visibility = "visible";
+
+  updateSprite();
+  preloadImages(scheduleNextAction);
 };
