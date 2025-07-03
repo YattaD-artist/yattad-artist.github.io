@@ -1,4 +1,3 @@
-/* Font import */
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
@@ -11,19 +10,7 @@ html, body {
   overflow: hidden;
   height: 100%;
   width: 100%;
-}
-
-/* Nền pixel */
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('assets/Dat.png');
-  background-size: 98px 98px;
-  opacity: 0.3;
-  z-index: 0;
+  display: flex;
 }
 
 /* Menu dọc bên trái */
@@ -51,50 +38,54 @@ html, body {
   color: #4e5ba6;
 }
 
-/* Container dòng chào mừng */
+/* Container giữa */
 .container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto;
   text-align: center;
   z-index: 2;
-  max-width: 90%;
-  pointer-events: none;
 }
 
-.container p {
-  font-family: 'VT323', monospace;
-  font-size: 1.8em;
-  color: #444;
-  margin: 0;
-  line-height: 1.4em;
+/* Khối giới thiệu */
+.intro-block {
+  margin-top: 120px;
 }
 
-/* Nhóm logo + nhân vật */
-#logo-row {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: flex-end;
-  gap: 96px;
-  z-index: 2;
-}
-
-/* Chữ YattaD */
-#logo-text {
+h1 {
   font-family: 'Pixelify Sans', sans-serif;
-  font-size: 3.8em;
-  margin: 0;
+  font-size: 3em;
+  margin: 0.2em 0 0;
+  transition: transform 1s ease;
+}
+
+h1.centered {
+  transform: translateX(0);
+}
+
+p {
+  font-family: 'VT323', monospace;
+  font-size: 1.6em;
+  color: #444;
+  margin-top: 0.4em;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('assets/Dat.png');
+  background-size: 98px 98px;
+  opacity: 0.3;
+  z-index: 0;
 }
 
 /* Nhân vật pixel */
 #character {
+  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
-  pointer-events: none;
   z-index: 1;
+  pointer-events: none;
 }
