@@ -1,128 +1,171 @@
-let state="idle", direction="", isMoving=false, hasMoved=false;
-let idleFrame=0, moveFrame=0;
-const frameSize=62;
-const directions=["","U","L","R"];
-const dirVectors={"":[0,1],"U":[0,-1],"L":[-1,0],"R":[1,0]};
-const character=document.getElementById("character");
-const logoText=document.getElementById("logo-text");
-const logoBlock=document.getElementById("logo-block");
-let posX=0, posY=0;
+let state = "idle";
+let direction = "";
+let isMoving = false;
+let idleFrame = 0;
+let moveFrame = 0;
+let hasMoved = false;
 
-// Preload sprite images
-function preloadImages(callback){
-  const folders=["Idle","Walk","Run"];
-  const counts={Idle:16,Walk:16,Run:8};
-  let loaded=0, total=0;
-  folders.forEach(f=>{
-    directions.forEach(d=>{
-      total+=counts[f];
-      for(let i=0;i<counts[f];i++){
-        const frameStr=f==="Run"?`${i}`:i.toString().padStart(2,"0");
-        const img=new Image();
-        img.src=`assets/character/${f}${d}/${f}${d}${frameStr}.png`;
-        img.onload=img.onerror=()=>{
-          if(++loaded===total) callback();
-        }
+const frameSize = 62;
+const directions = ["", "U", "L", "R"];
+const dirVectors = {
+  "": [0, 1],
+  "U": [0, -1],
+  "L": [-1, 0],
+  "R": [1, 0]
+};
+
+const character = document.getElementById("character");
+const logoText = document.getElementById("logo-text");
+const logoBlock = document.getElementById("logo-block");
+const textContainer = document.getElementById("text-container");
+
+let posX = window.innerWidth / 2;
+let posY = 100;
+character.style.transform = `translate(0px, 0px)`;
+
+function preloadImages(callback) {
+  const folders = ["Idle", "Walk", "Run"];
+  const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
+  let loaded = 0, total = 0;
+
+  folders.forEach(folder => {
+    directions.forEach(dir => {
+      const prefix = folder + dir;
+      total += counts[folder];
+      for (let i = 0; i < counts[folder]; i++) {
+        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
+        const img = new Image();
+        img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
+        img.onload = img.onerror = () => {
+          loaded++;
+          if (loaded === total) callback();
+        };
       }
     });
   });
 }
 
-// Cập nhật sprite theo state
-function updateSprite(){
-  const folder=state.charAt(0).toUpperCase()+state.slice(1);
-  const base=folder+direction;
-  const idx=state==="run"?moveFrame%8:state==="idle"?idleFrame:moveFrame%16;
-  const frame=state==="run"?`${idx}`:idx.toString().padStart(2,"0");
-  character.src=`assets/character/${folder}${direction}/${base}${frame}.png`;
+function updateSprite() {
+  const folder = state.charAt(0).toUpperCase() + state.slice(1);
+  const base = folder + direction;
+  const idx = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+  const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
+  character.src = `assets/character/${folder}/${base}${frame}.png`;
 }
 
-// Kiểm tra va chạm hộp chữ + menu + logo
-function rectsOverlap(r1,r2){
-  return !(r1.right<r2.left||r1.left>r2.right||r1.bottom<r2.top||r1.top>r2.bottom);
-}
-function checkCollision(dx,dy){
-  const next={left:posX+dx,top:posY+dy,right:posX+dx+frameSize,bottom:posY+dy+frameSize};
-  const b={width:window.innerWidth,height:window.innerHeight};
-  if(next.left<0||next.top<0||next.right>b.width||next.bottom>b.height)return true;
-  if(rectsOverlap(next,document.querySelector(".menu-vertical").getBoundingClientRect()))return true;
-  if(rectsOverlap(next,logoText.getBoundingClientRect()))return true;
-  return false;
+function checkCollision(dx, dy) {
+  const next = {
+    left: posX + dx,
+    top: posY + dy,
+    right: posX + dx + frameSize,
+    bottom: posY + dy + frameSize
+  };
+  const bounds = { width: window.innerWidth, height: window.innerHeight };
+  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height)
+    return true;
+
+  const textRect = textContainer.getBoundingClientRect();
+  const overlap = !(
+    next.right < textRect.left ||
+    next.left > textRect.right ||
+    next.bottom < textRect.top ||
+    next.top > textRect.bottom
+  );
+
+  return overlap;
 }
 
-// Di chuyển mượt từng step
-function smoothMove(dx,dy,onFinish,mode){
-  const frames=mode==="run"?8:16, speed=mode==="run"?35:70;
-  let i=0,stepX=dx/frames,stepY=dy/frames;
-  function step(){
-    if(i>=frames)return onFinish();
-    posX+=stepX; posY+=stepY;
-    character.style.transform=`translate(${posX}px,${posY}px)`;
-    moveFrame=i++;
+function smoothMove(dx, dy, onFinish, mode) {
+  const frames = mode === "run" ? 8 : 16;
+  const speed = mode === "run" ? 35 : 70;
+  let i = 0;
+  const stepX = dx / frames;
+  const stepY = dy / frames;
+
+  function step() {
+    if (i >= frames) return onFinish();
+    posX += stepX;
+    posY += stepY;
+    character.style.transform = `translate(${posX - window.innerWidth / 2}px, ${posY - 100}px)`;
+    moveFrame = i;
     updateSprite();
-    setTimeout(step,speed);
+    i++;
+    setTimeout(step, speed);
   }
   step();
 }
 
-// Bắt đầu hành động
-function startMove(steps,mode){
-  if(isMoving)return;
-  isMoving=true;
-  state=mode;
-  direction=directions[Math.floor(Math.random()*directions.length)];
-  moveFrame=1; updateSprite();
-  const [vx,vy]=dirVectors[direction];
-  let count=0;
-  function next(){
-    if(count>=steps){
-      isMoving=false; state="idle"; idleFrame=0; updateSprite();
+function startMove(steps, mode) {
+  if (isMoving) return;
+  isMoving = true;
+  state = mode;
+  direction = directions[Math.floor(Math.random() * directions.length)];
+  moveFrame = 1;
+  updateSprite();
+
+  const [vx, vy] = dirVectors[direction];
+  let count = 0;
+
+  function next() {
+    if (count >= steps) {
+      isMoving = false;
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
       return scheduleNextAction();
     }
-    const dx=vx*frameSize,dy=vy*frameSize;
-    if(checkCollision(dx,dy)){
-      isMoving=false;state="idle";idleFrame=0;updateSprite();
+    const dx = vx * frameSize;
+    const dy = vy * frameSize;
+    if (checkCollision(dx, dy)) {
+      isMoving = false;
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
       return scheduleNextAction();
     }
-    smoothMove(dx,dy,next,mode);
+    smoothMove(dx, dy, next, mode);
     count++;
-    if(!hasMoved&&Math.abs(posX)>frameSize){
-      hasMoved=true;
-      logoBlock.style.left="50%"; // Khi nhân vật cách 1 ô, logo-text sẽ căn giữa
+    if (!hasMoved && Math.abs(posX - window.innerWidth / 2) >= frameSize) {
+      hasMoved = true;
+      detachLogoText();
     }
   }
   next();
 }
 
-// Lên lịch hành động tiếp theo
-function scheduleNextAction(){
-  setTimeout(()=>{
-    const chance=Math.random(),steps=1+Math.floor(Math.random()*3);
-    if(chance<0.2){
-      state="idle";idleFrame=0;updateSprite();scheduleNextAction();
-    } else if(chance<0.65){
-      startMove(steps,"walk");
-    } else startMove(steps,"run");
-  },3000); // Khởi động sau 3s
+function detachLogoText() {
+  logoBlock.removeChild(character);
+  logoText.style.position = "absolute";
+  logoText.style.left = "50%";
+  logoText.style.transform = "translateX(-50%)";
 }
 
-// Idle frame cycling
-setInterval(()=>{
-  if(state==="idle"){
-    idleFrame=(idleFrame+1)%16;
+function scheduleNextAction() {
+  setTimeout(() => {
+    const chance = Math.random();
+    const steps = 1 + Math.floor(Math.random() * 3);
+    if (chance < 0.2) {
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
+    } else if (chance < 0.65) {
+      startMove(steps, "walk");
+    } else {
+      startMove(steps, "run");
+    }
+  }, 3000);
+}
+
+setInterval(() => {
+  if (state === "idle") {
+    idleFrame = (idleFrame + 1) % 16;
     updateSprite();
   }
-},200);
+}, 200);
 
-// Thực thi khi load xong
-window.onload=()=>{
-  preloadImages(()=>{
-    // Đặt nhân vật sát bên trái chữ logo
-    const rect=logoText.getBoundingClientRect();
-    posX=rect.left-frameSize-16;
-    posY=rect.top;
-    character.style.transform=`translate(${posX}px,${posY}px)`;
-    character.style.visibility="visible";
+window.onload = () => {
+  preloadImages(() => {
     updateSprite();
     scheduleNextAction();
   });
