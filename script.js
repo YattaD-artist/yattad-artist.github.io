@@ -1,29 +1,148 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YattaD</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <div class="background"></div>
+let state = "idle", direction = "", isMoving = false;
+let idleFrame = 0, moveFrame = 0;
 
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
+const frameSize = 62;
+const directions = ["", "U", "L", "R"];
+const dirVectors = { "": [0, 1], "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
 
-  <div class="container" id="text-container">
-    <header>
-      <h1>YattaD</h1>
-      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
-  </div>
+const character = document.getElementById("character");
+const menu = document.querySelector(".menu-vertical");
+let headingBox;
 
-  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
-</body>
-</html>
+let posX = 0, posY = 0;
+character.style.visibility = "hidden";
+character.style.position = "absolute";
+character.style.width = character.style.height = `${frameSize}px`;
+
+function preloadImages(callback) {
+  const folders = ["Idle", "Walk", "Run"];
+  const counts = { Idle: 16, Walk: 16, Run: 8 };
+  let loaded = 0, total = folders.length * directions.length * 16;
+
+  folders.forEach(folder => {
+    directions.forEach(dir => {
+      const prefix = folder + dir;
+      for (let i = 0; i < counts[folder]; i++) {
+        const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
+        const img = new Image();
+        img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
+        img.onload = img.onerror = () => ++loaded === total && callback();
+      }
+    });
+  });
+}
+
+function updateSprite() {
+  const folder = state.charAt(0).toUpperCase() + state.slice(1);
+  const base = folder + direction;
+  const idx = state === "run" ? moveFrame % 8 : state === "idle" ? idleFrame : moveFrame % 16;
+  const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
+  character.src = `assets/character/${folder}/${base}${frame}.png`;
+}
+
+function rectsOverlap(r1, r2) {
+  return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+}
+
+function checkCollision(dx, dy) {
+  const next = {
+    left: posX + dx, top: posY + dy,
+    right: posX + dx + frameSize, bottom: posY + dy + frameSize
+  };
+
+  const bounds = { width: window.innerWidth, height: window.innerHeight };
+  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+  if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
+  if (rectsOverlap(next, headingBox)) return true;
+  return false;
+}
+
+function smoothMove(dx, dy, onFinish, mode) {
+  const frames = mode === "run" ? 8 : 16;
+  const speed = mode === "run" ? 35 : 70;
+  let i = 0;
+  const stepX = dx / frames, stepY = dy / frames;
+
+  function step() {
+    if (i >= frames) return onFinish();
+    posX += stepX;
+    posY += stepY;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    moveFrame = i++;
+    updateSprite();
+    setTimeout(step, speed);
+  }
+  step();
+}
+
+function startMove(steps, mode) {
+  if (isMoving) return;
+  isMoving = true;
+  state = mode;
+  direction = directions[Math.floor(Math.random() * directions.length)];
+  moveFrame = 1;
+  updateSprite();
+
+  const [vx, vy] = dirVectors[direction];
+  let count = 0;
+
+  function next() {
+    if (count++ >= steps) {
+      isMoving = false;
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      return scheduleNextAction();
+    }
+
+    const dx = vx * frameSize, dy = vy * frameSize;
+    if (checkCollision(dx, dy)) {
+      isMoving = false;
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      return scheduleNextAction();
+    }
+    smoothMove(dx, dy, next, mode);
+  }
+  next();
+}
+
+function scheduleNextAction() {
+  setTimeout(() => {
+    const chance = Math.random(), steps = 1 + Math.floor(Math.random() * 3);
+    if (chance < 0.2) {
+      state = "idle";
+      idleFrame = 0;
+      updateSprite();
+      scheduleNextAction();
+    } else if (chance < 0.65) {
+      startMove(steps, "walk");
+    } else {
+      startMove(steps, "run");
+    }
+  }, 1000 + Math.random() * 2500);
+}
+
+setInterval(() => {
+  if (state === "idle") {
+    idleFrame = (idleFrame + 1) % 16;
+    updateSprite();
+  }
+}, 200);
+
+window.onload = () => {
+  const heading = document.querySelector("h1");
+  const hr = heading.getBoundingClientRect();
+  posX = hr.left - 96;
+  posY = hr.bottom - frameSize;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.visibility = "visible";
+  updateSprite();
+
+  headingBox = heading.getBoundingClientRect();
+  preloadImages(scheduleNextAction);
+};
