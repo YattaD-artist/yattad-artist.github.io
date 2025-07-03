@@ -1,6 +1,7 @@
 let state = "idle";
 let direction = "";
 let isMoving = false;
+let hasMoved = false;
 
 let idleFrame = 0;
 let moveFrame = 0;
@@ -16,11 +17,15 @@ const dirVectors = {
 
 const character = document.getElementById("character");
 const menu = document.querySelector(".menu-vertical");
-const logoText = document.getElementById("logo-text");
-const logoRow = document.getElementById("logo-row");
+const heading = document.getElementById("title-heading");
+const textContainer = document.getElementById("text-container");
 
 let posX = 0;
 let posY = 0;
+character.style.visibility = "hidden";
+character.style.position = "absolute";
+character.style.width = `${frameSize}px`;
+character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
@@ -72,15 +77,16 @@ function checkCollision(dx, dy) {
     right: posX + dx + frameSize,
     bottom: posY + dy + frameSize
   };
-
   const bounds = { width: window.innerWidth, height: window.innerHeight };
+
   if (next.left < 0 || next.top < 0 ||
-      next.right > bounds.width || next.bottom > bounds.height) {
-    return true;
-  }
+      next.right > bounds.width || next.bottom > bounds.height) return true;
 
   const menuRect = menu.getBoundingClientRect();
   if (rectsOverlap(next, menuRect)) return true;
+
+  const titleRect = heading.getBoundingClientRect();
+  if (rectsOverlap(next, titleRect)) return true;
 
   return false;
 }
@@ -96,7 +102,8 @@ function smoothMove(dx, dy, onFinish, mode) {
     if (i >= frames) return onFinish();
     posX += stepX;
     posY += stepY;
-    character.style.transform = `translate(${posX}px, ${posY}px)`;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
     moveFrame = i;
     updateSprite();
     i++;
@@ -116,23 +123,31 @@ function startMove(steps, mode) {
   const [vx, vy] = dirVectors[direction];
   let count = 0;
 
+  if (!hasMoved) {
+    hasMoved = true;
+    centerTitle(); // Trigger slide-in effect
+  }
+
   function next() {
     if (count >= steps) {
       isMoving = false;
       state = "idle";
       idleFrame = 0;
       updateSprite();
-      return realignLogo();
+      return scheduleNextAction();
     }
+
     const dx = vx * frameSize;
     const dy = vy * frameSize;
+
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
       idleFrame = 0;
       updateSprite();
-      return realignLogo();
+      return scheduleNextAction();
     }
+
     smoothMove(dx, dy, next, mode);
     count++;
   }
@@ -156,18 +171,11 @@ function scheduleNextAction() {
   }, 1000 + Math.random() * 2500);
 }
 
-// Cân chỉnh lại logo sau khi nhân vật rời đi
-function realignLogo() {
-  logoRow.style.justifyContent = "center";
-  logoRow.style.gap = "0px";
-  logoText.style.transition = "transform 0.8s ease";
-  character.style.opacity = "0";
-  setTimeout(() => {
-    scheduleNextAction();
-  }, 1500);
+// Chuyển tiêu đề về giữa sau khi nhân vật di chuyển
+function centerTitle() {
+  heading.style.transform = `translateX(${window.innerWidth / 2 - heading.getBoundingClientRect().left - heading.offsetWidth / 2}px)`;
 }
 
-// Idle animation
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -175,13 +183,15 @@ setInterval(() => {
   }
 }, 200);
 
-// Vị trí khởi đầu
 window.onload = () => {
-  const logoRect = logoRow.getBoundingClientRect();
-  posX = 0;
-  posY = 0;
-  character.style.transform = `translate(${posX}px, ${posY}px)`;
-  character.style.opacity = "1";
+  const hr = heading.getBoundingClientRect();
+  posX = hr.left - 96;
+  posY = hr.bottom + 8;
+
+  character.style.left = `${posX}px`;
+  character.style.top = `${posY}px`;
+  character.style.visibility = "visible";
+
   updateSprite();
   preloadImages(scheduleNextAction);
 };
