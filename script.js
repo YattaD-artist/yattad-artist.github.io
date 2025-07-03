@@ -1,47 +1,32 @@
-let state = "idle";
-let direction = "";
-let isMoving = false;
-
-let idleFrame = 0;
-let moveFrame = 0;
+let state = "idle", direction = "", isMoving = false;
+let idleFrame = 0, moveFrame = 0;
 
 const frameSize = 62;
 const directions = ["", "U", "L", "R"];
-const dirVectors = {
-  "": [0, 1],
-  "U": [0, -1],
-  "L": [-1, 0],
-  "R": [1, 0]
-};
+const dirVectors = { "": [0, 1], "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
 
 const character = document.getElementById("character");
 const menu = document.querySelector(".menu-vertical");
-const textContainer = document.getElementById("text-container");
+let headingBox;
 
-let posX = 0;
-let posY = 0;
+let posX = 0, posY = 0;
 character.style.visibility = "hidden";
 character.style.position = "absolute";
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
+character.style.width = character.style.height = `${frameSize}px`;
 
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
-  const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-  let loaded = 0, total = 0;
+  const counts = { Idle: 16, Walk: 16, Run: 8 };
+  let loaded = 0, total = folders.length * directions.length * 16;
 
   folders.forEach(folder => {
     directions.forEach(dir => {
       const prefix = folder + dir;
-      total += counts[folder];
       for (let i = 0; i < counts[folder]; i++) {
         const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
         const img = new Image();
         img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-        img.onload = img.onerror = () => {
-          loaded++;
-          if (loaded === total) callback();
-        };
+        img.onload = img.onerror = () => ++loaded === total && callback();
       }
     });
   });
@@ -61,19 +46,14 @@ function rectsOverlap(r1, r2) {
 
 function checkCollision(dx, dy) {
   const next = {
-    left: posX + dx,
-    top: posY + dy,
-    right: posX + dx + frameSize,
-    bottom: posY + dy + frameSize
+    left: posX + dx, top: posY + dy,
+    right: posX + dx + frameSize, bottom: posY + dy + frameSize
   };
 
   const bounds = { width: window.innerWidth, height: window.innerHeight };
-  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height)
-    return true;
-
+  if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
   if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
-  if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
-
+  if (rectsOverlap(next, headingBox)) return true;
   return false;
 }
 
@@ -81,8 +61,7 @@ function smoothMove(dx, dy, onFinish, mode) {
   const frames = mode === "run" ? 8 : 16;
   const speed = mode === "run" ? 35 : 70;
   let i = 0;
-  const stepX = dx / frames;
-  const stepY = dy / frames;
+  const stepX = dx / frames, stepY = dy / frames;
 
   function step() {
     if (i >= frames) return onFinish();
@@ -90,9 +69,8 @@ function smoothMove(dx, dy, onFinish, mode) {
     posY += stepY;
     character.style.left = `${posX}px`;
     character.style.top = `${posY}px`;
-    moveFrame = i;
+    moveFrame = i++;
     updateSprite();
-    i++;
     setTimeout(step, speed);
   }
   step();
@@ -110,15 +88,15 @@ function startMove(steps, mode) {
   let count = 0;
 
   function next() {
-    if (count >= steps) {
+    if (count++ >= steps) {
       isMoving = false;
       state = "idle";
       idleFrame = 0;
       updateSprite();
       return scheduleNextAction();
     }
-    const dx = vx * frameSize;
-    const dy = vy * frameSize;
+
+    const dx = vx * frameSize, dy = vy * frameSize;
     if (checkCollision(dx, dy)) {
       isMoving = false;
       state = "idle";
@@ -127,15 +105,13 @@ function startMove(steps, mode) {
       return scheduleNextAction();
     }
     smoothMove(dx, dy, next, mode);
-    count++;
   }
   next();
 }
 
 function scheduleNextAction() {
   setTimeout(() => {
-    const chance = Math.random();
-    const steps = 1 + Math.floor(Math.random() * 3);
+    const chance = Math.random(), steps = 1 + Math.floor(Math.random() * 3);
     if (chance < 0.2) {
       state = "idle";
       idleFrame = 0;
@@ -165,7 +141,8 @@ window.onload = () => {
   character.style.left = `${posX}px`;
   character.style.top = `${posY}px`;
   character.style.visibility = "visible";
-
   updateSprite();
+
+  headingBox = heading.getBoundingClientRect();
   preloadImages(scheduleNextAction);
 };
