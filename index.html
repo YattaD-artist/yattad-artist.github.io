@@ -83,13 +83,16 @@
         .hero-logo {
             display: flex;
             align-items: flex-end;
-            gap: 16px;
+            /* [KHẮC PHỤC] Thay gap bằng margin trên nhân vật để kiểm soát layout tốt hơn */
+            /* gap: 16px; */
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
             transition: transform 1.2s ease-in-out;
             will-change: transform;
             z-index: 2;
+            /* Thêm để đảm bảo text không bị nhảy khi container có width cố định */
+            justify-content: flex-start;
         }
 
         .hero-logo.centered {
@@ -127,11 +130,15 @@
             top: 0;
             z-index: 3;
             transition: opacity 0.2s;
+            /* [KHẮC PHỤC] Dùng margin thay cho gap */
+            margin-right: 16px;
         }
 
         #character.absolute {
             position: absolute !important;
             transition: left 0.1s, top 0.1s;
+            /* Bỏ margin khi đã ra ngoài */
+            margin-right: 0;
         }
 
         .hidden {
@@ -171,6 +178,7 @@
             </div>
             <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
         </header>
+    }
     </div>
 
     <script>
@@ -181,9 +189,8 @@
         let idleFrame = 0;
         let moveFrame = 0;
         const frameSize = 62;
-        const directions = ["", "U", "L", "R"];
+        const directions = ["U", "L", "R"];
         const dirVectors = {
-            "": [0, 1],
             "U": [0, -1],
             "L": [-1, 0],
             "R": [1, 0]
@@ -191,18 +198,26 @@
 
         let character, heroLogo, logoText, heroDesc;
         let posX = 0, posY = 0;
-        let heroLogoRect, charRect;
         let isFirstMove = true;
 
         function preloadImages(callback) {
             const folders = ["Idle", "Walk", "Run"];
+            const allDirs = ["", "U", "L", "R"];
             const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
             let loaded = 0;
-            const totalImages = (counts.Idle + counts.Walk + counts.Run) * directions.length;
+            let totalImages = 0;
             let callbackCalled = false;
 
             folders.forEach(folder => {
-                directions.forEach(dir => {
+                const dirsForFolder = folder === 'Idle' ? allDirs : directions;
+                dirsForFolder.forEach(() => {
+                    totalImages += counts[folder];
+                });
+            });
+
+            folders.forEach(folder => {
+                const dirsForFolder = folder === 'Idle' ? allDirs : directions;
+                dirsForFolder.forEach(dir => {
                     const prefix = folder + dir;
                     for (let i = 0; i < counts[folder]; i++) {
                         const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
@@ -224,13 +239,14 @@
             const folder = state.charAt(0).toUpperCase() + state.slice(1);
             const base = folder + direction;
             const idx = state === "run" ? moveFrame % 8 :
-                state === "idle" ? idleFrame :
+                state === "idle" ? idleFrame % 16 :
                 moveFrame % 16;
             const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
-            character.src = `assets/character/${folder}/${base}${frame}.png`;
+            if (character) character.src = `assets/character/${folder}/${base}${frame}.png`;
         }
 
         function rectsOverlap(r1, r2) {
+            if (!r1 || !r2) return false;
             return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
         }
 
@@ -247,13 +263,11 @@
 
             let curHeroLogoRect = heroLogo.getBoundingClientRect();
             let curHeroDescRect = heroDesc.getBoundingClientRect();
-
             if (rectsOverlap(next, curHeroLogoRect)) return true;
             if (rectsOverlap(next, curHeroDescRect)) return true;
 
             return false;
         }
-
 
         function smoothMove(dx, dy, onFinish, mode) {
             const frames = mode === "run" ? 8 : 16;
@@ -275,43 +289,20 @@
             }
             step();
         }
-
+        
         function autoMoveOutOfLogo(onFinish) {
-            let logoRect = heroLogo.getBoundingClientRect();
-            let charRect = character.getBoundingClientRect();
-            posX = charRect.left;
-            posY = charRect.top;
-            
-            let tryDirections = ["R", "L"];
-
-            function tryMove(dirIndex) {
-                if (dirIndex >= tryDirections.length) {
-                    if (onFinish) onFinish();
-                    return;
-                }
-                let dir = tryDirections[dirIndex];
-                let [vx, vy] = dirVectors[dir];
-                
-                let nextCharRect = { ...charRect, left: charRect.left + vx, right: charRect.right + vx };
-
-                if (!rectsOverlap(nextCharRect, logoRect)) {
-                     state = "walk";
-                    direction = dir;
-                    moveFrame = 1;
-                    updateSprite();
-                    smoothMove(vx * frameSize, vy * frameSize, () => {
-                         if (onFinish) onFinish();
-                    }, "walk");
-                } else {
-                     tryMove(dirIndex + 1);
-                }
-            }
-            tryMove(0);
+            const forcedDirection = "R";
+            const [vx, vy] = dirVectors[forcedDirection];
+            state = "walk";
+            direction = forcedDirection;
+            moveFrame = 1;
+            updateSprite();
+            smoothMove(vx * frameSize, vy * frameSize, onFinish, "walk");
         }
 
         function setLogoAndCharacterInitPos() {
             const descRect = heroDesc.getBoundingClientRect();
-            heroLogoRect = heroLogo.getBoundingClientRect();
+            const heroLogoRect = heroLogo.getBoundingClientRect();
             const margin = 18;
             const wrapRect = document.querySelector('.hero-logo-wrap').getBoundingClientRect();
             const logoHeight = heroLogoRect.height;
@@ -323,7 +314,6 @@
         }
 
         function moveCharacterOutOfLogo() {
-            // [KHẮC PHỤC] Đo và gán chiều rộng cố định cho logo TRƯỚC KHI di chuyển nhân vật
             const currentLogoWidth = heroLogo.getBoundingClientRect().width;
             heroLogo.style.width = `${currentLogoWidth}px`;
             
@@ -340,25 +330,33 @@
         function startIdleAnimation() {
             setInterval(() => {
                 if (state === "idle") {
-                    idleFrame = (idleFrame + 1) % 16;
+                    idleFrame++;
                     updateSprite();
                 }
             }, 200);
         }
 
+        // [KHẮC PHỤC] "Biên đạo" lại toàn bộ chuỗi hành động
         function mainIdleAuto() {
             setTimeout(() => {
+                // 1. Chuẩn bị sân khấu: Di chuyển nhân vật ra khỏi cấu trúc DOM của logo
+                // và khóa chiều rộng của logo để nó không bị co lại gây giật.
                 moveCharacterOutOfLogo();
-                autoMoveOutOfLogo(() => {
-                    setTimeout(() => {
-                        heroLogo.classList.add('moved');
-                        heroLogo.classList.remove('centered');
-                    }, 100);
 
-                    setTimeout(() => {
-                        scheduleNextAction();
-                    }, 800);
+                // 2. Ra lệnh đồng thời:
+                // a. Nhân vật bắt đầu bước đi một bước.
+                autoMoveOutOfLogo(() => {
+                    // Sau khi bước xong, bắt đầu lịch trình di chuyển tự do.
+                    scheduleNextAction();
                 });
+
+                // b. Chữ YattaD bắt đầu trượt vào vị trí.
+                // Một delay cực nhỏ (0-50ms) để trình duyệt "thở" và áp dụng transition mượt mà.
+                setTimeout(() => {
+                    heroLogo.classList.add('moved');
+                    heroLogo.classList.remove('centered');
+                }, 50);
+
             }, 3000);
         }
 
@@ -368,7 +366,7 @@
                 const steps = 1 + Math.floor(Math.random() * 3);
                 if (chance < 0.2) {
                     state = "idle";
-                    idleFrame = 0;
+                    direction = "";
                     updateSprite();
                     scheduleNextAction();
                 } else if (chance < 0.65) {
@@ -387,7 +385,6 @@
             if (isFirstMove) {
                 const preferredDirs = ["L", "U"];
                 availableDirs = preferredDirs.filter(dir => {
-                    if (!dir) return false;
                     let [vx, vy] = dirVectors[dir];
                     return !checkCollision(vx * frameSize, vy * frameSize);
                 });
@@ -397,20 +394,17 @@
                         return !checkCollision(vx * frameSize, vy * frameSize);
                     });
                 }
-                isFirstMove = false;
             } else {
-                 availableDirs = ["L", "U", "R"].filter(dir => {
-                    if (!dir) return false;
+                 availableDirs = directions.filter(dir => {
                     let [vx, vy] = dirVectors[dir];
                     return !checkCollision(vx * frameSize, vy * frameSize);
                 });
             }
 
-
             if (availableDirs.length === 0) {
                 isMoving = false;
                 state = "idle";
-                idleFrame = 0;
+                direction = "";
                 updateSprite();
                 scheduleNextAction();
                 return;
@@ -424,9 +418,10 @@
 
             function next() {
                 if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
+                    if (isFirstMove) isFirstMove = false;
                     isMoving = false;
                     state = "idle";
-                    idleFrame = 0;
+                    direction = "";
                     updateSprite();
                     scheduleNextAction();
                     return;
@@ -448,6 +443,7 @@
             }, 10);
 
             preloadImages(() => {
+                direction = "";
                 updateSprite();
                 startIdleAnimation();
                 mainIdleAuto();
