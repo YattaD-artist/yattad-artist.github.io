@@ -11,124 +11,292 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-#logo-wrapper {
-  display: flex;
-  justify-content: center;
-  transition: justify-content 0.6s ease;
-}
-#logo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-#brand {
-  transition: margin-left 0.6s ease;
-}
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Be Vietnam Pro', sans-serif;
-  background-color: #f8f8ff;
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.menu-vertical {
-  position: fixed;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 3;
-}
-.menu-vertical a {
-  text-decoration: none;
-  color: #334;
-  font-size: 1.3em;
-  font-family: 'VT323', monospace;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-.menu-vertical a:hover {
-  transform: scale(1.1);
-  color: #4e5ba6;
-}
-.container {
-  margin: auto;
-  text-align: center;
-  z-index: 2;
-}
-h1 {
-  font-family: 'Pixelify Sans', sans-serif;
-  font-size: 3em;
-  margin: 0;
-}
-p {
-  font-family: 'VT323', monospace;
-  font-size: 1.6em;
-  color: #444;
-  margin-top: 0.4em;
-}
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('assets/Dat.png');
-  background-size: 98px 98px;
-  opacity: 0.3;
-  z-index: 0;
-}
-#character {
-  width: 62px;
-  height: 62px;
-  image-rendering: pixelated;
-  pointer-events: none;
-}
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.hero-logo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  position: relative;
-}
-.hero-logo #character {
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #f8f8ff;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      display: flex;
+    }
+
+    .menu-vertical {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 3;
+    }
+
+    .menu-vertical a {
+      text-decoration: none;
+      color: #334;
+      font-size: 1.3em;
+      font-family: 'VT323', monospace;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .menu-vertical a:hover {
+      transform: scale(1.1);
+      color: #4e5ba6;
+    }
+
+    .container {
+      margin: auto;
+      text-align: center;
+      z-index: 2;
+    }
+
+    h1 {
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 3em;
+      margin: 0;
+    }
+
+    p {
+      font-family: 'VT323', monospace;
+      font-size: 1.6em;
+      color: #444;
+      margin-top: 0.4em;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    #character {
+      width: 62px;
+      height: 62px;
+      image-rendering: pixelated;
+      pointer-events: none;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-logo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .hero-logo #character {
   visibility: visible;
 }
-.container header p {
-  margin: 0;
-}
+
+    .container header p {
+      margin: 0;
+    }
   </style>
 
   <script>
-  // JavaScript được thêm ở đây (đã có trong bước trước)
+    let state = "idle";
+    let direction = "";
+    let isMoving = false;
+    let idleFrame = 0;
+    let moveFrame = 0;
+    const frameSize = 62;
+
+    const directions = ["", "U", "L", "R"];
+    const dirVectors = {
+      "": [0, 1],
+      "U": [0, -1],
+      "L": [-1, 0],
+      "R": [1, 0]
+    };
+
+    let character, menu, textContainer;
+    let posX = 0, posY = 0;
+
+    function preloadImages(callback) {
+      const folders = ["Idle", "Walk", "Run"];
+      const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
+      let loaded = 0, total = 0;
+
+      folders.forEach(folder => {
+        directions.forEach(dir => {
+          const prefix = folder + dir;
+          total += counts[folder];
+          for (let i = 0; i < counts[folder]; i++) {
+            const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
+            const img = new Image();
+            img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
+            img.onload = img.onerror = () => {
+              if (++loaded === total) callback();
+            };
+          }
+        });
+      });
+    }
+
+    function updateSprite() {
+      if (!character) return;
+      const folder = state.charAt(0).toUpperCase() + state.slice(1);
+      const base = folder + direction;
+      const idx = state === "run" ? moveFrame % 8 :
+                  state === "idle" ? idleFrame :
+                  moveFrame % 16;
+      const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
+      character.src = `assets/character/${folder}/${base}${frame}.png`;
+    }
+
+    function rectsOverlap(r1, r2) {
+      return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+    }
+
+    function checkCollision(dx, dy) {
+      const next = {
+        left: posX + dx,
+        top: posY + dy,
+        right: posX + dx + frameSize,
+        bottom: posY + dy + frameSize
+      };
+      const bounds = { width: window.innerWidth, height: window.innerHeight };
+      if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+      if (menu && rectsOverlap(next, menu.getBoundingClientRect())) return true;
+      const logo = document.querySelector(".hero-logo");
+      if (logo && rectsOverlap(next, logo.getBoundingClientRect())) return true;
+      return false;
+    }
+
+    function smoothMove(dx, dy, onFinish, mode) {
+      const frames = mode === "run" ? 8 : 16;
+      const speed = mode === "run" ? 35 : 70;
+      let i = 0, stepX = dx / frames, stepY = dy / frames;
+
+      function step() {
+        if (i >= frames) return onFinish();
+        posX += stepX;
+        posY += stepY;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
+        moveFrame = i;
+        updateSprite();
+        i++;
+        setTimeout(step, speed);
+      }
+      step();
+    }
+
+    function startMove(steps, mode) {
+      if (isMoving) return;
+      isMoving = true;
+      state = mode;
+      direction = directions[Math.floor(Math.random() * directions.length)];
+      moveFrame = 1;
+      updateSprite();
+
+      const [vx, vy] = dirVectors[direction];
+      let count = 0;
+
+      function next() {
+        if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
+          isMoving = false;
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          return scheduleNextAction();
+          document.getElementById("text-container").style.visibility = "visible";
+        }
+        smoothMove(vx * frameSize, vy * frameSize, next, mode);
+        count++;
+      }
+      next();
+    }
+
+    function scheduleNextAction() {
+      setTimeout(() => {
+        const chance = Math.random();
+        const steps = 1 + Math.floor(Math.random() * 3);
+        if (chance < 0.2) {
+          state = "idle";
+          idleFrame = 0;
+          updateSprite();
+          scheduleNextAction();
+        } else if (chance < 0.65) {
+          startMove(steps, "walk");
+        } else {
+          startMove(steps, "run");
+        }
+      }, 1000 + Math.random() * 2500);
+    }
+
+    setInterval(() => {
+      if (state === "idle") {
+        idleFrame = (idleFrame + 1) % 16;
+        updateSprite();
+      }
+    }, 200);
+
+    window.onload = () => {
+      character = document.getElementById("character");
+      menu = document.querySelector(".menu-vertical");
+      textContainer = document.getElementById("text-container");
+
+      if (!character) return;
+      character.style.width = `${frameSize}px`;
+      character.style.height = `${frameSize}px`;
+      updateSprite();
+
+      preloadImages(() => {
+        setTimeout(() => {
+          const heading = document.querySelector(".hero-logo h1");
+document.body.appendChild(character);
+// Ép reflow để chữ YattaD căn giữa lại khi nhân vật rời khỏi logo
+const logo = document.querySelector(".hero-logo");
+logo.offsetWidth; // Force reflow
+logo.style.justifyContent = "center";
+          if (!heading) return;
+          const hr = heading.getBoundingClientRect();
+          posX = hr.left - 96;
+          posY = hr.top;
+
+          character.style.position = "absolute";
+          character.style.left = `${posX}px`;
+          character.style.top = `${posY}px`;
+          character.style.zIndex = 1;
+
+          updateSprite();
+          scheduleNextAction();
+        }, 3000);
+      });
+    };
   </script>
 </head>
+
 <body>
   <div class="background"></div>
+
   <nav class="menu-vertical">
     <a href="about.html">Giới thiệu</a>
     <a href="illustrations.html">Minh Họa</a>
     <a href="concepts.html">Thiết kế</a>
     <a href="comics.html">Truyện Tranh</a>
   </nav>
+
   <div class="container" id="text-container" style="visibility: hidden;">
     <header class="hero">
-      <div class="hero-logo-wrapper" id="logo-wrapper">
-        <div class="hero-logo" id="logo">
-          <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-          <h1 id="brand">YattaD</h1>
-        </div>
+      <div class="hero-logo">
+        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+        <h1>YattaD</h1>
       </div>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
