@@ -338,10 +338,28 @@
                     scheduleNextAction();
                 });
 
-                setTimeout(() => {
-                    heroLogo.classList.add('moved');
-                    heroLogo.classList.remove('centered');
-                }, 50);
+               function moveCharacterOutOfLogo() {
+    let charRect = character.getBoundingClientRect();
+    posX = charRect.left;
+    posY = charRect.top;
+    character.classList.add('absolute');
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    character.style.zIndex = 2;
+    document.body.appendChild(character);
+
+    // Theo dõi vị trí di chuyển
+    const initialX = posX;
+    const observer = setInterval(() => {
+        const distance = Math.abs(posX - initialX);
+        if (distance >= frameSize) {
+            heroLogo.classList.add('moved');
+            heroLogo.classList.remove('centered');
+            clearInterval(observer);
+        }
+    }, 100);
+}
+
 
             }, 3000);
         }
