@@ -43,31 +43,43 @@ html, body {
   margin: auto;
   text-align: center;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-/* Khối giới thiệu */
-.intro-block {
-  margin-top: 120px;
+/* Logo block: Nhân vật + chữ */
+.logo-block {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: left 1s ease;
 }
 
-h1 {
+/* Chữ YattaD */
+#logo-text {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 3em;
-  margin: 0.2em 0 0;
-  transition: transform 1s ease;
+  margin: 0;
+  padding: 0;
 }
 
-h1.centered {
-  transform: translateX(0);
-}
-
+/* Dòng chào mừng */
 p {
   font-family: 'VT323', monospace;
   font-size: 1.6em;
   color: #444;
-  margin-top: 0.4em;
+  margin-top: 120px;
 }
 
+/* Nền pixel */
 .background {
   position: fixed;
   top: 0;
@@ -80,9 +92,8 @@ p {
   z-index: 0;
 }
 
-/* Nhân vật pixel */
+/* Nhân vật */
 #character {
-  position: absolute;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
