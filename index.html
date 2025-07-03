@@ -216,29 +216,30 @@
     function autoMoveOutOfLogo(callback) {
       direction = "L";
       state = "walk";
-      moveFrame = 1;
+      moveFrame = 0;
       updateSprite();
       smoothMove(-frameSize, 0, callback, "walk");
     }
 
-    function smoothMove(dx, dy, onFinish, mode) {
-      const frames = mode === "run" ? 8 : 16;
-      const speed = mode === "run" ? 35 : 70;
-      let i = 0;
-      const stepX = dx / frames, stepY = dy / frames;
+  function smoothMove(dx, dy, onFinish, mode) {
+  const frames = mode === "run" ? 8 : 16;
+  const speed = mode === "run" ? 35 : 70;
+  let i = 0;
+  const stepX = dx / frames, stepY = dy / frames;
 
-      function step() {
-        if (i >= frames) return onFinish?.();
-        posX += stepX;
-        posY += stepY;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-        moveFrame = i++;
-        updateSprite();
-        setTimeout(step, speed);
-      }
-      step();
-    }
+  function step() {
+    if (i >= frames) return onFinish?.();
+    posX += stepX;
+    posY += stepY;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    moveFrame++;
+    updateSprite();
+    i++;
+    setTimeout(step, speed);
+  }
+  step();
+}
 
     function checkCollision(dx, dy) {
       const next = {
