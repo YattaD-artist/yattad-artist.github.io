@@ -81,13 +81,29 @@
       });
     }
 
-    function updateSprite(){
-      const f = state.charAt(0).toUpperCase()+state.slice(1),
-            base = `${f}${direction}`,
-            idx = state==="run"?moveFrame%8:idleFrame%16,
-            frame = state==="run"?String(idx):idx.toString().padStart(2,"0");
-      character.src=`assets/character/${f}/${base}${frame}.png`;
-    }
+function updateSprite() {
+  const folder = state.charAt(0).toUpperCase() + state.slice(1); // Idle, Walk, Run
+  const base = folder + direction;
+
+  // Xác định chỉ số frame:
+  let idx;
+  if (state === "run") {
+    idx = moveFrame % 8;
+  } else if (state === "walk") {
+    idx = moveFrame % 16;
+  } else {
+    idx = idleFrame % 16;
+  }
+
+  // Định dạng frame string:
+  const frame = state === "run" 
+    ? `${idx}` 
+    : idx.toString().padStart(2, "0");
+
+  // Cập nhật src
+  character.src = `assets/character/${folder}/${base}${frame}.png`;
+}
+
 
     function moveCharacterOutOfLogo() {
       const rect = character.getBoundingClientRect();
