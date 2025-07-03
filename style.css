@@ -1,64 +1,91 @@
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap');
 
-html, body, .container {
-  margin:0; padding:0;
-  width:100%; height:100%;
-  font-family:'Be Vietnam Pro',sans-serif;
-  overflow:hidden;
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background-color: #f8f8ff;
+  overflow: hidden;
 }
-body { background:#f8f8ff; display:flex; }
+
+/* Nền ô lưới pixel */
 .background {
-  position:fixed; top:0; left:0;
-  width:100vw; height:100vh;
-  background:url('assets/Dat.png') repeat;
-  opacity:0.3; z-index:0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('assets/Dat.png');
+  background-size: 98px 98px;
+  opacity: 0.3;
+  z-index: 0;
 }
-.menu-vertical {
-  position:fixed; left:20px; top:50%;
-  transform:translateY(-50%);
-  display:flex; flex-direction:column;
-  gap:16px; z-index:3;
+
+/* Khối ban đầu chứa nhân vật và dòng chữ "YattaD" */
+#logo-block {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  transition: left 0.6s ease;
 }
-.menu-vertical a {
-  font-family:'VT323',monospace;
-  font-size:1.3em; color:#334;
-  text-decoration:none;
-  transition:transform .2s, color .2s;
-}
-.menu-vertical a:hover {
-  transform:scale(1.1); color:#4e5ba6;
-}
-.container {
-  position:relative;
-  margin:auto; text-align:center;
-  display:flex; flex-direction:column;
-  align-items:center; z-index:2;
-}
-.logo-block {
-  display:flex; align-items:flex-end;
-  gap:32px;
-  position:absolute;
-  top:50%; transform:translateY(-80%);
-  left:50%; transform:translate(-50%,-80%);
-  transition:left 0.8s ease;
-}
-#logo-text {
-  font-family:'Pixelify Sans',sans-serif;
-  font-size:3.5em;
-  margin:0; padding:0;
-  z-index:2;
-}
-.tagline {
-  font-family:'VT323',monospace;
-  font-size:1.6em; color:#444;
-  margin-top:1.2em;
-}
+
+/* Nhân vật pixel */
 #character {
-  width:62px; height:62px;
-  image-rendering:pixelated;
-  position:absolute;
-  pointer-events:none;
-  z-index:1;
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+/* Logo chữ YattaD */
+#logo-text {
+  font-family: 'Pixelify Sans', sans-serif;
+  font-size: 2.8em;
+  margin-top: 8px;
+  color: #222;
+  text-shadow: 1px 1px 0 #fff;
+  transition: left 0.6s ease;
+}
+
+/* Container nội dung */
+.container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-top: 140px;
+}
+
+/* Dòng tagline */
+.tagline {
+  font-family: 'VT323', monospace;
+  font-size: 1.5em;
+  color: #444;
+  margin-top: 16px;
+}
+
+/* Menu */
+.menu-vertical {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.menu-vertical a {
+  display: inline-block;
+  text-decoration: none;
+  color: #334;
+  font-size: 1.1em;
+  margin: 0 12px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.menu-vertical a:hover {
+  transform: scale(1.2);
+  color: #4e5ba6;
 }
