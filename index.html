@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -162,7 +161,10 @@
     }
 
     function rectsOverlap(r1, r2) {
-      return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+      return !(r1.right < r2.left ||
+               r1.left > r2.right ||
+               r1.bottom < r2.top ||
+               r1.top > r2.bottom);
     }
 
     function checkCollision(dx, dy) {
@@ -173,9 +175,16 @@
         bottom: posY + dy + frameSize
       };
       const bounds = { width: window.innerWidth, height: window.innerHeight };
-      if (next.left < 0 || next.top < 0 || next.right > bounds.width || next.bottom > bounds.height) return true;
+      // Không ra ngoài màn hình
+      if (next.left < 0 || next.top < 0 ||
+          next.right > bounds.width || next.bottom > bounds.height) {
+        return true;
+      }
+      // Tránh menu
       if (rectsOverlap(next, menu.getBoundingClientRect())) return true;
-      if (rectsOverlap(next, textContainer.getBoundingClientRect())) return true;
+      // Chỉ tránh phần logo YattaD, không cảm ứng đến toàn bộ text-container
+      const logoRect = document.querySelector(".hero-logo").getBoundingClientRect();
+      if (rectsOverlap(next, logoRect)) return true;
       return false;
     }
 
@@ -183,7 +192,6 @@
       const frames = mode === "run" ? 8 : 16;
       const speed = mode === "run" ? 35 : 70;
       let i = 0, stepX = dx / frames, stepY = dy / frames;
-
       function step() {
         if (i >= frames) return onFinish();
         posX += stepX;
@@ -208,7 +216,6 @@
 
       const [vx, vy] = dirVectors[direction];
       let count = 0;
-
       function next() {
         if (count >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
           isMoving = false;
