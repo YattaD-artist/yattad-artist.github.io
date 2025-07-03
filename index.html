@@ -214,6 +214,7 @@
           idleFrame = 0;
           updateSprite();
           return scheduleNextAction();
+          document.getElementById("text-container").style.visibility = "visible";
         }
         smoothMove(vx * frameSize, vy * frameSize, next, mode);
         count++;
@@ -258,13 +259,11 @@
       preloadImages(() => {
         setTimeout(() => {
           const heading = document.querySelector(".hero-logo h1");
-          document.body.appendChild(character);
-
-          // Di chuyển nhân vật 1 ô sang phải trước khi tính lại vị trí chữ
-          posX += frameSize;
-          character.style.left = `${posX}px`;
-          character.style.top = `${posY}px`;
-          document.body.appendChild(character);
+document.body.appendChild(character);
+// Ép reflow để chữ YattaD căn giữa lại khi nhân vật rời khỏi logo
+const logo = document.querySelector(".hero-logo");
+logo.offsetWidth; // Force reflow
+logo.style.justifyContent = "center";
           if (!heading) return;
           const hr = heading.getBoundingClientRect();
           posX = hr.left - 96;
@@ -293,7 +292,7 @@
     <a href="comics.html">Truyện Tranh</a>
   </nav>
 
-  <div class="container" id="text-container">
+  <div class="container" id="text-container" style="visibility: hidden;">
     <header class="hero">
       <div class="hero-logo">
         <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
