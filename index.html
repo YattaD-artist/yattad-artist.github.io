@@ -12,85 +12,71 @@
 
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       font-family: 'Be Vietnam Pro', sans-serif;
       background-color: #f8f8ff;
-      overflow: hidden;
+      overflow: hidden; height: 100%; width: 100%;
+      position: relative;
     }
 
     .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 48px;
+      position: relative; z-index: 2;
+      text-align: center; padding-top: 48px;
     }
 
     h1 {
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 2.5em;
-      margin: 0.2em 0 0;
+      font-size: 2.5em; margin: 0.2em 0 0;
     }
 
     p {
       font-family: 'VT323', monospace;
-      font-size: 1.5em;
-      color: #444;
+      font-size: 1.5em; color: #444;
     }
 
     .menu {
-      text-align: center;
-      margin-top: 20px;
+      text-align: center; margin-top: 20px;
     }
 
     .menu a {
-      display: inline-block;
-      text-decoration: none;
-      color: #334;
-      font-size: 1.1em;
-      margin: 0 12px;
+      display: inline-block; text-decoration: none; color: #334;
+      font-size: 1.1em; margin: 0 12px;
       transition: transform 0.2s ease, color 0.2s ease;
       font-family: 'VT323', monospace;
     }
 
     .menu a:hover {
-      transform: scale(1.2);
-      color: #4e5ba6;
+      transform: scale(1.2); color: #4e5ba6;
     }
 
     .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
+      background-size: 98px 98px; opacity: 0.3; z-index: 0;
     }
 
-    #character {
-      position: absolute;
-      width: 62px;
-      height: 62px;
-      image-rendering: pixelated;
-      z-index: 1;
-      pointer-events: none;
+    /* Các sprite Vydra: chung class và hue khác nhau */
+    .vydra {
+      position: absolute; width: 62px; height: 62px;
+      image-rendering: pixelated; pointer-events: none; z-index: 1;
     }
+    #vydra1 { filter: none; }
+    #vydra2 { filter: hue-rotate(30deg); }
+    #vydra3 { filter: hue-rotate(60deg); }
   </style>
 </head>
 <body>
+
   <!-- Nền pixel -->
   <div class="background"></div>
 
-  <!-- Nội dung trang -->
+  <!-- Nội dung chính -->
   <div class="container" id="text-container">
     <header>
       <h1>YattaD</h1>
       <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     </header>
-
     <nav class="menu">
       <a href="about.html">Giới thiệu</a>
       <a href="illustrations.html">Minh Họa</a>
@@ -99,191 +85,138 @@
     </nav>
   </div>
 
-  <!-- Nhân vật pixel -->
-  <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
+  <!-- Ba sprite Vydra -->
+  <img id="vydra1" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 1" />
+  <img id="vydra2" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 2" />
+  <img id="vydra3" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 3" />
 
   <script>
-    // Trạng thái nhân vật: idle, walk, run
-    let state = "idle";
-    let direction = ""; // "", U, L, R
-    let isMoving = false;
-
-    let idleFrame = 0;
-    let moveFrame = 0;
-
+    // Cấu hình chung
     const frameSize = 62;
     const directions = ["", "U", "L", "R"];
-    const dirVectors = {
-      "": [0, 1],
-      "U": [0, -1],
-      "L": [-1, 0],
-      "R": [1, 0]
-    };
+    const dirVectors = { "": [0,1], "U":[0,-1], "L":[-1,0], "R":[1,0] };
+    
+    // --- Vydra 1: tự động ---
+    let state1 = "idle", dir1 = "", idleFrame1 = 0, moveFrame1 = 0, isMoving1 = false;
+    const v1 = document.getElementById("vydra1");
+    let pos1 = { x: window.innerWidth/2 - frameSize - 32, y: window.innerHeight/2 + 100 };
 
-    const character = document.getElementById("character");
-    const textContainer = document.getElementById("text-container");
+    // --- Vydra 2: WASD ---
+    let state2 = "idle", dir2 = "";
+    let idleFrame2 = 0, moveFrame2 = 0;
+    const v2 = document.getElementById("vydra2");
+    let pos2 = { x: window.innerWidth/2, y: window.innerHeight/2 + 100 };
 
-    let posX = window.innerWidth / 2;
-    let posY = window.innerHeight / 2 + 100;
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-    character.style.width = `${frameSize}px`;
-    character.style.height = `${frameSize}px`;
+    // --- Vydra 3: click to move ---
+    let state3 = "idle", dir3 = "";
+    let idleFrame3 = 0, moveFrame3 = 0;
+    const v3 = document.getElementById("vydra3");
+    let pos3 = { x: window.innerWidth/2 + frameSize + 32, y: window.innerHeight/2 + 100 };
 
-    function preloadImages(callback) {
-      const folders = ["Idle", "Walk", "Run"];
-      const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-      let loaded = 0;
-      let total = 0;
+    // Hiển thị ban đầu
+    function setPos(v, p) {
+      v.style.left = p.x + "px";
+      v.style.top  = p.y + "px";
+    }
+    setPos(v1, pos1);
+    setPos(v2, pos2);
+    setPos(v3, pos3);
 
-      for (const folder of folders) {
-        for (const dir of directions) {
-          const suffix = dir;
-          const prefix = folder + suffix;
-          const count = counts[folder];
-          total += count;
-          for (let i = 0; i < count; i++) {
-            const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+    // Preload hình
+    function preload(cb) {
+      const folders = ["Idle","Walk","Run"], counts={Idle:16,Walk:16,Run:8};
+      let loaded=0, total=0;
+      folders.forEach(f=>{
+        directions.forEach(d=>{
+          total += counts[f];
+          for(let i=0;i<counts[f];i++){
+            const idx = f==="Run"?i:String(i).padStart(2,"0");
             const img = new Image();
-            img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-            img.onload = () => {
-              loaded++;
-              if (loaded >= total) callback();
-            };
-            img.onerror = () => {
-              console.warn("Failed to load: ", img.src);
-              loaded++;
-              if (loaded >= total) callback();
-            };
+            img.src = `assets/character/${f}/${f}${d}${idx}.png`;
+            img.onload=img.onerror=()=>{ if(++loaded===total) cb(); };
           }
-        }
-      }
+        });
+      });
     }
 
-    function updateSprite() {
-      const folder = state.charAt(0).toUpperCase() + state.slice(1);
-      const baseName = folder + direction;
-
-      let frameIndex, frameStr;
-
-      if (state === "run") {
-        frameIndex = moveFrame % 8;
-        frameStr = `${frameIndex}`;
-      } else {
-        frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-        frameStr = frameIndex.toString().padStart(2, "0");
-      }
-
-      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+    function update(v, state, dir, idleF, moveF) {
+      const fld = state.charAt(0).toUpperCase()+state.slice(1);
+      const base = fld + dir;
+      let idx = state==="run"? moveF%8 : (state==="idle"? idleF%16 : moveF%16);
+      let str = (state==="run"? String(idx) : String(idx).padStart(2,"0"));
+      v.src = `assets/character/${fld}/${base}${str}.png`;
     }
 
-    function checkCollision(dx, dy) {
-      const nextX = posX + dx;
-      const nextY = posY + dy;
-      const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
-      const bounds = { width: window.innerWidth, height: window.innerHeight };
-
-      if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
-
-      const textRect = textContainer.getBoundingClientRect();
-      return !(
-        charRect.right < textRect.left ||
-        charRect.left > textRect.right ||
-        charRect.bottom < textRect.top ||
-        charRect.top > textRect.bottom
-      );
+    // Vydra1 logic (tự động)
+    function schedule1(){
+      setTimeout(()=>{
+        const c=Math.random(), steps=1+Math.floor(Math.random()*3);
+        if(c<0.2){ state1="idle"; idleFrame1=0; update(v1,state1,dir1,idleFrame1,moveFrame1); schedule1(); }
+        else if(c<0.65) startMove1(steps,"walk");
+        else startMove1(steps,"run");
+      },1000+Math.random()*2500);
+    }
+    function startMove1(steps, mode){
+      if(isMoving1) return; isMoving1=true;
+      state1=mode; dir1 = directions[Math.floor(Math.random()*directions.length)];
+      moveFrame1=1; update(v1,state1,dir1,idleFrame1,moveFrame1);
+      const [vx,vy]=dirVectors[dir1]; let count=0;
+      (function next(){
+        if(count++>=steps){ end1(); return; }
+        if(check1(vx*frameSize,vy*frameSize)){ end1(); return; }
+        smooth(v1,vx*frameSize,vy*frameSize,()=>{
+          next();
+        },mode, ()=>{});
+      })();
+    }
+    function end1(){
+      isMoving1=false; state1="idle"; idleFrame1=0; update(v1,state1,dir1,idleFrame1,moveFrame1); schedule1();
+    }
+    function check1(dx,dy){
+      const nx=pos1.x+dx, ny=pos1.y+dy;
+      return nx<0||ny<0||nx+frameSize>window.innerWidth||ny+frameSize>window.innerHeight;
     }
 
-    function smoothMove(dx, dy, onFinish, mode) {
-      const totalFrames = mode === "run" ? 8 : 16;
-      const speed = mode === "run" ? 35 : 70;
-      let current = 0;
-      const stepX = dx / totalFrames;
-      const stepY = dy / totalFrames;
+    // Vydra2: WASD
+    document.addEventListener("keydown", e=>{
+      const step=8;
+      if(e.key==="w") pos2.y-=step;
+      if(e.key==="s") pos2.y+=step;
+      if(e.key==="a") pos2.x-=step;
+      if(e.key==="d") pos2.x+=step;
+      setPos(v2,pos2);
+    });
 
-      function step() {
-        if (current >= totalFrames) { onFinish(); return; }
-        posX += stepX;
-        posY += stepY;
-        character.style.left = `${posX}px`;
-        character.style.top = `${posY}px`;
-        moveFrame = current;
-        updateSprite();
-        current++;
-        setTimeout(step, speed);
-      }
+    // Vydra3: click
+    document.addEventListener("click", e=>{
+      pos3.x = e.clientX - frameSize/2;
+      pos3.y = e.clientY - frameSize/2;
+      setPos(v3,pos3);
+    });
 
-      step();
+    // common smooth
+    function smooth(v, dx, dy, onFinish, mode){
+      const frames = mode==="run"?8:16, speed=mode==="run"?35:70;
+      let i=0, sx=dx/frames, sy=dy/frames;
+      (function step(){
+        if(i>=frames){ onFinish(); return; }
+        pos1.x+=sx; pos1.y+=sy;
+        setPos(v1,pos1);
+        moveFrame1++; update(v1,state1,dir1,idleFrame1,moveFrame1);
+        i++; setTimeout(step,speed);
+      })();
     }
 
-    function startMove(steps, mode) {
-      if (isMoving) return;
-      isMoving = true;
-      state = mode;
-      direction = directions[Math.floor(Math.random() * directions.length)];
-      moveFrame = 1;
-      updateSprite();
+    // Idle 1
+    setInterval(()=>{
+      if(state1==="idle"){ idleFrame1++; update(v1,state1,dir1,idleFrame1,moveFrame1); }
+    },200);
 
-      const [vx, vy] = dirVectors[direction];
-      let stepCount = 0;
-
-      function nextStep() {
-        if (stepCount >= steps) {
-          isMoving = false;
-          state = "idle";
-          idleFrame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        const dx = vx * frameSize;
-        const dy = vy * frameSize;
-        if (checkCollision(dx, dy)) {
-          isMoving = false;
-          state = "idle";
-          idleFrame = 0;
-          updateSprite();
-          scheduleNextAction();
-          return;
-        }
-
-        moveFrame = 0;
-        smoothMove(dx, dy, nextStep, mode);
-        stepCount++;
-      }
-
-      nextStep();
-    }
-
-    function scheduleNextAction() {
-      const delay = 1000 + Math.random() * 2500;
-      setTimeout(() => {
-        const chance = Math.random();
-        const steps = 1 + Math.floor(Math.random() * 3);
-        if (chance < 0.2) {
-          state = "idle";
-          idleFrame = 0;
-          updateSprite();
-          scheduleNextAction();
-        } else if (chance < 0.65) {
-          startMove(steps, "walk");
-        } else {
-          startMove(steps, "run");
-        }
-      }, delay);
-    }
-
-    setInterval(() => {
-      if (state === "idle") {
-        idleFrame = (idleFrame + 1) % 16;
-        updateSprite();
-      }
-    }, 200);
-
-    updateSprite();
-    preloadImages(() => {
-      scheduleNextAction();
+    // Start all
+    preload(()=>{
+      update(v1,state1,dir1,idleFrame1,moveFrame1);
+      setPos(v1,pos1);
+      schedule1();
     });
   </script>
 </body>
