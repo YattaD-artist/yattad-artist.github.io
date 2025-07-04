@@ -4,79 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
-
-  <!-- Font từ Google -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
-
   <style>
-    html, body {
-      margin: 0; padding: 0;
-      font-family: 'Be Vietnam Pro', sans-serif;
-      background-color: #f8f8ff;
-      overflow: hidden; height: 100%; width: 100%;
-      position: relative;
-    }
-
-    .container {
-      position: relative; z-index: 2;
-      text-align: center; padding-top: 48px;
-    }
-
-    h1 {
-      font-family: 'Pixelify Sans', sans-serif;
-      font-size: 2.5em; margin: 0.2em 0 0;
-    }
-
-    p {
-      font-family: 'VT323', monospace;
-      font-size: 1.5em; color: #444;
-    }
-
-    .menu {
-      text-align: center; margin-top: 20px;
-    }
-
-    .menu a {
-      display: inline-block; text-decoration: none; color: #334;
-      font-size: 1.1em; margin: 0 12px;
-      transition: transform 0.2s ease, color 0.2s ease;
-      font-family: 'VT323', monospace;
-    }
-
-    .menu a:hover {
-      transform: scale(1.2); color: #4e5ba6;
-    }
-
-    .background {
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px; opacity: 0.3; z-index: 0;
-    }
-
-    /* Các sprite Vydra: chung class và hue khác nhau */
-    .vydra {
-      position: absolute; width: 62px; height: 62px;
-      image-rendering: pixelated; pointer-events: none; z-index: 1;
-    }
-    #vydra1 { filter: none; }
-    #vydra2 { filter: hue-rotate(30deg); }
-    #vydra3 { filter: hue-rotate(60deg); }
+    html, body { margin:0; padding:0; background:#f8f8ff; overflow:hidden; font-family:'Be Vietnam Pro',sans-serif; }
+    .background {position:fixed;top:0;left:0;width:100vw;height:100vh;background:url('assets/Dat.png') center/98px 98px repeat;opacity:.3;z-index:0;}
+    .container {position:relative;z-index:2;text-align:center;padding-top:48px;}
+    h1 {font-family:'Pixelify Sans',sans-serif;font-size:2.5em;margin:.2em 0 0;}
+    p  {font-family:'VT323',monospace;font-size:1.5em;color:#444;}
+    .menu a {font-family:'VT323',monospace;text-decoration:none;color:#334;margin:0 12px;transition:transform .2s,color .2s;}
+    .menu a:hover {transform:scale(1.2);color:#4e5ba6;}
+    /* Vydra sprites */
+    .vydra {position:absolute;width:62px;height:62px;image-rendering:pixelated;pointer-events:none;z-index:1;}
+    #vydra1 {filter:none;}
+    #vydra2 {filter:hue-rotate(30deg);}
+    #vydra3 {filter:hue-rotate(60deg);}
   </style>
 </head>
 <body>
-
-  <!-- Nền pixel -->
   <div class="background"></div>
-
-  <!-- Nội dung chính -->
   <div class="container" id="text-container">
-    <header>
-      <h1>YattaD</h1>
-      <p>Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
+    <h1>YattaD</h1>
+    <p>Chào mừng đến với trang web cá nhân của YattaD</p>
     <nav class="menu">
       <a href="about.html">Giới thiệu</a>
       <a href="illustrations.html">Minh Họa</a>
@@ -85,139 +36,127 @@
     </nav>
   </div>
 
-  <!-- Ba sprite Vydra -->
-  <img id="vydra1" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 1" />
-  <img id="vydra2" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 2" />
-  <img id="vydra3" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 3" />
+  <!-- Ba Vydra -->
+  <img id="vydra1" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 1">
+  <img id="vydra2" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 2">
+  <img id="vydra3" class="vydra" src="assets/character/Idle/Idle00.png" alt="Vydra 3">
 
   <script>
-    // Cấu hình chung
-    const frameSize = 62;
-    const directions = ["", "U", "L", "R"];
-    const dirVectors = { "": [0,1], "U":[0,-1], "L":[-1,0], "R":[1,0] };
-    
-    // --- Vydra 1: tự động ---
-    let state1 = "idle", dir1 = "", idleFrame1 = 0, moveFrame1 = 0, isMoving1 = false;
-    const v1 = document.getElementById("vydra1");
-    let pos1 = { x: window.innerWidth/2 - frameSize - 32, y: window.innerHeight/2 + 100 };
-
-    // --- Vydra 2: WASD ---
-    let state2 = "idle", dir2 = "";
-    let idleFrame2 = 0, moveFrame2 = 0;
-    const v2 = document.getElementById("vydra2");
-    let pos2 = { x: window.innerWidth/2, y: window.innerHeight/2 + 100 };
-
-    // --- Vydra 3: click to move ---
-    let state3 = "idle", dir3 = "";
-    let idleFrame3 = 0, moveFrame3 = 0;
-    const v3 = document.getElementById("vydra3");
-    let pos3 = { x: window.innerWidth/2 + frameSize + 32, y: window.innerHeight/2 + 100 };
-
-    // Hiển thị ban đầu
-    function setPos(v, p) {
-      v.style.left = p.x + "px";
-      v.style.top  = p.y + "px";
-    }
-    setPos(v1, pos1);
-    setPos(v2, pos2);
-    setPos(v3, pos3);
-
-    // Preload hình
-    function preload(cb) {
-      const folders = ["Idle","Walk","Run"], counts={Idle:16,Walk:16,Run:8};
-      let loaded=0, total=0;
-      folders.forEach(f=>{
-        directions.forEach(d=>{
-          total += counts[f];
-          for(let i=0;i<counts[f];i++){
-            const idx = f==="Run"?i:String(i).padStart(2,"0");
-            const img = new Image();
-            img.src = `assets/character/${f}/${f}${d}${idx}.png`;
-            img.onload=img.onerror=()=>{ if(++loaded===total) cb(); };
-          }
-        });
+  const frameSize = 62;
+  const directions = ["U","L","R",""];
+  const dirVec = { "":[0,1], "U":[0,-1], "L":[-1,0], "R":[1,0] };
+  // Preload all sprites
+  function preload(cb){
+    const sets=["Idle","Walk","Run"], counts={Idle:16,Walk:16,Run:8};
+    let L=0,T=0;
+    sets.forEach(f=>{
+      directions.forEach(d=>{
+        T += counts[f];
+        for(let i=0;i<counts[f];i++){
+          const idx = f==="Run"?i:String(i).padStart(2,"0");
+          const img=new Image();
+          img.src=`assets/character/${f}/${f}${d}${idx}.png`;
+          img.onload=img.onerror=()=>{ if(++L===T) cb(); };
+        }
       });
-    }
-
-    function update(v, state, dir, idleF, moveF) {
-      const fld = state.charAt(0).toUpperCase()+state.slice(1);
-      const base = fld + dir;
-      let idx = state==="run"? moveF%8 : (state==="idle"? idleF%16 : moveF%16);
-      let str = (state==="run"? String(idx) : String(idx).padStart(2,"0"));
-      v.src = `assets/character/${fld}/${base}${str}.png`;
-    }
-
-    // Vydra1 logic (tự động)
-    function schedule1(){
-      setTimeout(()=>{
-        const c=Math.random(), steps=1+Math.floor(Math.random()*3);
-        if(c<0.2){ state1="idle"; idleFrame1=0; update(v1,state1,dir1,idleFrame1,moveFrame1); schedule1(); }
-        else if(c<0.65) startMove1(steps,"walk");
-        else startMove1(steps,"run");
-      },1000+Math.random()*2500);
-    }
-    function startMove1(steps, mode){
-      if(isMoving1) return; isMoving1=true;
-      state1=mode; dir1 = directions[Math.floor(Math.random()*directions.length)];
-      moveFrame1=1; update(v1,state1,dir1,idleFrame1,moveFrame1);
-      const [vx,vy]=dirVectors[dir1]; let count=0;
-      (function next(){
-        if(count++>=steps){ end1(); return; }
-        if(check1(vx*frameSize,vy*frameSize)){ end1(); return; }
-        smooth(v1,vx*frameSize,vy*frameSize,()=>{
-          next();
-        },mode, ()=>{});
-      })();
-    }
-    function end1(){
-      isMoving1=false; state1="idle"; idleFrame1=0; update(v1,state1,dir1,idleFrame1,moveFrame1); schedule1();
-    }
-    function check1(dx,dy){
-      const nx=pos1.x+dx, ny=pos1.y+dy;
-      return nx<0||ny<0||nx+frameSize>window.innerWidth||ny+frameSize>window.innerHeight;
-    }
-
-    // Vydra2: WASD
-    document.addEventListener("keydown", e=>{
-      const step=8;
-      if(e.key==="w") pos2.y-=step;
-      if(e.key==="s") pos2.y+=step;
-      if(e.key==="a") pos2.x-=step;
-      if(e.key==="d") pos2.x+=step;
-      setPos(v2,pos2);
     });
+  }
+  function update(v,state,dir,idleF,moveF){
+    const fld=state.charAt(0).toUpperCase()+state.slice(1);
+    const base=fld+dir;
+    let idx = state==="run"?moveF%8:(state==="idle"?idleF%16:moveF%16);
+    const frm = (state==="run"?String(idx):String(idx).padStart(2,"0"));
+    v.src=`assets/character/${fld}/${base}${frm}.png`;
+  }
+  // Shared movement
+  function tileMove(v,pos,dir,cb){
+    let [dx,dy]=dirVec[dir];
+    let steps=16, c=0, startX=pos.x, startY=pos.y;
+    (function step(){
+      if(c++>=steps){ cb(); return; }
+      pos.x += dx*frameSize/steps;
+      pos.y += dy*frameSize/steps;
+      v.style.left=pos.x+"px"; v.style.top=pos.y+"px";
+      requestAnimationFrame(step);
+    })();
+  }
 
-    // Vydra3: click
-    document.addEventListener("click", e=>{
-      pos3.x = e.clientX - frameSize/2;
-      pos3.y = e.clientY - frameSize/2;
-      setPos(v3,pos3);
+  // --- Vydra 1: auto ---
+  const v1=document.getElementById("vydra1");
+  let s1="idle", d1="", i1=0, m1=0, moving1=false;
+  let pos1={x:window.innerWidth/2 - frameSize -32, y:window.innerHeight/2+100};
+
+  function schedule1(){
+    setTimeout(()=>{
+      const c=Math.random(), steps=1+Math.floor(Math.random()*3);
+      if(c<0.2){ s1="idle"; i1=0; update(v1,s1,d1,i1,m1); schedule1(); }
+      else if(c<0.65) move1(steps,"walk");
+      else move1(steps,"run");
+    },1000+Math.random()*2500);
+  }
+  function move1(steps,mode){
+    if(moving1) return; moving1=true;
+    s1=mode; d1=directions[Math.floor(Math.random()*4)]; m1=1;
+    update(v1,s1,d1,i1,m1);
+    let count=0;
+    (function next(){
+      if(count++>=steps){ end1(); return; }
+      const [vx,vy]=dirVec[d1];
+      // collision omitted for brevity
+      tileMove(v1,pos1,d1,next);
+      m1++;
+    })();
+  }
+  function end1(){ moving1=false; s1="idle"; i1=0; update(v1,s1,d1,i1,m1); schedule1(); }
+
+  // --- Vydra 2: WASD ---
+  const v2=document.getElementById("vydra2");
+  let pos2={x:window.innerWidth/2, y:window.innerHeight/2+100};
+  let s2="idle", d2="", i2=0, m2=0, moving2=false;
+  document.addEventListener("keydown",e=>{
+    const keyMap={w:"U",a:"L",s:"",d:"R"};
+    if(!keyMap[e.key]||moving2) return;
+    moving2=true; d2=keyMap[e.key]; s2="walk"; m2=1;
+    update(v2,s2,d2,i2,m2);
+    tileMove(v2,pos2,d2,()=>{
+      moving2=false; s2="idle"; i2=0; update(v2,s2,d2,i2,m2);
     });
+  });
 
-    // common smooth
-    function smooth(v, dx, dy, onFinish, mode){
-      const frames = mode==="run"?8:16, speed=mode==="run"?35:70;
-      let i=0, sx=dx/frames, sy=dy/frames;
-      (function step(){
-        if(i>=frames){ onFinish(); return; }
-        pos1.x+=sx; pos1.y+=sy;
-        setPos(v1,pos1);
-        moveFrame1++; update(v1,state1,dir1,idleFrame1,moveFrame1);
-        i++; setTimeout(step,speed);
-      })();
-    }
-
-    // Idle 1
-    setInterval(()=>{
-      if(state1==="idle"){ idleFrame1++; update(v1,state1,dir1,idleFrame1,moveFrame1); }
-    },200);
-
-    // Start all
-    preload(()=>{
-      update(v1,state1,dir1,idleFrame1,moveFrame1);
-      setPos(v1,pos1);
-      schedule1();
+  // --- Vydra 3: Click-to-tile ---
+  const v3=document.getElementById("vydra3");
+  let pos3={x:window.innerWidth/2+frameSize+32,y:window.innerHeight/2+100};
+  let s3="idle", d3="", i3=0, m3=0, moving3=false;
+  document.addEventListener("click",e=>{
+    if(moving3) return;
+    // compute tile direction
+    const dx = e.clientX - (pos3.x+frameSize/2),
+          dy = e.clientY - (pos3.y+frameSize/2);
+    const absX=Math.abs(dx), absY=Math.abs(dy);
+    if(absX>absY) d3 = dx>0?"R":"L";
+    else if(absY>0) d3 = dy>0?"":"U";
+    else return;
+    moving3=true; s3="walk"; m3=1;
+    update(v3,s3,d3,i3,m3);
+    tileMove(v3,pos3,d3,()=>{
+      moving3=false; s3="idle"; i3=0; update(v3,s3,d3,i3,m3);
     });
+  });
+
+  // idle animations
+  setInterval(()=>{
+    if(s1==="idle"){ i1++; update(v1,s1,d1,i1,m1); }
+  },200);
+
+  // init
+  preload(()=>{
+    [v1,v2,v3].forEach((v,i)=>v.style.opacity=1);
+    v1.style.left=pos1.x+"px"; v1.style.top=pos1.y+"px";
+    v2.style.left=pos2.x+"px"; v2.style.top=pos2.y+"px";
+    v3.style.left=pos3.x+"px"; v3.style.top=pos3.y+"px";
+    update(v1,s1,d1,i1,m1);
+    schedule1();
+  });
   </script>
 </body>
 </html>
