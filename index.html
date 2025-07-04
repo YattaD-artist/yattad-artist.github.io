@@ -125,10 +125,10 @@
 
     let posX = window.innerWidth / 2;
     let posY = window.innerHeight / 2 + 100;
-    character.style.left = ${posX}px;
-    character.style.top = ${posY}px;
-    character.style.width = ${frameSize}px;
-    character.style.height = ${frameSize}px;
+    character.style.left = `${posX}px`;
+    character.style.top = `${posY}px`;
+    character.style.width = `${frameSize}px`;
+    character.style.height = `${frameSize}px`;
 
     function preloadImages(callback) {
       const folders = ["Idle", "Walk", "Run"];
@@ -143,9 +143,9 @@
           const count = counts[folder];
           total += count;
           for (let i = 0; i < count; i++) {
-            const frameStr = folder === "Run" ? ${i} : ${i.toString().padStart(2, "0")};
+            const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
             const img = new Image();
-            img.src = assets/character/${folder}/${prefix}${frameStr}.png;
+            img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
             img.onload = () => {
               loaded++;
               if (loaded >= total) callback();
@@ -168,13 +168,13 @@
 
       if (state === "run") {
         frameIndex = moveFrame % 8;
-        frameStr = ${frameIndex};
+        frameStr = `${frameIndex}`;
       } else {
         frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
         frameStr = frameIndex.toString().padStart(2, "0");
       }
 
-      character.src = assets/character/${folder}/${baseName}${frameStr}.png;
+      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     }
 
     function checkCollision(dx, dy) {
@@ -205,8 +205,8 @@
         if (current >= totalFrames) { onFinish(); return; }
         posX += stepX;
         posY += stepY;
-        character.style.left = ${posX}px;
-        character.style.top = ${posY}px;
+        character.style.left = `${posX}px`;
+        character.style.top = `${posY}px`;
         moveFrame = current;
         updateSprite();
         current++;
@@ -285,208 +285,6 @@
     preloadImages(() => {
       scheduleNextAction();
     });
-  </script>
-</body>
-</html>
-
-  </style>
-</head>
-<body>
-
-  <div class="background"></div>
-
-  <nav class="menu-vertical">
-    <a href="about.html">Giới thiệu</a>
-    <a href="illustrations.html">Minh Họa</a>
-    <a href="concepts.html">Thiết kế</a>
-    <a href="comics.html">Truyện Tranh</a>
-  </nav>
-
-  <div class="container">
-    <header class="hero">
-      <div class="hero-logo-wrap">
-        <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
-        <div class="hero-logo centered" id="heroLogo">
-          <h1 class="hero-logo-text" id="logoText">YattaD</h1>
-        </div>
-      </div>
-      <p class="hero-desc" id="heroDesc">Chào mừng đến với trang web cá nhân của YattaD</p>
-    </header>
-  </div>
-
-  <script>
-    const directions = ["U", "L", "R"];
-    const dirVectors = { "U": [0, -1], "L": [-1, 0], "R": [1, 0] };
-    let state = "idle", direction = "", idleFrame = 0, moveFrame = 0;
-    let character, heroLogo, logoText, heroDesc;
-    let posX = 0, posY = 0, isFirstMove = true, isMoving = false;
-    const frameSize = 62;
-
-    function preloadImages(callback) {
-      const folders = ["Idle", "Walk", "Run"];
-      const allDirs = ["", "U", "L", "R"];
-      const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-      let loaded = 0, total = 0;
-
-      folders.forEach(folder => {
-        const dirs = folder === "Idle" ? allDirs : directions;
-        total += dirs.length * counts[folder];
-        dirs.forEach(dir => {
-          for (let i = 0; i < counts[folder]; i++) {
-            const frame = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
-            const src = `assets/character/${folder}/${folder}${dir}${frame}.png`;
-            const img = new Image();
-            img.src = src;
-            img.onload = img.onerror = () => {
-              if (++loaded === total) callback();
-            };
-          }
-        });
-      });
-    }
-
-    function updateSprite() {
-      const folder = state.charAt(0).toUpperCase() + state.slice(1);
-      const base = `${folder}${direction}`;
-      const idx = state === "run" ? moveFrame % 8 : idleFrame % 16;
-      const frame = state === "run" ? `${idx}` : idx.toString().padStart(2, "0");
-      character.src = `assets/character/${folder}/${base}${frame}.png`;
-    }
-
-    function moveCharacterOutOfLogo() {
-      const rect = character.getBoundingClientRect();
-      posX = rect.left;
-      posY = rect.top;
-      character.classList.add("absolute");
-      character.style.left = `${posX}px`;
-      character.style.top = `${posY}px`;
-      document.body.appendChild(character);
-
-      const initialX = posX;
-      const observer = setInterval(() => {
-        const distance = Math.abs(posX - initialX);
-        if (distance >= frameSize) {
-          heroLogo.classList.remove("centered");
-          heroLogo.classList.add("moved");
-          clearInterval(observer);
-        }
-      }, 100);
-    }
-
-    function autoMoveOutOfLogo(callback) {
-      direction = "L";
-      state = "walk";
-      moveFrame = 0;
-      updateSprite();
-      smoothMove(-frameSize, 0, callback, "walk");
-    }
-
-  function smoothMove(dx, dy, onFinish, mode) {
-  const frames = mode === "run" ? 8 : 16;
-  const speed = mode === "run" ? 35 : 70;
-  let i = 0;
-  const stepX = dx / frames, stepY = dy / frames;
-
-  function step() {
-    if (i >= frames) return onFinish?.();
-    posX += stepX;
-    posY += stepY;
-    character.style.left = `${posX}px`;
-    character.style.top = `${posY}px`;
-    moveFrame++;
-    updateSprite();
-    i++;
-    setTimeout(step, speed);
-  }
-  step();
-}
-
-    function checkCollision(dx, dy) {
-      const next = {
-        left: posX + dx, top: posY + dy,
-        right: posX + dx + frameSize,
-        bottom: posY + dy + frameSize
-      };
-      const w = window.innerWidth, h = window.innerHeight;
-      if (next.left < 0 || next.top < 0 || next.right > w || next.bottom > h) return true;
-
-      const logo = heroLogo.getBoundingClientRect();
-      const desc = heroDesc.getBoundingClientRect();
-
-      return !(next.right < logo.left || next.left > logo.right || next.bottom < logo.top || next.top > logo.bottom) ||
-             !(next.right < desc.left || next.left > desc.right || next.bottom < desc.top || next.top > desc.bottom);
-    }
-
-    function startIdleAnimation() {
-      setInterval(() => {
-        if (state === "idle") {
-          idleFrame++;
-          updateSprite();
-        }
-      }, 200);
-    }
-
-    function scheduleNextAction() {
-      setTimeout(() => {
-        const chance = Math.random();
-        const steps = 1 + Math.floor(Math.random() * 3);
-        if (chance < 0.2) {
-          state = "idle"; direction = "";
-          updateSprite();
-          scheduleNextAction();
-        } else if (chance < 0.65) {
-          startMove(steps, "walk");
-        } else {
-          startMove(steps, "run");
-        }
-      }, 1000 + Math.random() * 2500);
-    }
-
-    function startMove(steps, mode) {
-      if (isMoving) return;
-      isMoving = true;
-
-      let available = directions.filter(dir => {
-        const [vx, vy] = dirVectors[dir];
-        return !checkCollision(vx * frameSize, vy * frameSize);
-      });
-
-      if (available.length === 0) {
-        isMoving = false; state = "idle"; updateSprite(); scheduleNextAction();
-        return;
-      }
-
-      direction = available[Math.floor(Math.random() * available.length)];
-      state = mode; moveFrame = 1; updateSprite();
-      const [vx, vy] = dirVectors[direction];
-      let count = 0;
-
-      function next() {
-        if (count++ >= steps || checkCollision(vx * frameSize, vy * frameSize)) {
-          isMoving = false; state = "idle"; updateSprite(); scheduleNextAction();
-          return;
-        }
-        smoothMove(vx * frameSize, vy * frameSize, next, mode);
-      }
-      next();
-    }
-
-    window.onload = () => {
-      character = document.getElementById("character");
-      heroLogo = document.getElementById("heroLogo");
-      logoText = document.getElementById("logoText");
-      heroDesc = document.getElementById("heroDesc");
-
-      preloadImages(() => {
-        updateSprite();
-        startIdleAnimation();
-
-        setTimeout(() => {
-          moveCharacterOutOfLogo();
-          autoMoveOutOfLogo(() => scheduleNextAction());
-        }, 3000);
-      });
-    };
   </script>
 </body>
 </html>
