@@ -60,6 +60,49 @@
       color: #2d2f92;
       transform: scale(1.1);
     }
+
+    .grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+      gap: 8px;
+    }
+
+    .grid-item {
+      aspect-ratio: 1 / 1;
+      background-color: #ddd;
+      border: 1px solid #aaa;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .grid-item:hover {
+      transform: scale(1.05);
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .lightbox:active {
+      display: none;
+    }
   </style>
 </head>
 
@@ -70,6 +113,45 @@
     <h1>Minh Họa</h1>
     <p>Đây là kho hình vẽ của YattaD</p>
     <a href="index.html">← Quay lại trang chủ</a>
+
+    <div class="grid" id="grid"></div>
   </div>
+
+  <!-- Lightbox hiển thị ảnh lớn -->
+  <div class="lightbox" id="lightbox" onclick="hideLightbox()">
+    <img id="lightbox-img" src="" alt="Hình lớn">
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    const totalCells = 70;
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-item';
+
+      // Gắn hình nền nếu muốn hiển thị ảnh mẫu (hoặc giữ trống)
+      // cell.style.backgroundImage = `url('illustrations/${i.toString().padStart(2, '0')}.webp')`;
+
+      cell.addEventListener('click', () => {
+        lightboxImg.src = `illustrations/${i.toString().padStart(2, '0')}.webp`;
+        lightbox.style.display = 'flex';
+      });
+
+      grid.appendChild(cell);
+    }
+
+    function hideLightbox() {
+      lightbox.style.display = 'none';
+    }
+
+    // Bấm ESC để đóng lightbox
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideLightbox();
+    });
+  </script>
 </body>
 </html>
