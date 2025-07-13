@@ -22,10 +22,9 @@
     }
 
     h1 {
-      font-size: 2.8em;
-      font-weight: normal;
+      font-size: 2.6em;
       margin: 0.2em 0 0;
-      color: #222;
+      font-weight: normal;
     }
 
     .menu {
@@ -68,11 +67,12 @@
       color: #4e5ba6;
     }
 
+    /* Overlay & Gallery */
     .overlay {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.7);
       backdrop-filter: blur(4px);
       z-index: 100;
       display: none;
@@ -91,40 +91,62 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      max-height: 85vh;
-      max-width: 85vw;
+      max-height: 80vh;
+      max-width: 80vw;
       transform: translate(-50%, -50%) scale(0.6);
       transition: transform 0.5s ease, z-index 0.3s ease;
-      border-radius: 6px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.5);
-      filter: contrast(0.8) brightness(0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      filter: brightness(0.6) contrast(0.9);
       pointer-events: none;
     }
 
     .deck img.active {
       transform: translate(-50%, -50%) scale(1);
       z-index: 10;
-      filter: none;
+      filter: brightness(1) contrast(1);
       pointer-events: auto;
     }
 
     .deck img.left {
       transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
+      z-index: 5;
     }
 
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
+      z-index: 5;
     }
 
     .caption {
       position: absolute;
-      bottom: 32px;
-      width: 100%;
-      text-align: center;
-      font-size: 1.4em;
-      color: #ddd;
+      bottom: 6vh;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2em;
+      color: #eee;
+      background-color: rgba(0,0,0,0.4);
+      padding: 4px 16px;
+      border-radius: 6px;
       z-index: 15;
-      pointer-events: none;
+    }
+
+    .return-btn {
+      position: absolute;
+      bottom: 16px;
+      right: 24px;
+      font-size: 1.2em;
+      background-color: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .return-btn:hover {
+      background-color: rgba(255,255,255,0.2);
     }
 
     .close-btn {
@@ -139,25 +161,6 @@
 
     .close-btn:hover {
       color: white;
-    }
-
-    .restart-btn {
-      position: absolute;
-      right: 30px;
-      bottom: 90px;
-      font-size: 1.3em;
-      color: #eee;
-      background-color: rgba(255,255,255,0.1);
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s;
-      z-index: 20;
-      display: none;
-    }
-
-    .restart-btn:hover {
-      background-color: rgba(255,255,255,0.2);
     }
   </style>
 </head>
@@ -179,7 +182,7 @@
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
     <div class="caption" id="caption"></div>
-    <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
+    <div class="return-btn" id="returnBtn" style="display: none;">← Quay lại trang bìa</div>
   </div>
 
   <script>
@@ -188,11 +191,11 @@
     const closeBtn = document.getElementById('closeBtn');
     const deck = document.getElementById('deck');
     const caption = document.getElementById('caption');
-    const restartBtn = document.getElementById('restartBtn');
+    const returnBtn = document.getElementById('returnBtn');
 
     const totalImages = 13;
-    const images = [];
     let currentIndex = 0;
+    const images = [];
 
     const captions = [
       "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
@@ -202,7 +205,8 @@
 
     for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
-      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.jpg`;
+      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+      img.classList.add('gallery-img');
       deck.appendChild(img);
       images.push(img);
     }
@@ -212,17 +216,15 @@
         img.classList.remove('active', 'left', 'right');
         if (index === currentIndex) {
           img.classList.add('active');
-          img.style.zIndex = '10';
         } else if (index < currentIndex) {
           img.classList.add('left');
-          img.style.zIndex = `${5 + index}`;
         } else {
           img.classList.add('right');
-          img.style.zIndex = `${5 - (index - currentIndex)}`;
         }
       });
+
       caption.textContent = captions[currentIndex] || "";
-      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+      returnBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
     }
 
     function showOverlay() {
@@ -248,24 +250,23 @@
       }
     }
 
-    function handleClick(e) {
-      const rect = overlay.getBoundingClientRect();
-      const clickX = e.clientX;
-      const centerX = rect.left + rect.width / 2;
-      if (clickX > centerX + 50) nextImage();
-      else if (clickX < centerX - 50) prevImage();
-    }
-
-    function restartGallery() {
+    function resetToCover() {
       currentIndex = 0;
       updateClasses();
     }
 
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
-    overlay.addEventListener('click', handleClick);
-    restartBtn.addEventListener('click', restartGallery);
+    returnBtn.addEventListener('click', resetToCover);
 
+    // Chuột trái để chuyển trang
+    overlay.addEventListener('click', e => {
+      const centerX = window.innerWidth / 2;
+      if (e.clientX > centerX + 60) nextImage();
+      else if (e.clientX < centerX - 60) prevImage();
+    });
+
+    // Phím tắt
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex') return;
       if (e.key === 'ArrowRight') nextImage();
