@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
+
+  <!-- Google Font: VT323 kiểu chữ pixel-style -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
   <style>
@@ -174,9 +176,11 @@
 
   <div class="container">
     <h1>Truyện Tranh</h1>
+
     <div class="menu">
       <a id="punkga-link">PunkgaMerch</a>
     </div>
+
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
@@ -216,13 +220,8 @@
   function playFlipSound() {
     const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
     const audio = new Audio(randomSrc);
-    audio.playbackRate = 1.5;
+    audio.playbackRate = 1.5; // 🔊 Phát nhanh hơn
     audio.play().catch(() => {});
-  }
-
-  function playClickSound() {
-    const click = new Audio('assets/sfx/Click.mp3');
-    click.play().catch(() => {});
   }
 
   for (let i = 0; i < totalImages; i++) {
@@ -266,7 +265,6 @@
   }
 
   function hideOverlay() {
-    playClickSound(); // 🔊 Phát âm thanh khi đóng
     overlay.style.display = 'none';
     isTransitioning = false;
   }
