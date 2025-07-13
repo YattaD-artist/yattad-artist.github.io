@@ -182,99 +182,104 @@
     <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
   </div>
 
-  <!-- ... phần head giữ nguyên ... -->
+  <script>
+    const punkgaLink = document.getElementById('punkga-link');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+    const deck = document.getElementById('deck');
+    const caption = document.getElementById('caption');
+    const restartBtn = document.getElementById('restartBtn');
 
-<script>
-  const punkgaLink = document.getElementById('punkga-link');
-  const overlay = document.getElementById('overlay');
-  const closeBtn = document.getElementById('closeBtn');
-  const deck = document.getElementById('deck');
-  const caption = document.getElementById('caption');
-  const restartBtn = document.getElementById('restartBtn');
+    const totalImages = 13;
+    const images = [];
+    let currentIndex = 0;
+    let isTransitioning = false;
 
-  const totalImages = 13;
-  const images = [];
-  let currentIndex = 0;
+    const captions = [
+      "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
+      "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
+      "Trang 10", "Trang 11", "Trang 12"
+    ];
 
-  const captions = [
-    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
-    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
-    "Trang 10", "Trang 11", "Trang 12"
-  ];
+    for (let i = 0; i < totalImages; i++) {
+      const img = document.createElement('img');
+      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+      deck.appendChild(img);
+      images.push(img);
 
-  for (let i = 0; i < totalImages; i++) {
-    const img = document.createElement('img');
-    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`; // CHỈ SỬA ĐOẠN NÀY
-    deck.appendChild(img);
-    images.push(img);
-  }
+      img.addEventListener('transitionend', () => {
+        if (img.classList.contains('active')) {
+          isTransitioning = false;
+        }
+      });
+    }
 
-  function updateClasses() {
-    images.forEach((img, index) => {
-      img.classList.remove('active', 'left', 'right');
-      if (index === currentIndex) {
-        img.classList.add('active');
-        img.style.zIndex = '10';
-      } else if (index < currentIndex) {
-        img.classList.add('left');
-        img.style.zIndex = `${5 + index}`;
-      } else {
-        img.classList.add('right');
-        img.style.zIndex = `${5 - (index - currentIndex)}`;
-      }
-    });
-    caption.textContent = captions[currentIndex] || "";
-    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-  }
+    function updateClasses() {
+      images.forEach((img, index) => {
+        img.classList.remove('active', 'left', 'right');
+        if (index === currentIndex) {
+          img.classList.add('active');
+          img.style.zIndex = '10';
+        } else if (index < currentIndex) {
+          img.classList.add('left');
+          img.style.zIndex = `${5 + index}`;
+        } else {
+          img.classList.add('right');
+          img.style.zIndex = `${5 - (index - currentIndex)}`;
+        }
+      });
+      caption.textContent = captions[currentIndex] || "";
+      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+    }
 
-  function showOverlay() {
-    overlay.style.display = 'flex';
-    updateClasses();
-  }
+    function showOverlay() {
+      overlay.style.display = 'flex';
+      updateClasses();
+    }
 
-  function hideOverlay() {
-    overlay.style.display = 'none';
-  }
+    function hideOverlay() {
+      overlay.style.display = 'none';
+    }
 
-  function nextImage() {
-    if (currentIndex < totalImages - 1) {
+    function nextImage() {
+      if (isTransitioning || currentIndex >= totalImages - 1) return;
       currentIndex++;
+      isTransitioning = true;
       updateClasses();
     }
-  }
 
-  function prevImage() {
-    if (currentIndex > 0) {
+    function prevImage() {
+      if (isTransitioning || currentIndex <= 0) return;
       currentIndex--;
+      isTransitioning = true;
       updateClasses();
     }
-  }
 
-  function handleClick(e) {
-    const rect = overlay.getBoundingClientRect();
-    const clickX = e.clientX;
-    const centerX = rect.left + rect.width / 2;
-    if (clickX > centerX + 50) nextImage();
-    else if (clickX < centerX - 50) prevImage();
-  }
+    function handleClick(e) {
+      const rect = overlay.getBoundingClientRect();
+      const clickX = e.clientX;
+      const centerX = rect.left + rect.width / 2;
+      if (clickX > centerX + 50) nextImage();
+      else if (clickX < centerX - 50) prevImage();
+    }
 
-  function restartGallery() {
-    currentIndex = 0;
-    updateClasses();
-  }
+    function restartGallery() {
+      if (isTransitioning) return;
+      currentIndex = 0;
+      updateClasses();
+    }
 
-  punkgaLink.addEventListener('click', showOverlay);
-  closeBtn.addEventListener('click', hideOverlay);
-  overlay.addEventListener('click', handleClick);
-  restartBtn.addEventListener('click', restartGallery);
+    punkgaLink.addEventListener('click', showOverlay);
+    closeBtn.addEventListener('click', hideOverlay);
+    overlay.addEventListener('click', handleClick);
+    restartBtn.addEventListener('click', restartGallery);
 
-  window.addEventListener('keydown', e => {
-    if (overlay.style.display !== 'flex') return;
-    if (e.key === 'ArrowRight') nextImage();
-    if (e.key === 'ArrowLeft') prevImage();
-    if (e.key === 'Escape') hideOverlay();
-  });
-</script>
-
+    window.addEventListener('keydown', e => {
+      if (overlay.style.display !== 'flex' || isTransitioning) return;
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'Escape') hideOverlay();
+    });
+  </script>
 </body>
 </html>
