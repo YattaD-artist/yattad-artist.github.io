@@ -239,13 +239,15 @@
     }
 
     function showOverlay() {
+      currentIndex = 0;           // 🔄 Reset về Trang Bìa khi mở lại
+      isTransitioning = false;    // 🔧 Đảm bảo không kẹt
       overlay.style.display = 'flex';
       updateClasses();
     }
 
     function hideOverlay() {
       overlay.style.display = 'none';
-      isTransitioning = false; // ✅ Reset lại để không bị lỗi khi mở lại
+      isTransitioning = false;    // 🔧 Reset trạng thái nếu đóng khi đang chuyển
     }
 
     function nextImage() {
