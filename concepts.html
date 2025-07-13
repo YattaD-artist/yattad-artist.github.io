@@ -1,18 +1,153 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Thiết kế</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tranh Concepts</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'VT323', monospace;
+      background-color: #f8f8ff;
+      overflow-x: hidden;
+    }
+
+    .background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    main {
+      padding: 80px 5vw 0;
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: normal;
+      margin-bottom: 24px;
+      color: #111;
+    }
+
+    p {
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      margin: 12px 0;
+      color: #333;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 32px;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      text-decoration: none;
+      color: #4e5ba6;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    a:hover {
+      color: #2d2f92;
+      transform: scale(1.1);
+    }
+
+    .grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 0 2vw 64px;
+    }
+
+    .grid-item {
+      aspect-ratio: 1 / 1;
+      background-color: #ddd;
+      border: 1px solid #aaa;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .grid-item:hover {
+      transform: scale(1.05);
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .lightbox:active {
+      display: none;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Concept Arts</h1>
-        <p>Đây là</p>
-        <a href="index.html">Quay lại trang chủ</a>
-    </div>
+  <div class="background"></div>
+
+  <main>
+    <h1>Minh Họa</h1>
+    <p>Đây là kho hình vẽ của YattaD</p>
+    <a href="index.html">← Quay lại trang chủ</a>
+  </main>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="lightbox" id="lightbox" onclick="hideLightbox()">
+    <img id="lightbox-img" src="" alt="Hình lớn">
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    const totalCells = 70;
+
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-item';
+
+      // Để gắn ảnh thật, bỏ comment dòng sau:
+      // cell.style.backgroundImage = `url('illustrations/${i.toString().padStart(2, '0')}.webp')`;
+
+      cell.addEventListener('click', () => {
+        lightboxImg.src = `illustrations/${i.toString().padStart(2, '0')}.webp`;
+        lightbox.style.display = 'flex';
+      });
+
+      grid.appendChild(cell);
+    }
+
+    function hideLightbox() {
+      lightbox.style.display = 'none';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hideLightbox();
+    });
+  </script>
 </body>
-
 </html>
-
