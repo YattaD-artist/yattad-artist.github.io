@@ -224,6 +224,7 @@
 
 function updateClasses() {
   const total = images.length;
+
   images.forEach((img, index) => {
     img.classList.remove('active', 'left', 'right');
 
@@ -231,22 +232,21 @@ function updateClasses() {
       img.classList.add('active');
       img.style.zIndex = 100;
     } else if (index < currentIndex) {
-      // TRANG BÊN TRÁI — xếp từ dưới lên
-      const distanceFromCurrent = currentIndex - index;
+      // Bên trái: từ dưới lên
+      const distLeft = currentIndex - index;
       img.classList.add('left');
-      img.style.zIndex = 10 + distanceFromCurrent;
+      img.style.zIndex = 10 + distLeft;
     } else {
-      // TRANG BÊN PHẢI — xếp từ trên xuống
-      const distanceFromCurrent = index - currentIndex;
+      // Bên phải: từ trên xuống — trang cuối nằm dưới cùng
+      const distRight = total - 1 - index;
       img.classList.add('right');
-      img.style.zIndex = 10 - distanceFromCurrent;
+      img.style.zIndex = 10 + distRight;
     }
   });
 
   caption.textContent = captions[currentIndex] || "";
   restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
 }
-
 
     function showOverlay() {
       currentIndex = 0;
