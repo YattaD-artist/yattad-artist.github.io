@@ -25,13 +25,10 @@
       pointer-events: none;
     }
 
-    .container {
-      padding-top: 80px;
-      padding-left: 12ch;
-      padding-right: 5vw;
-      max-width: 800px;
+    main {
+      padding: 80px 5vw 0;
+      z-index: 1;
       position: relative;
-      z-index: 2;
     }
 
     h1 {
@@ -64,9 +61,9 @@
     .grid {
       margin-top: 64px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      padding: 0 2vw;
+      padding: 0 2vw 64px;
     }
 
     .grid-item {
@@ -110,15 +107,14 @@
 <body>
   <div class="background"></div>
 
-  <div class="container">
+  <main>
     <h1>Minh Họa</h1>
     <p>Đây là kho hình vẽ của YattaD</p>
     <a href="index.html">← Quay lại trang chủ</a>
+  </main>
 
-    <div class="grid" id="grid"></div>
-  </div>
+  <div class="grid" id="grid"></div>
 
-  <!-- Lightbox hiển thị ảnh lớn -->
   <div class="lightbox" id="lightbox" onclick="hideLightbox()">
     <img id="lightbox-img" src="" alt="Hình lớn">
   </div>
@@ -134,7 +130,7 @@
       const cell = document.createElement('div');
       cell.className = 'grid-item';
 
-      // Có thể bật dòng dưới để hiển thị ảnh nếu đã có ảnh thật
+      // Để gắn ảnh thật, bỏ comment dòng sau:
       // cell.style.backgroundImage = `url('illustrations/${i.toString().padStart(2, '0')}.webp')`;
 
       cell.addEventListener('click', () => {
