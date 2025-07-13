@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>YattaD</title>
 
-  <!-- Font từ Google -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
@@ -30,27 +30,28 @@
 
     h1 {
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 6vw; /* responsive heading */
+      font-size: clamp(2rem, 6vw, 3.5rem);
       margin: 0.2em 0 0;
     }
 
     p {
       font-family: 'VT323', monospace;
-      font-size: 3.2vw; /* responsive paragraph */
+      font-size: clamp(1rem, 3.2vw, 2rem);
       color: #444;
     }
 
     .menu {
-      text-align: center;
-      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7ch; /* khoảng cách tương đương với 7 chữ 'n' */
+      margin-top: 24px;
     }
 
     .menu a {
-      display: inline-block;
       text-decoration: none;
       color: #334;
-      font-size: 2.6vw; /* responsive menu text */
-      margin: 0 12px;
+      font-size: clamp(1rem, 2.6vw, 1.8rem);
       transition: transform 0.2s ease, color 0.2s ease;
       font-family: 'VT323', monospace;
     }
@@ -82,12 +83,12 @@
     }
   </style>
 </head>
-
 <body>
+
   <!-- Nền pixel -->
   <div class="background"></div>
 
-  <!-- Nội dung trang -->
+  <!-- Nội dung chính -->
   <div class="container" id="text-container">
     <header>
       <h1>YattaD</h1>
