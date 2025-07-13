@@ -267,18 +267,18 @@
   }
 
   // Hiện overlay
-  function showOverlay() {
-    overlay.style.display = 'flex';
-    updateClasses();
-  }
+function showOverlay() {
+  currentIndex = 0;          // 🔁 Reset về Trang Bìa khi mở lại
+  isTransitioning = false;
+  overlay.style.display = 'flex';
+  updateClasses();           // ⬅️ Cập nhật ngay sau khi reset
+}
 
-  // Ẩn overlay và reset trạng thái
-  function hideOverlay() {
-    overlay.style.display = 'none';
-    isTransitioning = false;
-    currentIndex = 0; // ✅ Reset về Trang Bìa khi đóng
-    updateClasses();  // ✅ Cập nhật lại lớp hiển thị
-  }
+function hideOverlay() {
+  overlay.style.display = 'none';
+  isTransitioning = false;   // 🧹 Dọn trạng thái
+  // Không cần reset currentIndex ở đây nữa
+}
 
   // Chuyển sang trang kế
   function nextImage() {
