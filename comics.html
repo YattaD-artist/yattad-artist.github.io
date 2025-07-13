@@ -222,25 +222,23 @@
       });
     }
 
-function updateClasses() {
-  images.forEach((img, index) => {
-    img.classList.remove('active', 'left', 'right');
-
-    if (index === currentIndex) {
-      img.classList.add('active');
-      img.style.zIndex = 50;
-    } else if (index > currentIndex) {
-      img.classList.add('right');
-      img.style.zIndex = 49 - (index - (currentIndex + 1));
-    } else {
-      img.classList.add('left');
-      img.style.zIndex = 51 + (currentIndex - 1 - index);
+    function updateClasses() {
+      images.forEach((img, index) => {
+        img.classList.remove('active', 'left', 'right');
+        if (index === currentIndex) {
+          img.classList.add('active');
+          img.style.zIndex = '50';
+        } else if (index < currentIndex) {
+          img.classList.add('left');
+          img.style.zIndex = `${1 + index}`;
+        } else {
+          img.classList.add('right');
+          img.style.zIndex = `${1 - (index - currentIndex)}`;
+        }
+      });
+      caption.textContent = captions[currentIndex] || "";
+      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
     }
-  });
-
-  caption.textContent = captions[currentIndex] || "";
-  restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-}
 
     function showOverlay() {
       currentIndex = 0;
