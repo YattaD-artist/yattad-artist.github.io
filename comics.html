@@ -19,10 +19,12 @@
       padding-top: 48px;
       z-index: 1;
       position: relative;
+      max-width: 80vw;
+      margin: 0 auto;
     }
 
     h1 {
-      font-size: 2.8em;
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
       font-weight: normal;
       margin: 0.2em 0 0;
       color: #222;
@@ -30,11 +32,14 @@
 
     .menu {
       margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7ch;
     }
 
     .menu a {
-      margin: 0 16px;
-      font-size: 1.6em;
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
       text-decoration: none;
       color: #334;
       transition: transform 0.2s ease, color 0.2s ease;
@@ -59,9 +64,10 @@
     .back-link {
       display: block;
       margin-top: 40px;
-      font-size: 1.4em;
+      font-size: clamp(1.1rem, 2.2vw, 1.8rem);
       text-decoration: none;
       color: #444;
+      transition: color 0.2s ease;
     }
 
     .back-link:hover {
@@ -121,7 +127,7 @@
       bottom: 32px;
       width: 100%;
       text-align: center;
-      font-size: 1.4em;
+      font-size: clamp(1.1rem, 2.5vw, 1.8rem);
       color: #ddd;
       z-index: 15;
       pointer-events: none;
@@ -145,7 +151,7 @@
       position: absolute;
       right: 30px;
       bottom: 90px;
-      font-size: 1.3em;
+      font-size: clamp(1rem, 2vw, 1.6rem);
       color: #eee;
       background-color: rgba(255,255,255,0.1);
       padding: 10px 16px;
