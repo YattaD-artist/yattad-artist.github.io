@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
+
+  <!-- Google Font: VT323 kiểu chữ pixel-style -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
   <style>
+    /* Reset và thiết lập nền */
     html, body {
       margin: 0;
       padding: 0;
@@ -14,22 +18,36 @@
       overflow: hidden;
     }
 
+    /* Hình nền dạng caro chìm */
+    .background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    /* Container cho nội dung chính */
     .container {
       text-align: center;
       padding-top: 48px;
-      z-index: 1;
       position: relative;
+      z-index: 1;
       max-width: 80vw;
       margin: 0 auto;
     }
 
-   h1 {
-  font-size: clamp(2.7rem, 7.5vw, 5.25rem); /* tăng hơn 0.5 lần */
-      font-weight: normal;
-  margin: 0.2em 0 0;
-  color: #222;
-}
+    /* Tiêu đề: phóng to hơn 0.5 lần, bôi đậm */
+    h1 {
+      font-size: clamp(2.7rem, 7.5vw, 5.25rem);
+      font-weight: bold;
+      margin: 0.2em 0 0;
+      color: #222;
+    }
 
+    /* Menu lựa chọn */
     .menu {
       margin-top: 24px;
       display: flex;
@@ -38,6 +56,7 @@
       gap: 7ch;
     }
 
+    /* Mục trong menu */
     .menu a {
       font-size: clamp(1.2rem, 2.5vw, 2rem);
       text-decoration: none;
@@ -51,16 +70,7 @@
       color: #4e5ba6;
     }
 
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
-
+    /* Link quay lại trang chủ */
     .back-link {
       display: block;
       margin-top: 40px;
@@ -74,6 +84,7 @@
       color: #4e5ba6;
     }
 
+    /* Overlay che phủ toàn màn khi xem truyện */
     .overlay {
       position: fixed;
       top: 0; left: 0;
@@ -87,12 +98,14 @@
       overflow: hidden;
     }
 
+    /* Khu vực chứa tất cả các trang truyện */
     .deck {
       position: relative;
       width: 100%;
       height: 100%;
     }
 
+    /* Từng hình ảnh đại diện cho một trang */
     .deck img {
       position: absolute;
       top: 50%;
@@ -107,6 +120,7 @@
       pointer-events: none;
     }
 
+    /* Trang hiện tại */
     .deck img.active {
       transform: translate(-50%, -50%) scale(1);
       z-index: 30;
@@ -114,14 +128,17 @@
       pointer-events: auto;
     }
 
+    /* Trang bên trái */
     .deck img.left {
       transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
     }
 
+    /* Trang bên phải */
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
     }
 
+    /* Phần ghi chú bên dưới ảnh */
     .caption {
       position: absolute;
       bottom: 32px;
@@ -133,6 +150,7 @@
       pointer-events: none;
     }
 
+    /* Nút đóng (góc trên bên phải) */
     .close-btn {
       position: absolute;
       top: 20px;
@@ -147,6 +165,7 @@
       color: white;
     }
 
+    /* Nút quay lại trang đầu (chỉ hiện ở cuối truyện) */
     .restart-btn {
       position: absolute;
       right: 30px;
@@ -169,16 +188,23 @@
 </head>
 
 <body>
+  <!-- Nền caro -->
   <div class="background"></div>
 
+  <!-- Giao diện chính -->
   <div class="container">
     <h1>Truyện Tranh</h1>
+
+    <!-- Menu hiện chỉ còn 1 mục -->
     <div class="menu">
       <a id="punkga-link">PunkgaMerch</a>
     </div>
+
+    <!-- Liên kết trở lại -->
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
+  <!-- Giao diện đọc truyện -->
   <div class="overlay" id="overlay">
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
@@ -187,6 +213,7 @@
   </div>
 
   <script>
+    // Khai báo phần tử giao diện
     const punkgaLink = document.getElementById('punkga-link');
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
@@ -194,17 +221,20 @@
     const caption = document.getElementById('caption');
     const restartBtn = document.getElementById('restartBtn');
 
+    // Tổng số ảnh
     const totalImages = 13;
     const images = [];
     let currentIndex = 0;
     let isTransitioning = false;
 
+    // Chú thích cho từng trang
     const captions = [
       "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
       "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
       "Trang 10", "Trang 11", "Trang 12"
     ];
 
+    // Tải ảnh vào DOM
     for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
       img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
@@ -218,6 +248,7 @@
       });
     }
 
+    // Cập nhật trạng thái hiển thị từng trang
     function updateClasses() {
       images.forEach((img, index) => {
         img.classList.remove('active', 'left', 'right');
@@ -237,16 +268,19 @@
       restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
     }
 
+    // Mở giao diện đọc truyện
     function showOverlay() {
       overlay.style.display = 'flex';
       updateClasses();
     }
 
+    // Đóng giao diện đọc truyện
     function hideOverlay() {
       overlay.style.display = 'none';
       isTransitioning = false;
     }
 
+    // Chuyển sang trang tiếp theo
     function nextImage() {
       if (isTransitioning || currentIndex >= totalImages - 1) return;
       currentIndex++;
@@ -254,6 +288,7 @@
       updateClasses();
     }
 
+    // Quay lại trang trước
     function prevImage() {
       if (isTransitioning || currentIndex <= 0) return;
       currentIndex--;
@@ -261,6 +296,7 @@
       updateClasses();
     }
 
+    // Nhấn vào trái/phải màn hình để chuyển trang
     function handleClick(e) {
       const rect = overlay.getBoundingClientRect();
       const clickX = e.clientX;
@@ -269,17 +305,20 @@
       else if (clickX < centerX - 50) prevImage();
     }
 
+    // Quay lại trang đầu
     function restartGallery() {
       if (isTransitioning) return;
       currentIndex = 0;
       updateClasses();
     }
 
+    // Gắn sự kiện
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
     overlay.addEventListener('click', handleClick);
     restartBtn.addEventListener('click', restartGallery);
 
+    // Bắt phím tắt: ← → ESC
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex' || isTransitioning) return;
       if (e.key === 'ArrowRight') nextImage();
