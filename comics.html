@@ -223,21 +223,20 @@
     }
 
 function updateClasses() {
-  const total = images.length;
+  const zIndexBase = 50;
 
   images.forEach((img, index) => {
     img.classList.remove('active', 'left', 'right');
 
     if (index === currentIndex) {
       img.classList.add('active');
-      img.style.zIndex = 50;
+      img.style.zIndex = zIndexBase;
     } else if (index < currentIndex) {
       img.classList.add('left');
-      img.style.zIndex = index + 1;
+      img.style.zIndex = index + 1;  // zIndex từ 1 đến currentIndex
     } else {
-      // Công thức đúng: Trang càng gần bên phải thì zIndex càng cao
       img.classList.add('right');
-      img.style.zIndex = 50 + (total - index);
+      img.style.zIndex = zIndexBase + (currentIndex + 1 - index);
     }
   });
 
