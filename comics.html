@@ -1,278 +1,93 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Truyện Tranh</title>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'VT323', monospace;
-      background-color: #f8f8ff;
-      overflow: hidden;
-    }
+<!-- ... phần head giữ nguyên ... -->
 
-    .container {
-      text-align: center;
-      padding-top: 48px;
-      z-index: 1;
-      position: relative;
-    }
+<script>
+  const punkgaLink = document.getElementById('punkga-link');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const deck = document.getElementById('deck');
+  const caption = document.getElementById('caption');
+  const restartBtn = document.getElementById('restartBtn');
 
-    h1 {
-      font-size: 2.6em;
-      margin: 0.2em 0 0;
-      font-weight: normal;
-    }
+  const totalImages = 13;
+  const images = [];
+  let currentIndex = 0;
 
-    .menu {
-      margin-top: 24px;
-    }
+  const captions = [
+    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
+    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
+    "Trang 10", "Trang 11", "Trang 12"
+  ];
 
-    .menu a {
-      margin: 0 16px;
-      font-size: 1.6em;
-      text-decoration: none;
-      color: #334;
-      transition: transform 0.2s ease, color 0.2s ease;
-      cursor: pointer;
-    }
+  for (let i = 0; i < totalImages; i++) {
+    const img = document.createElement('img');
+    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`; // CHỈ SỬA ĐOẠN NÀY
+    deck.appendChild(img);
+    images.push(img);
+  }
 
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #4e5ba6;
-    }
+  function updateClasses() {
+    images.forEach((img, index) => {
+      img.classList.remove('active', 'left', 'right');
+      if (index === currentIndex) {
+        img.classList.add('active');
+        img.style.zIndex = '10';
+      } else if (index < currentIndex) {
+        img.classList.add('left');
+        img.style.zIndex = `${5 + index}`;
+      } else {
+        img.classList.add('right');
+        img.style.zIndex = `${5 - (index - currentIndex)}`;
+      }
+    });
+    caption.textContent = captions[currentIndex] || "";
+    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+  }
 
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
+  function showOverlay() {
+    overlay.style.display = 'flex';
+    updateClasses();
+  }
 
-    .back-link {
-      display: block;
-      margin-top: 40px;
-      font-size: 1.4em;
-      text-decoration: none;
-      color: #444;
-    }
+  function hideOverlay() {
+    overlay.style.display = 'none';
+  }
 
-    .back-link:hover {
-      color: #4e5ba6;
-    }
-
-    /* Overlay & Gallery */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    .deck {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .deck img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      max-height: 80vh;
-      max-width: 80vw;
-      transform: translate(-50%, -50%) scale(0.6);
-      transition: transform 0.5s ease, z-index 0.3s ease;
-      border-radius: 8px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.4);
-      filter: brightness(0.6) contrast(0.9);
-      pointer-events: none;
-    }
-
-    .deck img.active {
-      transform: translate(-50%, -50%) scale(1);
-      z-index: 10;
-      filter: brightness(1) contrast(1);
-      pointer-events: auto;
-    }
-
-    .deck img.left {
-      transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
-      z-index: 5;
-    }
-
-    .deck img.right {
-      transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
-      z-index: 5;
-    }
-
-    .caption {
-      position: absolute;
-      bottom: 6vh;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.2em;
-      color: #eee;
-      background-color: rgba(0,0,0,0.4);
-      padding: 4px 16px;
-      border-radius: 6px;
-      z-index: 15;
-    }
-
-    .return-btn {
-      position: absolute;
-      bottom: 16px;
-      right: 24px;
-      font-size: 1.2em;
-      background-color: rgba(255,255,255,0.1);
-      color: #fff;
-      border: 1px solid #ccc;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    .return-btn:hover {
-      background-color: rgba(255,255,255,0.2);
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 28px;
-      font-size: 2em;
-      color: #eee;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    .close-btn:hover {
-      color: white;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="background"></div>
-
-  <div class="container">
-    <h1>Truyện Tranh</h1>
-    <div class="menu">
-      <a href="agnu.html">AGNU</a>
-      <a href="tieu.html">Tiêu</a>
-      <a id="punkga-link">PunkgaMerch</a>
-    </div>
-    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
-  </div>
-
-  <div class="overlay" id="overlay">
-    <div class="close-btn" id="closeBtn">✕</div>
-    <div class="deck" id="deck"></div>
-    <div class="caption" id="caption"></div>
-    <div class="return-btn" id="returnBtn" style="display: none;">← Quay lại trang bìa</div>
-  </div>
-
-  <script>
-    const punkgaLink = document.getElementById('punkga-link');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeBtn');
-    const deck = document.getElementById('deck');
-    const caption = document.getElementById('caption');
-    const returnBtn = document.getElementById('returnBtn');
-
-    const totalImages = 13;
-    let currentIndex = 0;
-    const images = [];
-
-    const captions = [
-      "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
-      "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
-      "Trang 10", "Trang 11", "Trang 12"
-    ];
-
-    for (let i = 0; i < totalImages; i++) {
-      const img = document.createElement('img');
-      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-      img.classList.add('gallery-img');
-      deck.appendChild(img);
-      images.push(img);
-    }
-
-    function updateClasses() {
-      images.forEach((img, index) => {
-        img.classList.remove('active', 'left', 'right');
-        if (index === currentIndex) {
-          img.classList.add('active');
-        } else if (index < currentIndex) {
-          img.classList.add('left');
-        } else {
-          img.classList.add('right');
-        }
-      });
-
-      caption.textContent = captions[currentIndex] || "";
-      returnBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-    }
-
-    function showOverlay() {
-      overlay.style.display = 'flex';
+  function nextImage() {
+    if (currentIndex < totalImages - 1) {
+      currentIndex++;
       updateClasses();
     }
+  }
 
-    function hideOverlay() {
-      overlay.style.display = 'none';
-    }
-
-    function nextImage() {
-      if (currentIndex < totalImages - 1) {
-        currentIndex++;
-        updateClasses();
-      }
-    }
-
-    function prevImage() {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateClasses();
-      }
-    }
-
-    function resetToCover() {
-      currentIndex = 0;
+  function prevImage() {
+    if (currentIndex > 0) {
+      currentIndex--;
       updateClasses();
     }
+  }
 
-    punkgaLink.addEventListener('click', showOverlay);
-    closeBtn.addEventListener('click', hideOverlay);
-    returnBtn.addEventListener('click', resetToCover);
+  function handleClick(e) {
+    const rect = overlay.getBoundingClientRect();
+    const clickX = e.clientX;
+    const centerX = rect.left + rect.width / 2;
+    if (clickX > centerX + 50) nextImage();
+    else if (clickX < centerX - 50) prevImage();
+  }
 
-    // Chuột trái để chuyển trang
-    overlay.addEventListener('click', e => {
-      const centerX = window.innerWidth / 2;
-      if (e.clientX > centerX + 60) nextImage();
-      else if (e.clientX < centerX - 60) prevImage();
-    });
+  function restartGallery() {
+    currentIndex = 0;
+    updateClasses();
+  }
 
-    // Phím tắt
-    window.addEventListener('keydown', e => {
-      if (overlay.style.display !== 'flex') return;
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'Escape') hideOverlay();
-    });
-  </script>
-</body>
-</html>
+  punkgaLink.addEventListener('click', showOverlay);
+  closeBtn.addEventListener('click', hideOverlay);
+  overlay.addEventListener('click', handleClick);
+  restartBtn.addEventListener('click', restartGallery);
+
+  window.addEventListener('keydown', e => {
+    if (overlay.style.display !== 'flex') return;
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'Escape') hideOverlay();
+  });
+</script>
