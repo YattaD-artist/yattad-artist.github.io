@@ -1,34 +1,97 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truyện Tranh</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const menuItems = document.querySelectorAll(".menu-item");
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truyện Tranh</title>
 
-        menuItems.forEach(item => {
-            item.addEventListener("click", function () {
-                let subMenu = this.nextElementSibling;
-                if (subMenu) {
-                    subMenu.classList.toggle("active");
-                }
-            });
-        });
-    });
-</script>
+  <!-- Font từ Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #f8f8ff;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 48px;
+    }
+
+    h1 {
+      font-family: 'Pixelify Sans', sans-serif;
+      font-size: 2.5em;
+      margin: 0.2em 0 0;
+    }
+
+    .menu {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .menu a {
+      display: inline-block;
+      text-decoration: none;
+      color: #334;
+      font-size: 1.3em;
+      margin: 0 12px;
+      transition: transform 0.2s ease, color 0.2s ease;
+      font-family: 'VT323', monospace;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 40px;
+      font-size: 1.2em;
+      text-decoration: none;
+      font-family: 'VT323', monospace;
+      color: #444;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: #4e5ba6;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+  </style>
+</head>
 
 <body>
-    <div class="container">
-        <h1>Truyện Tranh</h1>
-        <div class="menu">
-            <a href="agnu.html" class="menu-item">AGNU</a>
-            <a href="tieu.html" class="menu-item">Tiêu</a>
-        </div>
-        <a href="index.html" class="back-link">Quay lại trang chủ</a>
+  <!-- Nền pixel -->
+  <div class="background"></div>
+
+  <!-- Nội dung chính -->
+  <div class="container">
+    <h1>Truyện Tranh</h1>
+    <div class="menu">
+      <a href="agnu.html">AGNU</a>
+      <a href="tieu.html">Tiêu</a>
     </div>
+    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
+  </div>
 </body>
 </html>
