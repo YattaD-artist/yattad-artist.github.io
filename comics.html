@@ -224,30 +224,28 @@
 
 function updateClasses() {
   const total = images.length;
-
   images.forEach((img, index) => {
     img.classList.remove('active', 'left', 'right');
 
     if (index === currentIndex) {
       img.classList.add('active');
-      img.style.zIndex = 100; // trang chính luôn trên cùng
+      img.style.zIndex = 100;
     } else if (index < currentIndex) {
-      // Trang bên trái, từ dưới lên
-      const z = index; // z tăng dần: 0, 1, 2, ...
+      // Bên trái: xếp từ dưới lên (z tăng dần)
+      const distance = currentIndex - index;
       img.classList.add('left');
-      img.style.zIndex = z;
+      img.style.zIndex = 10 + distance;
     } else {
-      // Trang bên phải, từ trên xuống
-      const z = total - index; // z giảm dần: 12, 11, 10, ...
+      // Bên phải: xếp từ cao xuống thấp (z giảm theo index)
+      const distance = index - currentIndex;
       img.classList.add('right');
-      img.style.zIndex = z;
+      img.style.zIndex = 100 - index;
     }
   });
 
   caption.textContent = captions[currentIndex] || "";
   restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
 }
-
 
     function showOverlay() {
       currentIndex = 0;
