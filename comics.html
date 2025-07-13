@@ -25,6 +25,7 @@
     h1 {
       font-size: 2.8em;
       margin: 0.2em 0 0;
+      font-weight: normal; /* Bỏ in đậm */
     }
 
     .menu {
@@ -79,12 +80,13 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      flex-direction: column;
     }
 
     .deck {
       position: relative;
       width: 100%;
-      height: 100%;
+      height: calc(100% - 60px);
     }
 
     .deck img {
@@ -112,6 +114,14 @@
 
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
+    }
+
+    .caption {
+      font-size: 1.4em;
+      color: #eee;
+      text-align: center;
+      padding: 12px 0;
+      z-index: 15;
     }
 
     .close-btn {
@@ -159,11 +169,13 @@
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
+  <!-- Overlay Viewer -->
   <div class="overlay" id="overlay">
     <div class="click-zone left-zone" id="clickLeft"></div>
     <div class="click-zone right-zone" id="clickRight"></div>
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
+    <div class="caption" id="caption"></div>
   </div>
 
   <script>
@@ -173,10 +185,27 @@
     const deck = document.getElementById('deck');
     const clickLeft = document.getElementById('clickLeft');
     const clickRight = document.getElementById('clickRight');
+    const caption = document.getElementById('caption');
 
     const totalImages = 13;
     let currentIndex = 0;
     const images = [];
+
+    const captions = [
+      "Trang Bìa",
+      "Trang 1",
+      "Trang 2",
+      "Trang 3",
+      "Trang 4",
+      "Trang 5",
+      "Trang 6",
+      "Trang 7",
+      "Trang 8",
+      "Trang 9",
+      "Trang 10",
+      "Trang 11",
+      "Trang 12"
+    ];
 
     // Tải ảnh vào deck
     for (let i = 0; i < totalImages; i++) {
@@ -200,6 +229,9 @@
           img.style.zIndex = 5 - (index - currentIndex);
         }
       });
+
+      // Cập nhật caption
+      caption.textContent = captions[currentIndex] || `Trang ${currentIndex}`;
     }
 
     function showOverlay() {
@@ -225,13 +257,11 @@
       }
     }
 
-    // Gán sự kiện
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
     clickLeft.addEventListener('click', prevImage);
     clickRight.addEventListener('click', nextImage);
 
-    // Điều hướng bằng phím
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex') return;
       if (e.key === 'ArrowRight') nextImage();
