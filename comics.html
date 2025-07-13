@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
 
-  <!-- Font duy nhất: VT323 -->
+  <!-- Font duy nhất -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
   <style>
@@ -42,6 +42,7 @@
       font-size: 1.6em;
       margin: 0 16px;
       transition: transform 0.2s ease, color 0.2s ease;
+      cursor: pointer;
     }
 
     .menu a:hover {
@@ -73,21 +74,97 @@
       opacity: 0.3;
       z-index: 0;
     }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 20px;
+      overflow-x: auto;
+      z-index: 999;
+    }
+
+    .gallery {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .gallery img {
+      max-height: 300px;
+      border-radius: 6px;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    .close-btn {
+      margin-top: 8px;
+      font-size: 1.5em;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .close-btn:hover {
+      color: white;
+    }
   </style>
 </head>
 
 <body>
-  <!-- Nền pixel -->
   <div class="background"></div>
 
-  <!-- Nội dung chính -->
   <div class="container">
     <h1>Truyện Tranh</h1>
     <div class="menu">
       <a href="agnu.html">AGNU</a>
       <a href="tieu.html">Tiêu</a>
+      <a id="punkga-link">PunkgaMerch</a>
     </div>
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
+
+  <!-- Overlay Gallery -->
+  <div class="overlay" id="overlay">
+    <div class="close-btn" id="closeBtn">Đóng ✕</div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+  <script>
+    const punkgaLink = document.getElementById('punkga-link');
+    const overlay = document.getElementById('overlay');
+    const gallery = document.getElementById('gallery');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // Hiển thị overlay
+    punkgaLink.addEventListener('click', () => {
+      overlay.style.display = 'flex';
+      gallery.innerHTML = '';
+
+      for (let i = 0; i <= 12; i++) {
+        const img = document.createElement('img');
+        const index = i.toString().padStart(2, '0');
+        img.src = `comics/PunkgaMerch/${index}.jpg`;
+        img.alt = `PunkgaMerch ${index}`;
+        gallery.appendChild(img);
+      }
+    });
+
+    // Đóng overlay
+    closeBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
