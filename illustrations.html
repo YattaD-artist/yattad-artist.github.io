@@ -1,16 +1,75 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Tranh Minh Họa</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tranh Minh Họa</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'VT323', monospace;
+      background-color: #f8f8ff;
+      overflow-x: hidden;
+    }
+
+    .background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      padding-top: 80px;
+      padding-left: 12ch;
+      padding-right: 5vw;
+      max-width: 800px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: normal;
+      margin-bottom: 24px;
+      color: #111;
+    }
+
+    p {
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      margin: 12px 0;
+      color: #333;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 32px;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      text-decoration: none;
+      color: #4e5ba6;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    a:hover {
+      color: #2d2f92;
+      transform: scale(1.1);
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Minh Họa</h1>
-        <p>Đây là</p>
-        <a href="index.html">Quay lại trang chủ</a>
-    </div>
+  <div class="background"></div>
+
+  <div class="container">
+    <h1>Minh Họa</h1>
+    <p>Đây là kho hình vẽ của YattaD</p>
+    <a href="index.html">← Quay lại trang chủ</a>
+  </div>
 </body>
 </html>
