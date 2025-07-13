@@ -24,17 +24,19 @@
       z-index: 2;
       text-align: center;
       padding-top: 48px;
+      width: 80vw;
+      margin: 0 auto;
     }
 
     h1 {
       font-family: 'Pixelify Sans', sans-serif;
-      font-size: 2.5em;
+      font-size: 6vw; /* responsive heading */
       margin: 0.2em 0 0;
     }
 
     p {
       font-family: 'VT323', monospace;
-      font-size: 1.5em;
+      font-size: 3.2vw; /* responsive paragraph */
       color: #444;
     }
 
@@ -47,7 +49,7 @@
       display: inline-block;
       text-decoration: none;
       color: #334;
-      font-size: 1.1em;
+      font-size: 2.6vw; /* responsive menu text */
       margin: 0 12px;
       transition: transform 0.2s ease, color 0.2s ease;
       font-family: 'VT323', monospace;
@@ -80,6 +82,7 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Nền pixel -->
   <div class="background"></div>
@@ -103,11 +106,9 @@
   <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 
   <script>
-    // Trạng thái nhân vật: idle, walk, run
     let state = "idle";
-    let direction = ""; // "", U, L, R
+    let direction = "";
     let isMoving = false;
-
     let idleFrame = 0;
     let moveFrame = 0;
 
@@ -133,27 +134,19 @@
     function preloadImages(callback) {
       const folders = ["Idle", "Walk", "Run"];
       const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
-      let loaded = 0;
-      let total = 0;
+      let loaded = 0, total = 0;
 
       for (const folder of folders) {
         for (const dir of directions) {
-          const suffix = dir;
-          const prefix = folder + suffix;
+          const prefix = folder + dir;
           const count = counts[folder];
           total += count;
           for (let i = 0; i < count; i++) {
-            const frameStr = folder === "Run" ? `${i}` : `${i.toString().padStart(2, "0")}`;
+            const frameStr = folder === "Run" ? `${i}` : i.toString().padStart(2, "0");
             const img = new Image();
             img.src = `assets/character/${folder}/${prefix}${frameStr}.png`;
-            img.onload = () => {
-              loaded++;
-              if (loaded >= total) callback();
-            };
-            img.onerror = () => {
-              console.warn("Failed to load: ", img.src);
-              loaded++;
-              if (loaded >= total) callback();
+            img.onload = img.onerror = () => {
+              if (++loaded === total) callback();
             };
           }
         }
@@ -163,17 +156,8 @@
     function updateSprite() {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const baseName = folder + direction;
-
-      let frameIndex, frameStr;
-
-      if (state === "run") {
-        frameIndex = moveFrame % 8;
-        frameStr = `${frameIndex}`;
-      } else {
-        frameIndex = (state === "idle" ? idleFrame : moveFrame % 16);
-        frameStr = frameIndex.toString().padStart(2, "0");
-      }
-
+      const frameIndex = state === "run" ? moveFrame % 8 : (state === "idle" ? idleFrame : moveFrame % 16);
+      const frameStr = state === "run" ? `${frameIndex}` : frameIndex.toString().padStart(2, "0");
       character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     }
 
@@ -182,9 +166,7 @@
       const nextY = posY + dy;
       const charRect = { left: nextX, top: nextY, right: nextX + frameSize, bottom: nextY + frameSize };
       const bounds = { width: window.innerWidth, height: window.innerHeight };
-
       if (charRect.left < 0 || charRect.right > bounds.width || charRect.top < 0 || charRect.bottom > bounds.height) return true;
-
       const textRect = textContainer.getBoundingClientRect();
       return !(
         charRect.right < textRect.left ||
