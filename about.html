@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giới thiệu</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
   <style>
     html, body {
       margin: 0;
@@ -27,10 +26,12 @@
     }
 
     .container {
+      position: relative;
       padding-top: 80px;
       padding-left: 12ch;
       padding-right: 5vw;
       max-width: 800px;
+      z-index: 2;
     }
 
     h1 {
@@ -63,22 +64,163 @@
       color: #2d2f92;
       transform: scale(1.1);
     }
+
+    #character {
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      image-rendering: pixelated;
+      pointer-events: none;
+      z-index: 1;
+    }
   </style>
 </head>
 
 <body>
   <div class="background"></div>
 
-  <div class="container">
+  <div class="container" id="text-container">
     <h1>Về tôi</h1>
-
     <p><strong>Năm sinh:</strong> 1998</p>
     <p><strong>Giới tính:</strong> Nam</p>
     <p><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại Đại học Kiến Trúc Hà Nội (HAU)</p>
     <p><strong>Công việc:</strong> Freelancer</p>
     <p><strong>Sở thích:</strong> Vẽ, viết kịch bản, khám phá nghệ thuật</p>
-
     <a href="index.html">← Quay lại trang chủ</a>
   </div>
-</body>
-</html>
+
+  <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
+
+  <script>
+    const character = document.getElementById("character");
+    const textContainer = document.getElementById("text-container");
+
+    let pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 + 100 };
+    const frameSize = 62;
+    let direction = '';
+    let moveFrame = 0;
+    let idleFrame = 0;
+    let state = 'idle';
+    let lastDirection = '';
+    let spacePressed = false;
+    const keysHeld = new Set();
+
+    const speedPerFrame = { walk: 2, run: 4 };
+    const frameRates = { idle: 200, walk: 100, run: 80 };
+
+    const keyToVector = {
+      'ArrowUp':    { dx: 0, dy: -1, dir: 'U' },
+      'ArrowDown':  { dx: 0, dy: 1,  dir: '' },
+      'ArrowLeft':  { dx: -1, dy: 0, dir: 'L' },
+      'ArrowRight': { dx: 1, dy: 0,  dir: 'R' }
+    };
+
+    character.style.left = pos.x + 'px';
+    character.style.top = pos.y + 'px';
+
+    function preloadImages(callback) {
+      const folders = { Idle: 16, Walk: 16, Run: 8 };
+      const directions = ['', 'U', 'L', 'R'];
+      let loaded = 0, total = 0;
+
+      for (const folder in folders) {
+        for (const dir of directions) {
+          const count = folders[folder];
+          for (let i = 0; i < count; i++) {
+            const frameStr = folder === 'Run' ? `${i}` : i.toString().padStart(2, '0');
+            const img = new Image();
+            img.src = `assets/character/${folder}/${folder}${dir}${frameStr}.png`;
+            img.onload = img.onerror = () => {
+              if (++loaded === total) callback();
+            };
+            total++;
+          }
+        }
+      }
+    }
+
+    function updateSprite() {
+      const folder = state.charAt(0).toUpperCase() + state.slice(1);
+      const baseName = folder + direction;
+      const frameStr = state === 'run'
+        ? `${moveFrame % 8}`
+        : (state === 'idle' ? idleFrame : moveFrame % 16).toString().padStart(2, '0');
+      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
+    }
+
+    function checkCollision(dx, dy) {
+      const nextX = pos.x + dx;
+      const nextY = pos.y + dy;
+      const charRect = {
+        left: nextX,
+        top: nextY,
+        right: nextX + frameSize,
+        bottom: nextY + frameSize
+      };
+
+      const bounds = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      if (
+        charRect.left < 0 ||
+        charRect.right > bounds.width ||
+        charRect.top < 0 ||
+        charRect.bottom > bounds.height
+      ) return true;
+
+      const textRect = textContainer.getBoundingClientRect();
+
+      return !(
+        charRect.right < textRect.left ||
+        charRect.left > textRect.right ||
+        charRect.bottom < textRect.top ||
+        charRect.top > textRect.bottom
+      );
+    }
+
+    let lastTime = 0;
+    let animTimer = 0;
+
+    function loop(timestamp) {
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+      animTimer += delta;
+
+      let moved = false, dx = 0, dy = 0;
+
+      for (const key of keysHeld) {
+        if (keyToVector[key]) {
+          const vec = keyToVector[key];
+          dx = vec.dx;
+          dy = vec.dy;
+          direction = vec.dir;
+          lastDirection = direction;
+          moved = true;
+          break;
+        }
+      }
+
+      if (moved) {
+        state = spacePressed ? 'run' : 'walk';
+        const speed = speedPerFrame[state];
+        const stepX = dx * speed;
+        const stepY = dy * speed;
+
+        if (!checkCollision(stepX, stepY)) {
+          pos.x += stepX;
+          pos.y += stepY;
+          character.style.left = `${pos.x}px`;
+          character.style.top = `${pos.y}px`;
+        }
+
+        if (animTimer >= frameRates[state]) {
+          moveFrame++;
+          updateSprite();
+          animTimer = 0;
+        }
+      } else {
+        state = 'idle';
+        direction = lastDirection;
+        if (animTimer >= frameRat
