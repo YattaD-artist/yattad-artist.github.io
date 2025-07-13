@@ -269,21 +269,21 @@
       isTransitioning = false;
     }
 
-    function nextImage() {
-      if (isTransitioning || currentIndex >= totalImages - 1) return;
-      currentIndex++;
-      isTransitioning = true;
-      updateClasses();
-      playFlipSound(); // 🔊
-    }
+function nextImage() {
+  if (isTransitioning || currentIndex >= totalImages - 1) return;
+  playFlipSound(); // 🔊 Phát tiếng trước
+  currentIndex++;
+  isTransitioning = true;
+  updateClasses();
+}
 
-    function prevImage() {
-      if (isTransitioning || currentIndex <= 0) return;
-      currentIndex--;
-      isTransitioning = true;
-      updateClasses();
-      playFlipSound(); // 🔊
-    }
+function prevImage() {
+  if (isTransitioning || currentIndex <= 0) return;
+  playFlipSound(); // 🔊 Phát tiếng trước
+  currentIndex--;
+  isTransitioning = true;
+  updateClasses();
+}
 
     function handleClick(e) {
       const rect = overlay.getBoundingClientRect();
