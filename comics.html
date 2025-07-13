@@ -209,7 +209,7 @@
 
     for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
-      img.src = comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp;
+      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
       deck.appendChild(img);
       images.push(img);
 
@@ -228,10 +228,10 @@
           img.style.zIndex = '10';
         } else if (index < currentIndex) {
           img.classList.add('left');
-          img.style.zIndex = ${5 + index};
+          img.style.zIndex = `${5 + index}`;
         } else {
           img.classList.add('right');
-          img.style.zIndex = ${5 - (index - currentIndex)};
+          img.style.zIndex = `${5 - (index - currentIndex)}`;
         }
       });
       caption.textContent = captions[currentIndex] || "";
@@ -239,15 +239,13 @@
     }
 
     function showOverlay() {
-      currentIndex = 0;           // 🔄 Reset về Trang Bìa khi mở lại
-      isTransitioning = false;    // 🔧 Đảm bảo không kẹt
       overlay.style.display = 'flex';
       updateClasses();
     }
 
     function hideOverlay() {
       overlay.style.display = 'none';
-      isTransitioning = false;    // 🔧 Reset trạng thái nếu đóng khi đang chuyển
+      isTransitioning = false; // ✅ Reset lại để không bị lỗi khi mở lại
     }
 
     function nextImage() {
