@@ -1,24 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Giới thiệu</title>
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giới thiệu</title>
+
+  <!-- Font VT323 duy nhất -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'VT323', monospace;
+      background-color: #f8f8ff;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      background-repeat: repeat;
+      background-attachment: fixed;
+      height: 100vh;
+      color: #222;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 80px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.6em;
+      margin-bottom: 24px;
+    }
+
+    p {
+      font-size: 1.6em;
+      margin: 12px 0;
+    }
+
+    strong {
+      color: #333;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 1.4em;
+      text-decoration: none;
+      color: #4e5ba6;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    a:hover {
+      color: #2d2f92;
+      transform: scale(1.05);
+    }
+  </style>
 </head>
+
 <body>
-<div class="container">
+  <div class="container">
     <h1>Về tôi</h1>
-    
-    <a href="index.html">Quay lại trang chủ</a>
-    
+
     <p><strong>Năm sinh:</strong> 1998</p>
     <p><strong>Giới tính:</strong> Nam</p>
-    <p><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại đại học Kiến Trúc Hà Nội (HAU)</p>
+    <p><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại Đại học Kiến Trúc Hà Nội (HAU)</p>
     <p><strong>Công việc:</strong> Freelancer</p>
     <p><strong>Sở thích:</strong> Vẽ, viết kịch bản, khám phá nghệ thuật</p>
-</div>
 
+    <a href="index.html">← Quay lại trang chủ</a>
+  </div>
 </body>
 </html>
