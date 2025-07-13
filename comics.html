@@ -212,119 +212,135 @@
     <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
   </div>
 
-  <script>
-    // Khai báo phần tử giao diện
-    const punkgaLink = document.getElementById('punkga-link');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeBtn');
-    const deck = document.getElementById('deck');
-    const caption = document.getElementById('caption');
-    const restartBtn = document.getElementById('restartBtn');
+<script>
+  const punkgaLink = document.getElementById('punkga-link');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const deck = document.getElementById('deck');
+  const caption = document.getElementById('caption');
+  const restartBtn = document.getElementById('restartBtn');
 
-    // Tổng số ảnh
-    const totalImages = 13;
-    const images = [];
-    let currentIndex = 0;
-    let isTransitioning = false;
+  const totalImages = 13;
+  const images = [];
+  let currentIndex = 0;
+  let isTransitioning = false;
 
-    // Chú thích cho từng trang
-    const captions = [
-      "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
-      "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
-      "Trang 10", "Trang 11", "Trang 12"
-    ];
+  const captions = [
+    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
+    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
+    "Trang 10", "Trang 11", "Trang 12"
+  ];
 
-    // Tải ảnh vào DOM
-    for (let i = 0; i < totalImages; i++) {
-      const img = document.createElement('img');
-      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-      deck.appendChild(img);
-      images.push(img);
+  // Khởi tạo ảnh truyện
+  for (let i = 0; i < totalImages; i++) {
+    const img = document.createElement('img');
+    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+    img.loading = 'lazy';
+    deck.appendChild(img);
+    images.push(img);
 
-      img.addEventListener('transitionend', () => {
-        if (img.classList.contains('active')) {
-          isTransitioning = false;
-        }
-      });
-    }
-
-    // Cập nhật trạng thái hiển thị từng trang
-    function updateClasses() {
-      images.forEach((img, index) => {
-        img.classList.remove('active', 'left', 'right');
-        if (index === currentIndex) {
-          img.classList.add('active');
-          img.style.zIndex = '30';
-        } else if (index < currentIndex) {
-          img.classList.add('left');
-          img.style.zIndex = `${5 + index}`;
-        } else {
-          img.classList.add('right');
-          img.style.zIndex = `${5 - (index - currentIndex)}`;
-        }
-      });
-
-      caption.textContent = captions[currentIndex] || "";
-      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-    }
-
-    // Mở giao diện đọc truyện
-    function showOverlay() {
-      overlay.style.display = 'flex';
-      updateClasses();
-    }
-
-    // Đóng giao diện đọc truyện
-    function hideOverlay() {
-      overlay.style.display = 'none';
-      isTransitioning = false;
-    }
-
-    // Chuyển sang trang tiếp theo
-    function nextImage() {
-      if (isTransitioning || currentIndex >= totalImages - 1) return;
-      currentIndex++;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    // Quay lại trang trước
-    function prevImage() {
-      if (isTransitioning || currentIndex <= 0) return;
-      currentIndex--;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    // Nhấn vào trái/phải màn hình để chuyển trang
-    function handleClick(e) {
-      const rect = overlay.getBoundingClientRect();
-      const clickX = e.clientX;
-      const centerX = rect.left + rect.width / 2;
-      if (clickX > centerX + 50) nextImage();
-      else if (clickX < centerX - 50) prevImage();
-    }
-
-    // Quay lại trang đầu
-    function restartGallery() {
-      if (isTransitioning) return;
-      currentIndex = 0;
-      updateClasses();
-    }
-
-    // Gắn sự kiện
-    punkgaLink.addEventListener('click', showOverlay);
-    closeBtn.addEventListener('click', hideOverlay);
-    overlay.addEventListener('click', handleClick);
-    restartBtn.addEventListener('click', restartGallery);
-
-    // Bắt phím tắt: ← → ESC
-    window.addEventListener('keydown', e => {
-      if (overlay.style.display !== 'flex' || isTransitioning) return;
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'Escape') hideOverlay();
+    img.addEventListener('transitionend', () => {
+      if (img.classList.contains('active')) {
+        isTransitioning = false;
+      }
     });
-  </script>
+  }
+
+  // Cập nhật trạng thái và thứ tự hiển thị
+  function updateClasses() {
+    images.forEach((img, index) => {
+      img.classList.remove('active', 'left', 'right');
+      if (index === currentIndex) {
+        img.classList.add('active');
+        img.style.zIndex = '30';
+      } else if (index < currentIndex) {
+        img.classList.add('left');
+        img.style.zIndex = `${5 + index}`;
+      } else {
+        img.classList.add('right');
+        img.style.zIndex = `${5 - (index - currentIndex)}`;
+      }
+    });
+
+    caption.textContent = captions[currentIndex] || "";
+    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+  }
+
+  // Hiện overlay
+  function showOverlay() {
+    overlay.style.display = 'flex';
+    updateClasses();
+  }
+
+  // Ẩn overlay và reset trạng thái
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    isTransitioning = false;
+    currentIndex = 0; // ✅ Reset về Trang Bìa khi đóng
+    updateClasses();  // ✅ Cập nhật lại lớp hiển thị
+  }
+
+  // Chuyển sang trang kế
+  function nextImage() {
+    if (isTransitioning || currentIndex >= totalImages - 1) return;
+    currentIndex++;
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  // Quay về trang trước
+  function prevImage() {
+    if (isTransitioning || currentIndex <= 0) return;
+    currentIndex--;
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  // Bắt sự kiện click chuột để chuyển trang
+  function handleClick(e) {
+    const rect = overlay.getBoundingClientRect();
+    const clickX = e.clientX;
+    const centerX = rect.left + rect.width / 2;
+    if (clickX > centerX + 50) nextImage();
+    else if (clickX < centerX - 50) prevImage();
+  }
+
+  // Quay lại từ đầu
+  function restartGallery() {
+    if (isTransitioning) return;
+    currentIndex = 0;
+    updateClasses();
+  }
+
+  // 👉 Sự kiện vuốt trên điện thoại
+  let touchStartX = 0;
+  overlay.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+
+  overlay.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
+    if (Math.abs(diffX) > 50) {
+      if (diffX < 0) nextImage();  // Vuốt trái
+      else prevImage();           // Vuốt phải
+    }
+  });
+
+  // 🎯 Gán sự kiện
+  punkgaLink.addEventListener('click', showOverlay);
+  closeBtn.addEventListener('click', hideOverlay);
+  overlay.addEventListener('click', handleClick);
+  restartBtn.addEventListener('click', restartGallery);
+
+  // ⌨️ Bắt phím điều hướng
+  window.addEventListener('keydown', e => {
+    if (overlay.style.display !== 'flex' || isTransitioning) return;
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'Escape') hideOverlay();
+  });
+</script>
+
 </body>
 </html>
