@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
-
-  <!-- Font duy nhất -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
   <style>
@@ -18,29 +16,26 @@
     }
 
     .container {
-      position: relative;
-      z-index: 2;
       text-align: center;
       padding-top: 48px;
+      z-index: 1;
+      position: relative;
     }
 
     h1 {
       font-size: 2.8em;
       margin: 0.2em 0 0;
-      color: #222;
     }
 
     .menu {
-      text-align: center;
       margin-top: 24px;
     }
 
     .menu a {
-      display: inline-block;
+      margin: 0 16px;
+      font-size: 1.6em;
       text-decoration: none;
       color: #334;
-      font-size: 1.6em;
-      margin: 0 16px;
       transition: transform 0.2s ease, color 0.2s ease;
       cursor: pointer;
     }
@@ -50,64 +45,87 @@
       color: #4e5ba6;
     }
 
-    .back-link {
-      display: block;
-      margin-top: 40px;
-      font-size: 1.4em;
-      text-decoration: none;
-      color: #444;
-      transition: color 0.2s ease;
-    }
-
-    .back-link:hover {
-      color: #4e5ba6;
-    }
-
     .background {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background-image: url('assets/Dat.png');
       background-size: 98px 98px;
       opacity: 0.3;
       z-index: 0;
     }
 
-    /* Overlay Gallery */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
+    .back-link {
+      display: block;
+      margin-top: 40px;
+      font-size: 1.4em;
+      text-decoration: none;
+      color: #444;
     }
 
-    .gallery-img {
-      max-height: 92vh;
-      max-width: 96vw;
-      border-radius: 6px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.5);
-      object-fit: contain;
+    .back-link:hover {
+      color: #4e5ba6;
+    }
+
+    /* Overlay with deck-style viewer */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .deck img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      max-height: 80vh;
+      max-width: 80vw;
+      transform: translate(-50%, -50%) scale(0.6);
+      transition: transform 0.5s ease, z-index 0.3s ease;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .deck img.active {
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 10;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .deck img.left {
+      transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
+      z-index: 5;
+    }
+
+    .deck img.right {
+      transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
+      z-index: 5;
     }
 
     .close-btn {
       position: absolute;
-      top: 16px;
-      right: 24px;
+      top: 20px;
+      right: 28px;
       font-size: 2em;
-      color: #ccc;
+      color: #eee;
       cursor: pointer;
-      transition: color 0.2s ease;
-      z-index: 1000;
+      z-index: 20;
     }
 
     .close-btn:hover {
@@ -121,18 +139,17 @@
       font-size: 3em;
       color: rgba(255,255,255,0.7);
       cursor: pointer;
-      user-select: none;
       padding: 8px 16px;
-      transition: color 0.2s ease;
-      z-index: 1000;
+      z-index: 20;
+      user-select: none;
     }
 
     .nav-arrow:hover {
       color: white;
     }
 
-    .nav-left { left: 12px; }
-    .nav-right { right: 12px; }
+    .nav-left { left: 16px; }
+    .nav-right { right: 16px; }
   </style>
 </head>
 
@@ -149,34 +166,50 @@
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
-  <!-- Overlay Viewer -->
   <div class="overlay" id="overlay">
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="nav-arrow nav-left" id="prevBtn">❮</div>
-    <img class="gallery-img" id="mainImage" src="" alt="PunkgaMerch" />
+    <div class="deck" id="deck"></div>
     <div class="nav-arrow nav-right" id="nextBtn">❯</div>
   </div>
 
   <script>
     const punkgaLink = document.getElementById('punkga-link');
     const overlay = document.getElementById('overlay');
-    const mainImage = document.getElementById('mainImage');
     const closeBtn = document.getElementById('closeBtn');
+    const deck = document.getElementById('deck');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
     const totalImages = 13;
     let currentIndex = 0;
+    const images = [];
 
-    function showImage(index) {
-      const padded = index.toString().padStart(2, '0');
-      mainImage.src = `comics/PunkgaMerch/${padded}.jpg`;
-      currentIndex = index;
+    // Tải và gắn tất cả ảnh
+    for (let i = 0; i < totalImages; i++) {
+      const img = document.createElement('img');
+      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.jpg`;
+      img.classList.add('gallery-img');
+      deck.appendChild(img);
+      images.push(img);
+    }
+
+    function updateClasses() {
+      images.forEach((img, index) => {
+        img.classList.remove('active', 'left', 'right');
+        if (index === currentIndex) {
+          img.classList.add('active');
+        } else if (index < currentIndex) {
+          img.classList.add('left');
+        } else {
+          img.classList.add('right');
+        }
+      });
     }
 
     function showOverlay() {
       overlay.style.display = 'flex';
-      showImage(0);
+      updateClasses();
     }
 
     function hideOverlay() {
@@ -184,11 +217,17 @@
     }
 
     function nextImage() {
-      if (currentIndex < totalImages - 1) showImage(currentIndex + 1);
+      if (currentIndex < totalImages - 1) {
+        currentIndex++;
+        updateClasses();
+      }
     }
 
     function prevImage() {
-      if (currentIndex > 0) showImage(currentIndex - 1);
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateClasses();
+      }
     }
 
     punkgaLink.addEventListener('click', showOverlay);
@@ -196,7 +235,6 @@
     nextBtn.addEventListener('click', nextImage);
     prevBtn.addEventListener('click', prevImage);
 
-    // Phím mũi tên điều hướng
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex') return;
       if (e.key === 'ArrowRight') nextImage();
