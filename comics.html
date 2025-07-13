@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
   <style>
     html, body {
       margin: 0;
@@ -24,7 +25,7 @@
     h1 {
       font-size: 2.8em;
       margin: 0.2em 0 0;
-      font-weight: normal;
+      font-weight: normal; /* Bỏ in đậm */
     }
 
     .menu {
@@ -67,6 +68,7 @@
       color: #4e5ba6;
     }
 
+    /* Overlay với kiểu xếp lá bài */
     .overlay {
       position: fixed;
       top: 0; left: 0;
@@ -84,7 +86,7 @@
     .deck {
       position: relative;
       width: 100%;
-      height: 90%;
+      height: calc(100% - 60px);
     }
 
     .deck img {
@@ -97,23 +99,29 @@
       transition: transform 0.5s ease, z-index 0.3s ease;
       border-radius: 8px;
       box-shadow: 0 0 12px rgba(0,0,0,0.4);
+      pointer-events: none;
     }
 
     .deck img.active {
       transform: translate(-50%, -50%) scale(1);
       z-index: 10;
+      pointer-events: auto;
     }
 
     .deck img.left {
       transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
-      z-index: 5;
-      filter: brightness(0.8) contrast(0.85);
     }
 
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
-      z-index: 5;
-      filter: brightness(0.8) contrast(0.85);
+    }
+
+    .caption {
+      font-size: 1.4em;
+      color: #eee;
+      text-align: center;
+      padding: 12px 0;
+      z-index: 15;
     }
 
     .close-btn {
@@ -130,11 +138,20 @@
       color: white;
     }
 
-    .caption {
-      font-size: 1.3em;
-      margin-top: 12px;
-      color: #eee;
-      z-index: 15;
+    .click-zone {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      z-index: 5;
+    }
+
+    .left-zone {
+      left: 0;
+    }
+
+    .right-zone {
+      right: 0;
     }
   </style>
 </head>
@@ -152,10 +169,13 @@
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
+  <!-- Overlay Viewer -->
   <div class="overlay" id="overlay">
+    <div class="click-zone left-zone" id="clickLeft"></div>
+    <div class="click-zone right-zone" id="clickRight"></div>
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
-    <div class="caption" id="captionText">Trang Bìa</div>
+    <div class="caption" id="caption"></div>
   </div>
 
   <script>
@@ -163,16 +183,31 @@
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
     const deck = document.getElementById('deck');
-    const captionText = document.getElementById('captionText');
+    const clickLeft = document.getElementById('clickLeft');
+    const clickRight = document.getElementById('clickRight');
+    const caption = document.getElementById('caption');
 
     const totalImages = 13;
     let currentIndex = 0;
     const images = [];
+
     const captions = [
-      "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4", "Trang 5",
-      "Trang 6", "Trang 7", "Trang 8", "Trang 9", "Trang 10", "Trang 11", "Trang 12"
+      "Trang Bìa",
+      "Trang 1",
+      "Trang 2",
+      "Trang 3",
+      "Trang 4",
+      "Trang 5",
+      "Trang 6",
+      "Trang 7",
+      "Trang 8",
+      "Trang 9",
+      "Trang 10",
+      "Trang 11",
+      "Trang 12"
     ];
 
+    // Tải ảnh vào deck
     for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
       img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.jpg`;
@@ -182,20 +217,22 @@
 
     function updateClasses() {
       images.forEach((img, index) => {
-  img.classList.remove('active', 'left', 'right');
-  img.style.zIndex = '1'; // reset
+        img.classList.remove('active', 'left', 'right');
+        if (index === currentIndex) {
+          img.classList.add('active');
+          img.style.zIndex = 10;
+        } else if (index < currentIndex) {
+          img.classList.add('left');
+          img.style.zIndex = 5 - (currentIndex - index);
+        } else {
+          img.classList.add('right');
+          img.style.zIndex = 5 - (index - currentIndex);
+        }
+      });
 
-  if (index === currentIndex) {
-    img.classList.add('active');
-    img.style.zIndex = '10';
-  } else if (index < currentIndex) {
-    img.classList.add('left');
-    img.style.zIndex = String(5 + index); // càng gần càng cao
-  } else {
-    img.classList.add('right');
-    img.style.zIndex = String(5 - (index - currentIndex)); // đảo chiều
-  }
-});
+      // Cập nhật caption
+      caption.textContent = captions[currentIndex] || `Trang ${currentIndex}`;
+    }
 
     function showOverlay() {
       overlay.style.display = 'flex';
@@ -220,21 +257,10 @@
       }
     }
 
-    function handleClick(e) {
-      const rect = overlay.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const midX = rect.width / 2;
-
-      if (clickX > midX) {
-        nextImage();
-      } else {
-        prevImage();
-      }
-    }
-
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
-    overlay.addEventListener('click', handleClick);
+    clickLeft.addEventListener('click', prevImage);
+    clickRight.addEventListener('click', nextImage);
 
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex') return;
