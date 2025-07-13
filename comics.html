@@ -190,17 +190,20 @@
     }
 
     function updateClasses() {
-      images.forEach((img, index) => {
-        img.classList.remove('active', 'left', 'right');
-        if (index === currentIndex) {
-          img.classList.add('active');
-        } else if (index < currentIndex) {
-          img.classList.add('left');
-        } else {
-          img.classList.add('right');
-        }
-      });
+  images.forEach((img, index) => {
+    img.classList.remove('active', 'left', 'right');
+    if (index === currentIndex) {
+      img.classList.add('active');
+      img.style.zIndex = 10;
+    } else if (index < currentIndex) {
+      img.classList.add('left');
+      img.style.zIndex = 5 - (currentIndex - index); // càng xa càng thấp
+    } else {
+      img.classList.add('right');
+      img.style.zIndex = 5 - (index - currentIndex); // gần hơn => lớn hơn
     }
+  });
+}
 
     function showOverlay() {
       overlay.style.display = 'flex';
