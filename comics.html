@@ -245,6 +245,7 @@
 
     function hideOverlay() {
       overlay.style.display = 'none';
+      isTransitioning = false; // ✅ Reset lại để không bị lỗi khi mở lại
     }
 
     function nextImage() {
