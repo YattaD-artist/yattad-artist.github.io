@@ -223,7 +223,6 @@
     }
 
 function updateClasses() {
-  const X = 100;
   const total = images.length;
 
   images.forEach((img, index) => {
@@ -231,20 +230,21 @@ function updateClasses() {
 
     if (index === currentIndex) {
       img.classList.add('active');
-      img.style.zIndex = X;
+      img.style.zIndex = 50;
     } else if (index < currentIndex) {
+      // Trái: tăng dần từ 1 → currentIndex
       img.classList.add('left');
-      img.style.zIndex = index;
+      img.style.zIndex = index + 1;
     } else {
+      // Phải: giảm dần từ 62 → 51
       img.classList.add('right');
-      img.style.zIndex = X + (index - currentIndex);
+      img.style.zIndex = 50 + (total - index);
     }
   });
 
   caption.textContent = captions[currentIndex] || "";
   restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
 }
-
 
     function showOverlay() {
       currentIndex = 0;
