@@ -232,11 +232,10 @@ function updateClasses() {
       img.classList.add('active');
       img.style.zIndex = 50;
     } else if (index < currentIndex) {
-      // Trái: tăng dần từ 1 → currentIndex
       img.classList.add('left');
       img.style.zIndex = index + 1;
     } else {
-      // Phải: giảm dần từ 62 → 51
+      // Công thức đúng: Trang càng gần bên phải thì zIndex càng cao
       img.classList.add('right');
       img.style.zIndex = 50 + (total - index);
     }
