@@ -140,6 +140,25 @@
     .close-btn:hover {
       color: white;
     }
+
+    .restart-btn {
+      position: absolute;
+      right: 30px;
+      bottom: 90px;
+      font-size: 1.3em;
+      color: #eee;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 20;
+      display: none;
+    }
+
+    .restart-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
   </style>
 </head>
 
@@ -160,6 +179,7 @@
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
     <div class="caption" id="caption"></div>
+    <div class="restart-btn" id="restartBtn">← Quay lại trang bìa</div>
   </div>
 
   <script>
@@ -168,6 +188,7 @@
     const closeBtn = document.getElementById('closeBtn');
     const deck = document.getElementById('deck');
     const caption = document.getElementById('caption');
+    const restartBtn = document.getElementById('restartBtn');
 
     const totalImages = 13;
     const images = [];
@@ -201,6 +222,7 @@
         }
       });
       caption.textContent = captions[currentIndex] || "";
+      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
     }
 
     function showOverlay() {
@@ -234,9 +256,15 @@
       else if (clickX < centerX - 50) prevImage();
     }
 
+    function restartGallery() {
+      currentIndex = 0;
+      updateClasses();
+    }
+
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
     overlay.addEventListener('click', handleClick);
+    restartBtn.addEventListener('click', restartGallery);
 
     window.addEventListener('keydown', e => {
       if (overlay.style.display !== 'flex') return;
