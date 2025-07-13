@@ -222,7 +222,7 @@
       });
     }
 
-   function updateClasses() {
+function updateClasses() {
   const total = images.length;
   images.forEach((img, index) => {
     img.classList.remove('active', 'left', 'right');
@@ -231,18 +231,22 @@
       img.classList.add('active');
       img.style.zIndex = 100;
     } else if (index < currentIndex) {
+      // TRANG BÊN TRÁI — xếp từ dưới lên
+      const distanceFromCurrent = currentIndex - index;
       img.classList.add('left');
-      img.style.zIndex = 10 + index; // thấp hơn trang hiện tại
+      img.style.zIndex = 10 + distanceFromCurrent;
     } else {
-      const distanceFromEnd = total - index;
+      // TRANG BÊN PHẢI — xếp từ trên xuống
+      const distanceFromCurrent = index - currentIndex;
       img.classList.add('right');
-      img.style.zIndex = 10 + distanceFromEnd; // cao hơn những trang phải sau
+      img.style.zIndex = 10 - distanceFromCurrent;
     }
   });
 
   caption.textContent = captions[currentIndex] || "";
   restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
 }
+
 
     function showOverlay() {
       currentIndex = 0;
