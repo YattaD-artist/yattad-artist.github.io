@@ -1,4 +1,188 @@
-<!-- ... phần head giữ nguyên ... -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Truyện Tranh</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'VT323', monospace;
+      background-color: #f8f8ff;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding-top: 48px;
+      z-index: 1;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      font-weight: normal;
+      margin: 0.2em 0 0;
+      color: #222;
+    }
+
+    .menu {
+      margin-top: 24px;
+    }
+
+    .menu a {
+      margin: 0 16px;
+      font-size: 1.6em;
+      text-decoration: none;
+      color: #334;
+      transition: transform 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .menu a:hover {
+      transform: scale(1.2);
+      color: #4e5ba6;
+    }
+
+    .background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-image: url('assets/Dat.png');
+      background-size: 98px 98px;
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 40px;
+      font-size: 1.4em;
+      text-decoration: none;
+      color: #444;
+    }
+
+    .back-link:hover {
+      color: #4e5ba6;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .deck img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      max-height: 85vh;
+      max-width: 85vw;
+      transform: translate(-50%, -50%) scale(0.6);
+      transition: transform 0.5s ease, z-index 0.3s ease;
+      border-radius: 6px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
+      filter: contrast(0.8) brightness(0.8);
+      pointer-events: none;
+    }
+
+    .deck img.active {
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 10;
+      filter: none;
+      pointer-events: auto;
+    }
+
+    .deck img.left {
+      transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
+    }
+
+    .deck img.right {
+      transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
+    }
+
+    .caption {
+      position: absolute;
+      bottom: 32px;
+      width: 100%;
+      text-align: center;
+      font-size: 1.4em;
+      color: #ddd;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 28px;
+      font-size: 2em;
+      color: #eee;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .close-btn:hover {
+      color: white;
+    }
+
+    .restart-btn {
+      position: absolute;
+      right: 30px;
+      bottom: 90px;
+      font-size: 1.3em;
+      color: #eee;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 20;
+      display: none;
+    }
+
+    .restart-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background"></div>
+
+  <div class="container">
+    <h1>Truyện Tranh</h1>
+    <div class="menu">
+      <a href="agnu.html">AGNU</a>
+      <a href="tieu.html">Tiêu</a>
+      <a id="punkga-link">PunkgaMerch</a>
+    </div>
+    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="close-btn" id="closeBtn">✕</div>
+    <div class="deck" id="deck"></div>
+    <div class="caption" id="caption"></div>
+    <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
+  </div>
+
+  <!-- ... phần head giữ nguyên ... -->
 
 <script>
   const punkgaLink = document.getElementById('punkga-link');
@@ -91,3 +275,6 @@
     if (e.key === 'Escape') hideOverlay();
   });
 </script>
+
+</body>
+</html>
