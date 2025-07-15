@@ -170,14 +170,17 @@
     }
   </style>
 </head>
+
 <body>
   <div class="background"></div>
 
   <div class="container">
     <h1>Truyện Tranh</h1>
+
     <div class="menu">
       <a id="punkga-link">PunkgaMerch</a>
     </div>
+
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
@@ -217,41 +220,22 @@
   function playFlipSound() {
     const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
     const audio = new Audio(randomSrc);
-    audio.playbackRate = 1.5;
+    audio.playbackRate = 1.5; // 🔊 Phát nhanh hơn
     audio.play().catch(() => {});
   }
 
-  function preloadImagesSequentially(index = 2) {
-    if (index >= totalImages) return;
+  for (let i = 0; i < totalImages; i++) {
     const img = document.createElement('img');
-    img.src = `comics/PunkgaMerch/${index.toString().padStart(2, '0')}.webp`;
-    if (index > 1) img.loading = 'lazy';
-    img.onload = img.onerror = () => preloadImagesSequentially(index + 1);
-    img.addEventListener('transitionend', () => {
-      if (img.classList.contains('active')) isTransitioning = false;
-    });
+    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+    img.loading = 'lazy';
     deck.appendChild(img);
-    images[index] = img;
-  }
+    images.push(img);
 
-  function preloadPriorityImages(callback) {
-    const first = new Image();
-    const second = new Image();
-    let loaded = 0;
-
-    function checkDone() {
-      loaded++;
-      if (loaded === 2 && typeof callback === 'function') callback();
-    }
-
-    first.src = 'comics/PunkgaMerch/00.webp';
-    second.src = 'comics/PunkgaMerch/01.webp';
-    first.onload = first.onerror = checkDone;
-    second.onload = second.onerror = checkDone;
-    deck.appendChild(first);
-    deck.appendChild(second);
-    images[0] = first;
-    images[1] = second;
+    img.addEventListener('transitionend', () => {
+      if (img.classList.contains('active')) {
+        isTransitioning = false;
+      }
+    });
   }
 
   function updateClasses() {
@@ -268,6 +252,7 @@
         img.style.zIndex = `${5 - (index - currentIndex)}`;
       }
     });
+
     caption.textContent = captions[currentIndex] || "";
     restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
   }
@@ -318,6 +303,7 @@
   overlay.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
   });
+
   overlay.addEventListener('touchend', e => {
     const touchEndX = e.changedTouches[0].clientX;
     const diffX = touchEndX - touchStartX;
@@ -338,10 +324,7 @@
     if (e.key === 'ArrowLeft') prevImage();
     if (e.key === 'Escape') hideOverlay();
   });
-
-  preloadPriorityImages(() => {
-    preloadImagesSequentially(2);
-  });
 </script>
+
 </body>
 </html>
