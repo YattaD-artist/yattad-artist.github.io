@@ -224,19 +224,26 @@
     audio.play().catch(() => {});
   }
 
-  for (let i = 0; i < totalImages; i++) {
-    const img = document.createElement('img');
-    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-    img.loading = 'lazy';
-    deck.appendChild(img);
-    images.push(img);
+const priorityIndices = [0, 1]; // Trang cần load trước
+const otherIndices = Array.from({ length: totalImages }, (_, i) => i).filter(i => !priorityIndices.includes(i));
+const loadOrder = [...priorityIndices, ...otherIndices]; // Kết hợp lại
 
-    img.addEventListener('transitionend', () => {
-      if (img.classList.contains('active')) {
-        isTransitioning = false;
-      }
-    });
-  }
+for (let i of loadOrder) {
+  const img = document.createElement('img');
+  img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+
+  // Trang 0 và 1 load sớm, còn lại lazy
+  if (!priorityIndices.includes(i)) img.loading = 'lazy';
+
+  deck.appendChild(img);
+  images[i] = img; // đảm bảo đúng thứ tự gán
+
+  img.addEventListener('transitionend', () => {
+    if (img.classList.contains('active')) {
+      isTransitioning = false;
+    }
+  });
+}
 
   function updateClasses() {
     images.forEach((img, index) => {
