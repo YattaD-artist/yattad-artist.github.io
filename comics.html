@@ -127,7 +127,7 @@
 
     .caption {
       position: absolute;
-      bottom: 5vh;
+      bottom: 32px;
       width: 100%;
       text-align: center;
       font-size: clamp(1.1rem, 2.5vw, 1.8rem);
@@ -172,6 +172,7 @@
 </head>
 <body>
   <div class="background"></div>
+
   <div class="container">
     <h1>Truyện Tranh</h1>
     <div class="menu">
@@ -179,144 +180,168 @@
     </div>
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
+
   <div class="overlay" id="overlay">
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
     <div class="caption" id="caption"></div>
     <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
   </div>
-  <script>
-    const punkgaLink = document.getElementById('punkga-link');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeBtn');
-    const deck = document.getElementById('deck');
-    const caption = document.getElementById('caption');
-    const restartBtn = document.getElementById('restartBtn');
 
-    const totalImages = 13;
-    const images = [];
-    let currentIndex = 0;
-    let isTransitioning = false;
+<script>
+  const punkgaLink = document.getElementById('punkga-link');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const deck = document.getElementById('deck');
+  const caption = document.getElementById('caption');
+  const restartBtn = document.getElementById('restartBtn');
 
-    const captions = [
-      "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
-      "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
-      "Trang 10", "Trang 11", "Trang 12"
-    ];
+  const totalImages = 13;
+  const images = [];
+  let currentIndex = 0;
+  let isTransitioning = false;
 
-    const flipSounds = [
-      'assets/sfx/Pictures/Paper1.mp3',
-      'assets/sfx/Pictures/Paper2.mp3',
-      'assets/sfx/Pictures/Paper3.mp3',
-      'assets/sfx/Pictures/Paper4.mp3'
-    ];
+  const captions = [
+    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
+    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
+    "Trang 10", "Trang 11", "Trang 12"
+  ];
 
-    function playFlipSound() {
-      const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
-      const audio = new Audio(randomSrc);
-      audio.playbackRate = 1.5;
-      audio.play().catch(() => {});
-    }
+  const flipSounds = [
+    'assets/sfx/Pictures/Paper1.mp3',
+    'assets/sfx/Pictures/Paper2.mp3',
+    'assets/sfx/Pictures/Paper3.mp3',
+    'assets/sfx/Pictures/Paper4.mp3'
+  ];
 
-    function preloadImagesSequentially(index = 0) {
-      if (index >= totalImages) return;
-      const img = document.createElement('img');
-      img.src = `comics/PunkgaMerch/${index.toString().padStart(2, '0')}.webp`;
-      if (index > 1) img.loading = 'lazy';
-      img.onload = img.onerror = () => preloadImagesSequentially(index + 1);
-      img.addEventListener('transitionend', () => {
-        if (img.classList.contains('active')) isTransitioning = false;
-      });
-      deck.appendChild(img);
-      images[index] = img;
-    }
+  function playFlipSound() {
+    const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
+    const audio = new Audio(randomSrc);
+    audio.playbackRate = 1.5;
+    audio.play().catch(() => {});
+  }
 
-    function updateClasses() {
-      images.forEach((img, index) => {
-        img.classList.remove('active', 'left', 'right');
-        if (index === currentIndex) {
-          img.classList.add('active');
-          img.style.zIndex = '30';
-        } else if (index < currentIndex) {
-          img.classList.add('left');
-          img.style.zIndex = `${5 + index}`;
-        } else {
-          img.classList.add('right');
-          img.style.zIndex = `${5 - (index - currentIndex)}`;
-        }
-      });
-      caption.textContent = captions[currentIndex] || "";
-      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-    }
-
-    function showOverlay() {
-      if (images.length === 0) preloadImagesSequentially();
-      currentIndex = 0;
-      isTransitioning = false;
-      overlay.style.display = 'flex';
-      updateClasses();
-    }
-
-    function hideOverlay() {
-      overlay.style.display = 'none';
-      isTransitioning = false;
-    }
-
-    function nextImage() {
-      if (isTransitioning || currentIndex >= totalImages - 1) return;
-      playFlipSound();
-      currentIndex++;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    function prevImage() {
-      if (isTransitioning || currentIndex <= 0) return;
-      playFlipSound();
-      currentIndex--;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    function handleClick(e) {
-      const rect = overlay.getBoundingClientRect();
-      const clickX = e.clientX;
-      const centerX = rect.left + rect.width / 2;
-      if (clickX > centerX + 50) nextImage();
-      else if (clickX < centerX - 50) prevImage();
-    }
-
-    function restartGallery() {
-      if (isTransitioning) return;
-      currentIndex = 0;
-      updateClasses();
-    }
-
-    let touchStartX = 0;
-    overlay.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
+  function preloadImagesSequentially(index = 2) {
+    if (index >= totalImages) return;
+    const img = document.createElement('img');
+    img.src = `comics/PunkgaMerch/${index.toString().padStart(2, '0')}.webp`;
+    if (index > 1) img.loading = 'lazy';
+    img.onload = img.onerror = () => preloadImagesSequentially(index + 1);
+    img.addEventListener('transitionend', () => {
+      if (img.classList.contains('active')) isTransitioning = false;
     });
+    deck.appendChild(img);
+    images[index] = img;
+  }
 
-    overlay.addEventListener('touchend', e => {
-      const touchEndX = e.changedTouches[0].clientX;
-      const diffX = touchEndX - touchStartX;
-      if (Math.abs(diffX) > 50) {
-        if (diffX < 0) nextImage();
-        else prevImage();
+  function preloadPriorityImages(callback) {
+    const first = new Image();
+    const second = new Image();
+    let loaded = 0;
+
+    function checkDone() {
+      loaded++;
+      if (loaded === 2 && typeof callback === 'function') callback();
+    }
+
+    first.src = 'comics/PunkgaMerch/00.webp';
+    second.src = 'comics/PunkgaMerch/01.webp';
+    first.onload = first.onerror = checkDone;
+    second.onload = second.onerror = checkDone;
+    deck.appendChild(first);
+    deck.appendChild(second);
+    images[0] = first;
+    images[1] = second;
+  }
+
+  function updateClasses() {
+    images.forEach((img, index) => {
+      img.classList.remove('active', 'left', 'right');
+      if (index === currentIndex) {
+        img.classList.add('active');
+        img.style.zIndex = '30';
+      } else if (index < currentIndex) {
+        img.classList.add('left');
+        img.style.zIndex = `${5 + index}`;
+      } else {
+        img.classList.add('right');
+        img.style.zIndex = `${5 - (index - currentIndex)}`;
       }
     });
+    caption.textContent = captions[currentIndex] || "";
+    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+  }
 
-    punkgaLink.addEventListener('click', showOverlay);
-    closeBtn.addEventListener('click', hideOverlay);
-    overlay.addEventListener('click', handleClick);
-    restartBtn.addEventListener('click', restartGallery);
+  function showOverlay() {
+    currentIndex = 0;
+    isTransitioning = false;
+    overlay.style.display = 'flex';
+    updateClasses();
+  }
 
-    window.addEventListener('keydown', e => {
-      if (overlay.style.display !== 'flex' || isTransitioning) return;
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'Escape') hideOverlay();
-    });
-  </script>
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    isTransitioning = false;
+  }
+
+  function nextImage() {
+    if (isTransitioning || currentIndex >= totalImages - 1) return;
+    playFlipSound();
+    currentIndex++;
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  function prevImage() {
+    if (isTransitioning || currentIndex <= 0) return;
+    playFlipSound();
+    currentIndex--;
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  function handleClick(e) {
+    const rect = overlay.getBoundingClientRect();
+    const clickX = e.clientX;
+    const centerX = rect.left + rect.width / 2;
+    if (clickX > centerX + 50) nextImage();
+    else if (clickX < centerX - 50) prevImage();
+  }
+
+  function restartGallery() {
+    if (isTransitioning) return;
+    currentIndex = 0;
+    updateClasses();
+  }
+
+  let touchStartX = 0;
+  overlay.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  overlay.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
+    if (Math.abs(diffX) > 50) {
+      if (diffX < 0) nextImage();
+      else prevImage();
+    }
+  });
+
+  punkgaLink.addEventListener('click', showOverlay);
+  closeBtn.addEventListener('click', hideOverlay);
+  overlay.addEventListener('click', handleClick);
+  restartBtn.addEventListener('click', restartGallery);
+
+  window.addEventListener('keydown', e => {
+    if (overlay.style.display !== 'flex' || isTransitioning) return;
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'Escape') hideOverlay();
+  });
+
+  preloadPriorityImages(() => {
+    preloadImagesSequentially(2);
+  });
+</script>
 </body>
 </html>
