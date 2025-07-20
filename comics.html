@@ -3,309 +3,309 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Truyện Tranh</title>
-
-  <!-- Google Font: VT323 kiểu chữ pixel-style -->
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
-  <!-- Preload hình ảnh đầu tiên -->
-  <link rel="preload" as="image" href="comics/PunkgaMerch/00.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="comics/PunkgaMerch/01.webp" fetchpriority="high">
-  <link rel="preload" as="image" href="comics/PunkgaMerch/02.webp">
-
-  <!-- Preload âm thanh -->
-  <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper1.mp3">
-  <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper2.mp3">
-  <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper3.mp3">
-  <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper4.mp3">
-
+  <title>Comm</title>
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      font-family: 'VT323', monospace;
-      background-color: #f8f8ff;
+      box-sizing: border-box;
+    }
+
+    body {
+      background:
+        linear-gradient(to right, rgba(255,192,203,0.3), rgba(173,216,230,0.3)),
+        repeating-linear-gradient(90deg, #dbeafe 0 20px, #bfdbfe 20px 40px),
+        repeating-linear-gradient(0deg, #dbeafe 0 20px, #bfdbfe 20px 40px);
+      background-blend-mode: overlay;
+      min-height: 100vh;
+      background-repeat: repeat;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px 20px;
+    }
+
+    .content {
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      max-width: 90vw;
+      width: auto;
+      min-width: 320px;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #1e3a8a;
+      margin-bottom: 0.4em;
+      white-space: nowrap;
       overflow: hidden;
     }
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-    }
-    .container {
-      text-align: center;
-      padding-top: 48px;
-      position: relative;
-      z-index: 1;
-      max-width: 80vw;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: clamp(2.7rem, 7.5vw, 5.25rem);
+
+    h2 {
+      font-size: 1.4em;
       font-weight: normal;
-      margin: 0.2em 0 0;
-      color: #222;
+      color: #555;
+      margin-bottom: 1.2em;
     }
-    .menu {
-      margin-top: 24px;
+
+    p {
+      font-size: 1em;
+      margin: 0.4em 0;
+    }
+
+    .icons {
+      margin-top: 1.5em;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 7ch;
+      gap: 20px;
     }
-    .menu a {
-      font-size: clamp(1.2rem, 2.5vw, 2rem);
+
+    .icons a {
+      color: #1e3a8a;
+      font-size: 1.5em;
       text-decoration: none;
-      color: #334;
-      transition: transform 0.2s ease, color 0.2s ease;
+      transition: transform 0.2s ease;
+    }
+
+    .icons a:hover {
+      transform: scale(1.2);
+    }
+
+    .images {
+      margin-top: 2em;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .images img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 280px;
       cursor: pointer;
     }
-    .menu a:hover {
-      transform: scale(1.2);
-      color: #4e5ba6;
-    }
-    .back-link {
-      display: block;
-      margin-top: 40px;
-      font-size: clamp(1.1rem, 2.2vw, 1.8rem);
-      text-decoration: none;
-      color: #444;
-      transition: color 0.2s ease;
-    }
-    .back-link:hover {
-      color: #4e5ba6;
-    }
+
     .overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      display: none;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      z-index: 9999;
+      flex-direction: column;
     }
-    .deck {
-      position: relative;
-      width: 100%;
-      height: 100%;
+
+    .overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
     }
-    .deck img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      max-height: 85vh;
-      max-width: 85vw;
-      transform: translate(-50%, -50%) scale(0.6);
-      transition: transform 0.5s ease, z-index 0.3s ease;
-      border-radius: 6px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.5);
-      filter: contrast(0.8) brightness(0.8);
-      pointer-events: none;
+
+    .awards {
+      margin-top: 2em;
+      text-align: left;
     }
-    .deck img.active {
-      transform: translate(-50%, -50%) scale(1);
-      z-index: 30;
-      filter: none;
-      pointer-events: auto;
+
+    .awards h3 {
+      font-size: 1.2em;
+      margin-bottom: 1em;
     }
-    .deck img.left {
-      transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
+
+    .award-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.6);
+      padding: 10px 15px;
+      border-radius: 8px;
     }
-    .deck img.right {
-      transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
+
+    .award-item span {
+      font-weight: 500;
     }
-    .caption {
-      position: absolute;
-      bottom: 32px;
-      width: 100%;
-      text-align: center;
-      font-size: clamp(1.1rem, 2.5vw, 1.8rem);
-      color: #ddd;
-      z-index: 15;
-      pointer-events: none;
-    }
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 28px;
-      font-size: 2em;
-      color: #eee;
-      cursor: pointer;
-      z-index: 20;
-    }
-    .close-btn:hover {
+
+    .award-item button {
+      background-color: #3b82f6;
       color: white;
-    }
-    .restart-btn {
-      position: absolute;
-      right: 30px;
-      bottom: 90px;
-      font-size: clamp(1rem, 2vw, 1.6rem);
-      color: #eee;
-      background-color: rgba(255,255,255,0.1);
-      padding: 10px 16px;
-      border-radius: 6px;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s;
-      z-index: 20;
-      display: none;
+      font-size: 0.9em;
+      transition: background-color 0.2s ease;
     }
-    .restart-btn:hover {
-      background-color: rgba(255,255,255,0.2);
+
+    .award-item button:hover {
+      background-color: #2563eb;
+    }
+
+    .music-section {
+      margin-top: 2em;
+      text-align: left;
+    }
+
+    .music-section h3 {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 160px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 10px 10px;
+      }
+
+      .content {
+        padding: 20px;
+        max-width: 95vw;
+      }
+
+      h1 {
+        font-size: 1.2em;
+        white-space: nowrap;
+      }
+
+      h2 {
+        font-size: 1em;
+      }
+
+      .icons a {
+        font-size: 1.3em;
+      }
+
+      .images img {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      iframe {
+        height: 200px;
+      }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <div class="background"></div>
-  <div class="container">
-    <h1>Truyện Tranh</h1>
-    <div class="menu">
-      <a id="punkga-link">PunkgaMerch</a>
+  <div class="content">
+    <h1>MINI PEACE | MAI THỦY TIÊN</h1>
+    <h2>FREELANCE 2D ARTIST</h2>
+    <p><strong>Porfolio 2025</strong></p>
+
+    <div class="icons">
+      <a href="https://www.facebook.com/minipeace2001" title="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="https://www.instagram.com/minipeace2001/" title="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.behance.net/maithuytien" title="Behance"><i class="fab fa-behance"></i></a>
+      <a href="https://www.youtube.com/playlist?list=PLR5fl78Q7K1RJs1C-68pNzut2mKCL2Nod" title="YouTube"><i class="fab fa-youtube"></i></a>
     </div>
-    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
+
+    <div class="images">
+      <img src="image01.webp" alt="Artwork 1" onclick="zoomImage(this)" />
+      <img src="image02.webp" alt="Artwork 2" onclick="zoomImage(this)" />
+    </div>
+
+    <div class="awards">
+      <h3>Một vài giải thưởng vẽ truyện tranh tôi đạt được</h3>
+      <div class="award-item">
+        <span>Giải nhất "Wow Yourself"</span>
+        <button onclick="openComicGallery()">Đọc truyện</button>
+      </div>
+      <div class="award-item">
+        <span>Giải nhì "Kaia Contest"</span>
+        <button>Đọc truyện</button>
+      </div>
+      <div class="award-item">
+        <span>Top 20 "AVA Contest"</span>
+        <button>Đọc truyện</button>
+      </div>
+    </div>
+
+    <div class="music-section">
+      <h3>Một vài Artwork cho sản phẩm âm nhạc</h3>
+      <div class="videos">
+        <iframe src="https://www.youtube.com/embed/1oUTJ3FpdJ8" title="YouTube video" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/3_8VEcalmRE" title="YouTube video" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/PhKgdZEzMxc" title="YouTube video" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/8ka2w0i97Xc" title="YouTube video" allowfullscreen></iframe>
+      </div>
+    </div>
   </div>
-  <div class="overlay" id="overlay">
-    <div class="close-btn" id="closeBtn">✕</div>
-    <div class="deck" id="deck"></div>
-    <div class="caption" id="caption"></div>
-    <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
+
+  <div id="comicOverlay" class="overlay" style="display: none;">
+    <img id="comicImage" src="" alt="Comic Page" />
   </div>
 
-<script>
-  const punkgaLink = document.getElementById('punkga-link');
-  const overlay = document.getElementById('overlay');
-  const closeBtn = document.getElementById('closeBtn');
-  const deck = document.getElementById('deck');
-  const caption = document.getElementById('caption');
-  const restartBtn = document.getElementById('restartBtn');
+  <script>
+    function zoomImage(img) {
+      const overlay = document.createElement('div');
+      overlay.classList.add('overlay');
+      overlay.onclick = () => document.body.removeChild(overlay);
 
-  const totalImages = 13;
-  const images = [];
-  let currentIndex = 0;
-  let isTransitioning = false;
+      const zoomedImg = document.createElement('img');
+      zoomedImg.src = img.src;
+      zoomedImg.alt = img.alt;
 
-  const captions = [
-    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
-    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
-    "Trang 10", "Trang 11", "Trang 12"
-  ];
-
-  const flipSounds = [
-    'assets/sfx/Pictures/Paper1.mp3',
-    'assets/sfx/Pictures/Paper2.mp3',
-    'assets/sfx/Pictures/Paper3.mp3',
-    'assets/sfx/Pictures/Paper4.mp3'
-  ];
-
-  function playFlipSound() {
-    const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
-    const audio = new Audio(randomSrc);
-    audio.playbackRate = 1.5;
-    audio.play().catch(() => {});
-  }
-
-  for (let i = 0; i < totalImages; i++) {
-    const img = document.createElement('img');
-    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-    if (i > 2) img.loading = 'lazy'; // 🔁 chỉ lazy từ ảnh thứ 3
-    deck.appendChild(img);
-    images.push(img);
-    img.addEventListener('transitionend', () => {
-      if (img.classList.contains('active')) isTransitioning = false;
-    });
-  }
-
-  function updateClasses() {
-    images.forEach((img, index) => {
-      img.classList.remove('active', 'left', 'right');
-      if (index === currentIndex) {
-        img.classList.add('active');
-        img.style.zIndex = '30';
-      } else if (index < currentIndex) {
-        img.classList.add('left');
-        img.style.zIndex = `${5 + index}`;
-      } else {
-        img.classList.add('right');
-        img.style.zIndex = `${5 - (index - currentIndex)}`;
-      }
-    });
-    caption.textContent = captions[currentIndex] || "";
-    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
-  }
-
-  function showOverlay() {
-    currentIndex = 0;
-    isTransitioning = false;
-    overlay.style.display = 'flex';
-    updateClasses();
-  }
-
-  function hideOverlay() {
-    overlay.style.display = 'none';
-    isTransitioning = false;
-  }
-
-  function nextImage() {
-    if (isTransitioning || currentIndex >= totalImages - 1) return;
-    playFlipSound();
-    currentIndex++;
-    isTransitioning = true;
-    updateClasses();
-  }
-
-  function prevImage() {
-    if (isTransitioning || currentIndex <= 0) return;
-    playFlipSound();
-    currentIndex--;
-    isTransitioning = true;
-    updateClasses();
-  }
-
-  function handleClick(e) {
-    const rect = overlay.getBoundingClientRect();
-    const clickX = e.clientX;
-    const centerX = rect.left + rect.width / 2;
-    if (clickX > centerX + 50) nextImage();
-    else if (clickX < centerX - 50) prevImage();
-  }
-
-  function restartGallery() {
-    if (isTransitioning) return;
-    currentIndex = 0;
-    updateClasses();
-  }
-
-  let touchStartX = 0;
-  overlay.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-  });
-  overlay.addEventListener('touchend', e => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const diffX = touchEndX - touchStartX;
-    if (Math.abs(diffX) > 50) {
-      if (diffX < 0) nextImage();
-      else prevImage();
+      overlay.appendChild(zoomedImg);
+      document.body.appendChild(overlay);
     }
-  });
 
-  punkgaLink.addEventListener('click', showOverlay);
-  closeBtn.addEventListener('click', hideOverlay);
-  overlay.addEventListener('click', handleClick);
-  restartBtn.addEventListener('click', restartGallery);
+    const comicImages = [
+      "WOW/01.webp",
+      "WOW/02.webp",
+      "WOW/03.webp",
+      "WOW/04.webp",
+      "WOW/05.webp",
+      "WOW/06.webp"
+    ];
 
-  window.addEventListener('keydown', e => {
-    if (overlay.style.display !== 'flex' || isTransitioning) return;
-    if (e.key === 'ArrowRight') nextImage();
-    if (e.key === 'ArrowLeft') prevImage();
-    if (e.key === 'Escape') hideOverlay();
-  });
-</script>
+    let currentComicIndex = 0;
+
+    function openComicGallery() {
+      const overlay = document.getElementById("comicOverlay");
+      const comicImg = document.getElementById("comicImage");
+
+      overlay.style.display = "flex";
+      currentComicIndex = 0;
+      comicImg.src = comicImages[currentComicIndex];
+
+      overlay.onclick = function (e) {
+        if (e.target === comicImg) {
+          currentComicIndex++;
+          if (currentComicIndex < comicImages.length) {
+            comicImg.src = comicImages[currentComicIndex];
+          } else {
+            overlay.style.display = "none";
+          }
+        } else {
+          overlay.style.display = "none";
+        }
+      };
+    }
+  </script>
 </body>
 </html>
