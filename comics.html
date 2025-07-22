@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
 
-  <!-- Google Font: VT323 kiểu chữ pixel-style -->
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Bangers&family=Noto+Sans+JP&family=Patrick+Hand&display=swap" rel="stylesheet">
 
-  <!-- Preload hình ảnh đầu tiên -->
+  <!-- Preload hình ảnh -->
   <link rel="preload" as="image" href="comics/PunkgaMerch/00.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/01.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/02.webp">
@@ -23,10 +23,11 @@
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'VT323', monospace;
+      font-family: 'Noto Sans JP', sans-serif;
       background-color: #f8f8ff;
       overflow: hidden;
     }
+
     .background {
       position: fixed;
       top: 0; left: 0;
@@ -36,6 +37,7 @@
       opacity: 0.3;
       z-index: 0;
     }
+
     .container {
       text-align: center;
       padding-top: 48px;
@@ -44,12 +46,16 @@
       max-width: 80vw;
       margin: 0 auto;
     }
+
     h1 {
+      font-family: 'Bangers', cursive;
       font-size: clamp(2.7rem, 7.5vw, 5.25rem);
       font-weight: normal;
       margin: 0.2em 0 0;
       color: #222;
+      letter-spacing: 1px;
     }
+
     .menu {
       margin-top: 24px;
       display: flex;
@@ -57,18 +63,23 @@
       flex-wrap: wrap;
       gap: 7ch;
     }
+
     .menu a {
+      font-family: 'Patrick Hand', cursive;
       font-size: clamp(1.2rem, 2.5vw, 2rem);
       text-decoration: none;
       color: #334;
       transition: transform 0.2s ease, color 0.2s ease;
       cursor: pointer;
     }
+
     .menu a:hover {
       transform: scale(1.2);
       color: #4e5ba6;
     }
+
     .back-link {
+      font-family: 'Patrick Hand', cursive;
       display: block;
       margin-top: 40px;
       font-size: clamp(1.1rem, 2.2vw, 1.8rem);
@@ -76,9 +87,11 @@
       color: #444;
       transition: color 0.2s ease;
     }
+
     .back-link:hover {
       color: #4e5ba6;
     }
+
     .overlay {
       position: fixed;
       top: 0; left: 0;
@@ -91,11 +104,13 @@
       align-items: center;
       overflow: hidden;
     }
+
     .deck {
       position: relative;
       width: 100%;
       height: 100%;
     }
+
     .deck img {
       position: absolute;
       top: 50%;
@@ -109,19 +124,24 @@
       filter: contrast(0.8) brightness(0.8);
       pointer-events: none;
     }
+
     .deck img.active {
       transform: translate(-50%, -50%) scale(1);
       z-index: 30;
       filter: none;
       pointer-events: auto;
     }
+
     .deck img.left {
       transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
     }
+
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
     }
+
     .caption {
+      font-family: 'Amatic SC', cursive;
       position: absolute;
       bottom: 32px;
       width: 100%;
@@ -130,8 +150,11 @@
       color: #ddd;
       z-index: 15;
       pointer-events: none;
+      letter-spacing: 1px;
     }
+
     .close-btn {
+      font-family: 'Patrick Hand', cursive;
       position: absolute;
       top: 20px;
       right: 28px;
@@ -140,10 +163,13 @@
       cursor: pointer;
       z-index: 20;
     }
+
     .close-btn:hover {
       color: white;
     }
+
     .restart-btn {
+      font-family: 'Patrick Hand', cursive;
       position: absolute;
       right: 30px;
       bottom: 90px;
@@ -157,6 +183,7 @@
       z-index: 20;
       display: none;
     }
+
     .restart-btn:hover {
       background-color: rgba(255,255,255,0.2);
     }
@@ -214,7 +241,7 @@
   for (let i = 0; i < totalImages; i++) {
     const img = document.createElement('img');
     img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-    if (i > 2) img.loading = 'lazy'; // 🔁 chỉ lazy từ ảnh thứ 3
+    if (i > 2) img.loading = 'lazy';
     deck.appendChild(img);
     images.push(img);
     img.addEventListener('transitionend', () => {
