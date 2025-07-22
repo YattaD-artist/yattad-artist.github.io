@@ -108,26 +108,36 @@
       opacity: 0;
     }
 
-    .social-icons {
+.social-icons {
   position: fixed;
   top: 50%;
   right: 12px;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  z-index: 1000;
+  gap: 16px;
+  z-index: 20;
 }
 
-.social-icons i {
-  font-size: 28px;
-  color: #222;
+.social-icons a,
+.social-icons button {
+  background: none;
+  border: none;
   cursor: pointer;
-  transition: color 0.3s ease;
+  padding: 0;
+  display: block;
 }
 
-.social-icons i:hover {
-  color: #e63946;
+.social-icons img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.social-icons img:hover {
+  filter: brightness(0) saturate(100%) sepia(100%) hue-rotate(-10deg) saturate(500%) brightness(1.2);
+  transform: scale(1.1);
 }
 
 .toast {
@@ -164,14 +174,24 @@
     <a href="index.html">← Quay lại trang chủ</a>
   </div>
   
+<!-- Hàng icon bên phải -->
 <div class="social-icons">
-  <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
-  <a href="https://www.instagram.com/yattad.art/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
-  <i class="fab fa-discord" onclick="copyToClipboard('Yattad')"></i>
-  <i class="fas fa-envelope" onclick="copyToClipboard('Yattadwork@gmail.com')"></i>
+  <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" title="Facebook">
+    <img src="assets/icons/facebook.png" alt="Facebook">
+  </a>
+  <a href="https://www.instagram.com/yattad.art/" target="_blank" title="Instagram">
+    <img src="assets/icons/instagram.png" alt="Instagram">
+  </a>
+  <button onclick="copyToClipboard('Yattad')" title="Discord">
+    <img src="assets/icons/discord.png" alt="Discord">
+  </button>
+  <button onclick="copyToClipboard('Yattadwork@gmail.com')" title="Gmail">
+    <img src="assets/icons/google.png" alt="Gmail">
+  </button>
 </div>
 
-<div class="toast" id="toast">Đã sao chép!</div>
+<!-- Toast thông báo copy -->
+<div id="toast" class="toast">Đã sao chép!</div>
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
@@ -340,6 +360,16 @@ function showToast(message) {
       updateSprite();
       requestAnimationFrame(gameLoop);
     });
+
+    function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const toast = document.getElementById('toast');
+    toast.textContent = `Đã sao chép: ${text}`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  });
+}
+
   </script>
 </body>
 </html>
