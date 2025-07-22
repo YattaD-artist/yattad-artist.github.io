@@ -74,10 +74,21 @@
       transition: color 0.2s ease, transform 0.2s ease;
     }
 
-    a:hover {
-      color: #dc3849;
-      transform: scale(1.1);
-    }
+   a.back-link {
+  display: inline-block;
+  margin-top: 32px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  text-decoration: none;
+  color: #4e5ba6;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+a.back-link:hover {
+  color: #2d2f92;
+  transform: scale(1.1);
+}
+
 
     #character {
       width: 62px;
@@ -179,7 +190,8 @@
     <p><strong>Công việc:</strong> Freelancer</p>
     <p><strong>Sở thích:</strong> Vẽ, viết kịch bản, khám phá nghệ thuật</p>
 
-    <a href="index.html">← Quay lại trang chủ</a>
+<a href="index.html" class="back-link">← Quay lại trang chủ</a>
+
   </div>
   
 <!-- Hàng icon -->
