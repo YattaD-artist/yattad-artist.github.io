@@ -111,44 +111,35 @@
 
 .social-icons {
   position: fixed;
-  top: 50%;
-  right: 36px;
-  transform: translateY(-50%);
+  top: 12px; /* gần sát đỉnh */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-direction: row;
+  gap: 24px;
   z-index: 20;
 }
 
-.social-icons i:hover {
-  color: red;
-  transform: scale(1.2);
-}
-
+.social-icons a,
 .social-icons button {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-}
-.social-icons .icon-wrapper {
-  width: 80px;
-  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
-  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .social-icons i {
-  font-size: 40px;
-  color: black;
+  font-size: 28px;
+  color: #000;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.social-icons .icon-wrapper:hover i {
+.social-icons i:hover {
+  color: #4e5ba6;
   transform: scale(1.2);
-  color: #e63946;
 }
 
 .toast {
@@ -191,21 +182,22 @@
     <a href="index.html">← Quay lại trang chủ</a>
   </div>
   
-<!-- Hàng icon bên phải (Font Awesome) -->
+<!-- Hàng icon -->
 <div class="social-icons">
   <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" title="Facebook">
-    <div class="icon-wrapper"><i class="fab fa-facebook-f"></i></div>
+    <i class="fab fa-facebook-f"></i>
   </a>
   <a href="https://www.instagram.com/yattad.art/" target="_blank" title="Instagram">
-    <div class="icon-wrapper"><i class="fab fa-instagram"></i></div>
+    <i class="fab fa-instagram"></i>
   </a>
   <button onclick="copyToClipboard('Yattad')" title="Discord">
-    <div class="icon-wrapper"><i class="fab fa-discord"></i></div>
+    <i class="fab fa-discord"></i>
   </button>
   <button onclick="copyToClipboard('Yattadwork@gmail.com')" title="Gmail">
-    <div class="icon-wrapper"><i class="fas fa-envelope"></i></div>
+    <i class="fas fa-envelope"></i>
   </button>
 </div>
+
 
 <!-- Toast thông báo copy -->
 <div id="toast" class="toast">Đã sao chép!</div>
