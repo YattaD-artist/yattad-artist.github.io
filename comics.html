@@ -214,7 +214,7 @@
   for (let i = 0; i < totalImages; i++) {
     const img = document.createElement('img');
     img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-    if (i > 2) img.loading = 'lazy';
+    if (i > 2) img.loading = 'lazy'; // 🔁 chỉ lazy từ ảnh thứ 3
     deck.appendChild(img);
     images.push(img);
     img.addEventListener('transitionend', () => {
@@ -223,91 +223,47 @@
   }
 
   function updateClasses() {
-    images.forEach((img) => {
-      img.classList.remove('active', 'left', 'right');
-      img.style.zIndex = '5';
-      img.style.display = 'none';
-    });
-
-    // Hiển thị cặp trang 11–12
-    if (currentIndex === 11 && images[12]) {
-      const imgLeft = images[11];
-      const imgRight = images[12];
-
-      imgLeft.style.display = 'block';
-      imgRight.style.display = 'block';
-
-      imgLeft.classList.add('active');
-      imgRight.classList.add('active');
-
-      imgLeft.style.zIndex = '30';
-      imgRight.style.zIndex = '30';
-
-      imgLeft.style.left = 'calc(50% - 50%)';   // căn bên trái
-      imgRight.style.left = 'calc(50% + 50%)';  // căn bên phải
-
-      imgLeft.style.transform = 'translate(-100%, -50%) scale(1)';
-      imgRight.style.transform = 'translate(0%, -50%) scale(1)';
-
-      caption.textContent = "Trang 11 - 12";
-      restartBtn.style.display = currentIndex >= totalImages - 1 ? 'block' : 'none';
-      return;
-    }
-
-    // Mặc định cho từng trang đơn
-    const img = images[currentIndex];
-    if (img) {
-      img.classList.add('active');
-      img.style.display = 'block';
-      img.style.zIndex = '30';
-      img.style.left = '50%';
-      img.style.transform = 'translate(-50%, -50%) scale(1)';
-    }
-
     images.forEach((img, index) => {
-      if (index < currentIndex) {
+      img.classList.remove('active', 'left', 'right');
+      if (index === currentIndex) {
+        img.classList.add('active');
+        img.style.zIndex = '30';
+      } else if (index < currentIndex) {
         img.classList.add('left');
-        img.style.display = 'block';
         img.style.zIndex = `${5 + index}`;
-      } else if (index > currentIndex) {
+      } else {
         img.classList.add('right');
-        img.style.display = 'block';
         img.style.zIndex = `${5 - (index - currentIndex)}`;
       }
     });
-
     caption.textContent = captions[currentIndex] || "";
-    restartBtn.style.display = currentIndex >= totalImages - 1 ? 'block' : 'none';
+    restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+  }
+
+  function showOverlay() {
+    currentIndex = 0;
+    isTransitioning = false;
+    overlay.style.display = 'flex';
+    updateClasses();
+  }
+
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    isTransitioning = false;
   }
 
   function nextImage() {
-    if (isTransitioning) return;
-
-    if (currentIndex === 11) {
-      currentIndex = 13; // bỏ qua 12 vì đã hiển thị chung
-    } else if (currentIndex < totalImages - 1) {
-      currentIndex++;
-    } else {
-      return;
-    }
-
+    if (isTransitioning || currentIndex >= totalImages - 1) return;
     playFlipSound();
+    currentIndex++;
     isTransitioning = true;
     updateClasses();
   }
 
   function prevImage() {
-    if (isTransitioning) return;
-
-    if (currentIndex === 13 && images[11] && images[12]) {
-      currentIndex = 11; // trở về cặp trang đôi
-    } else if (currentIndex > 0) {
-      currentIndex--;
-    } else {
-      return;
-    }
-
+    if (isTransitioning || currentIndex <= 0) return;
     playFlipSound();
+    currentIndex--;
     isTransitioning = true;
     updateClasses();
   }
@@ -326,24 +282,13 @@
     updateClasses();
   }
 
-  function showOverlay() {
-    currentIndex = 0;
-    isTransitioning = false;
-    overlay.style.display = 'flex';
-    updateClasses();
-  }
-
-  function hideOverlay() {
-    overlay.style.display = 'none';
-    isTransitioning = false;
-  }
-
   let touchStartX = 0;
   overlay.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
   });
   overlay.addEventListener('touchend', e => {
-    const diffX = e.changedTouches[0].clientX - touchStartX;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diffX = touchEndX - touchStartX;
     if (Math.abs(diffX) > 50) {
       if (diffX < 0) nextImage();
       else prevImage();
