@@ -6,10 +6,9 @@
   <title>Tranh Concepts</title>
 
   <!-- Font imports -->
-<link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
 
   <style>
-
     .background {
       position: fixed;
       top: 0; left: 0;
@@ -38,17 +37,24 @@
       letter-spacing: 1px;
     }
 
-p {
-  font-family: 'Patrick Hand', cursive;
-  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
-  margin: 12px 0;
-  color: #333;
-}
+    h2 {
+      font-family: 'Amatic SC', cursive;
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin: 24px 0;
+      color: #444;
+    }
+
+    p {
+      font-family: 'Patrick Hand', cursive;
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      margin: 12px 0;
+      color: #333;
+    }
 
     a {
       display: inline-block;
       margin-top: 24px;
-font-family: 'Patrick Hand', cursive;
+      font-family: 'Patrick Hand', cursive;
       font-size: clamp(1.1rem, 2vw, 1.6rem);
       text-decoration: none;
       color: #4e5ba6;
@@ -69,6 +75,7 @@ font-family: 'Patrick Hand', cursive;
     }
 
     .grid-item {
+      position: relative;
       aspect-ratio: 1 / 1;
       background-color: #ddd;
       border: 1px solid #aaa;
@@ -80,6 +87,26 @@ font-family: 'Patrick Hand', cursive;
 
     .grid-item:hover {
       transform: scale(1.05);
+    }
+
+    /* Tooltip custom styling */
+    .grid-item:hover::after {
+      content: attr(data-caption);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.2s;
+      z-index: 10;
     }
 
     .lightbox {
@@ -111,6 +138,7 @@ font-family: 'Patrick Hand', cursive;
 
   <main>
     <h1>Tranh Concepts</h1>
+    <h2>Bản thảo & thế giới trong đầu</h2>
     <p>Đây là kho hình vẽ của YattaD</p>
     <a href="index.html">← Quay lại trang chủ</a>
   </main>
@@ -131,6 +159,10 @@ font-family: 'Patrick Hand', cursive;
     for (let i = 0; i < totalCells; i++) {
       const cell = document.createElement('div');
       cell.className = 'grid-item';
+
+      // Chú thích 
+const filename = `${i.toString().padStart(2, '0')}.webp`;
+cell.setAttribute('data-caption', filename);
 
       // Để gắn ảnh thật, bỏ comment dòng sau:
       // cell.style.backgroundImage = `url('illustrations/${i.toString().padStart(2, '0')}.webp')`;
