@@ -179,166 +179,188 @@
   </div>
 
 <script>
-const punkgaLink = document.getElementById('punkga-link');
-const overlay = document.getElementById('overlay');
-const closeBtn = document.getElementById('closeBtn');
-const deck = document.getElementById('deck');
-const caption = document.getElementById('caption');
-const restartBtn = document.getElementById('restartBtn');
+  const punkgaLink = document.getElementById('punkga-link');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeBtn');
+  const deck = document.getElementById('deck');
+  const caption = document.getElementById('caption');
+  const restartBtn = document.getElementById('restartBtn');
 
-const totalImages = 14;
-const images = [];
+  const totalImages = 14;
+  const images = [];
+  let currentIndex = 0;
+  let isTransitioning = false;
 
-const flipSounds = [
-  'assets/sfx/Pictures/Paper1.mp3',
-  'assets/sfx/Pictures/Paper2.mp3',
-  'assets/sfx/Pictures/Paper3.mp3',
-  'assets/sfx/Pictures/Paper4.mp3'
-];
+  const captions = [
+    "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
+    "Trang 5", "Trang 6", "Trang 7", "Trang 8", "Trang 9",
+    "Trang 10", "Trang 11", "Trang 12", "Trang 13"
+  ];
 
-function playFlipSound() {
-  const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
-  const audio = new Audio(randomSrc);
-  audio.playbackRate = 1.5;
-  audio.play().catch(() => {});
-}
+  const flipSounds = [
+    'assets/sfx/Pictures/Paper1.mp3',
+    'assets/sfx/Pictures/Paper2.mp3',
+    'assets/sfx/Pictures/Paper3.mp3',
+    'assets/sfx/Pictures/Paper4.mp3'
+  ];
 
-// === PAGE STRUCTURE ===
-// Each entry is either a single index or a spread
-const pages = [
-  { type: 'single', indices: [0], caption: "Trang Bìa" },
-  { type: 'single', indices: [1], caption: "Trang 1" },
-  { type: 'single', indices: [2], caption: "Trang 2" },
-  { type: 'single', indices: [3], caption: "Trang 3" },
-  { type: 'single', indices: [4], caption: "Trang 4" },
-  { type: 'single', indices: [5], caption: "Trang 5" },
-  { type: 'single', indices: [6], caption: "Trang 6" },
-  { type: 'single', indices: [7], caption: "Trang 7" },
-  { type: 'single', indices: [8], caption: "Trang 8" },
-  { type: 'single', indices: [9], caption: "Trang 9" },
-  { type: 'single', indices: [10], caption: "Trang 10" },
-  { type: 'spread', indices: [11, 12], caption: "Trang 11–12" },
-  { type: 'single', indices: [13], caption: "Trang 13" },
-];
-
-let currentPage = 0;
-let isTransitioning = false;
-
-for (let i = 0; i < totalImages; i++) {
-  const img = document.createElement('img');
-  img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-  if (i > 2) img.loading = 'lazy';
-  deck.appendChild(img);
-  images.push(img);
-  img.addEventListener('transitionend', () => {
-    if (img.classList.contains('active')) isTransitioning = false;
-  });
-}
-
-// === DISPLAY LOGIC ===
-function updateClasses() {
-  images.forEach(img => {
-    img.className = '';
-    img.style.display = 'none';
-    img.style.zIndex = '5';
-  });
-
-  const page = pages[currentPage];
-
-  if (page.type === 'spread') {
-    const [leftIdx, rightIdx] = page.indices;
-    const leftImg = images[leftIdx];
-    const rightImg = images[rightIdx];
-
-    leftImg.style.display = 'block';
-    rightImg.style.display = 'block';
-
-    leftImg.classList.add('active');
-    rightImg.classList.add('active');
-
-    leftImg.style.zIndex = '30';
-    rightImg.style.zIndex = '30';
-
-    leftImg.style.transform = 'translate(calc(-50% - 25vw), -50%) scale(1)';
-    rightImg.style.transform = 'translate(calc(-50% + 25vw), -50%) scale(1)';
-  } else {
-    const img = images[page.indices[0]];
-    img.style.display = 'block';
-    img.classList.add('active');
-    img.style.zIndex = '30';
-    img.style.transform = 'translate(-50%, -50%) scale(1)';
+  function playFlipSound() {
+    const randomSrc = flipSounds[Math.floor(Math.random() * flipSounds.length)];
+    const audio = new Audio(randomSrc);
+    audio.playbackRate = 1.5;
+    audio.play().catch(() => {});
   }
 
-  caption.textContent = page.caption;
-  restartBtn.style.display = (currentPage === pages.length - 1) ? 'block' : 'none';
-}
-
-function showOverlay() {
-  currentPage = 0;
-  isTransitioning = false;
-  overlay.style.display = 'flex';
-  updateClasses();
-}
-
-function hideOverlay() {
-  overlay.style.display = 'none';
-  isTransitioning = false;
-}
-
-function nextImage() {
-  if (isTransitioning || currentPage >= pages.length - 1) return;
-  playFlipSound();
-  currentPage++;
-  isTransitioning = true;
-  updateClasses();
-}
-
-function prevImage() {
-  if (isTransitioning || currentPage <= 0) return;
-  playFlipSound();
-  currentPage--;
-  isTransitioning = true;
-  updateClasses();
-}
-
-function restartGallery() {
-  if (isTransitioning) return;
-  currentPage = 0;
-  updateClasses();
-}
-
-// === INTERACTIONS ===
-overlay.addEventListener('click', e => {
-  const rect = overlay.getBoundingClientRect();
-  const clickX = e.clientX;
-  const centerX = rect.left + rect.width / 2;
-  if (clickX > centerX + 50) nextImage();
-  else if (clickX < centerX - 50) prevImage();
-});
-
-overlay.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-});
-overlay.addEventListener('touchend', e => {
-  const touchEndX = e.changedTouches[0].clientX;
-  const diffX = touchEndX - touchStartX;
-  if (Math.abs(diffX) > 50) {
-    if (diffX < 0) nextImage();
-    else prevImage();
+  for (let i = 0; i < totalImages; i++) {
+    const img = document.createElement('img');
+    img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+    if (i > 2) img.loading = 'lazy';
+    deck.appendChild(img);
+    images.push(img);
+    img.addEventListener('transitionend', () => {
+      if (img.classList.contains('active')) isTransitioning = false;
+    });
   }
-});
 
-punkgaLink.addEventListener('click', showOverlay);
-closeBtn.addEventListener('click', hideOverlay);
-restartBtn.addEventListener('click', restartGallery);
+  function updateClasses() {
+    images.forEach((img) => {
+      img.classList.remove('active', 'left', 'right');
+      img.style.zIndex = '5';
+      img.style.display = 'none';
+    });
 
-window.addEventListener('keydown', e => {
-  if (overlay.style.display !== 'flex' || isTransitioning) return;
-  if (e.key === 'ArrowRight') nextImage();
-  if (e.key === 'ArrowLeft') prevImage();
-  if (e.key === 'Escape') hideOverlay();
-});
+    // Hiển thị cặp trang 11–12
+    if (currentIndex === 11 && images[12]) {
+      const imgLeft = images[11];
+      const imgRight = images[12];
+
+      imgLeft.style.display = 'block';
+      imgRight.style.display = 'block';
+
+      imgLeft.classList.add('active');
+      imgRight.classList.add('active');
+
+      imgLeft.style.zIndex = '30';
+      imgRight.style.zIndex = '30';
+
+      imgLeft.style.left = 'calc(50% - 50%)';   // căn bên trái
+      imgRight.style.left = 'calc(50% + 50%)';  // căn bên phải
+
+      imgLeft.style.transform = 'translate(-100%, -50%) scale(1)';
+      imgRight.style.transform = 'translate(0%, -50%) scale(1)';
+
+      caption.textContent = "Trang 11 - 12";
+      restartBtn.style.display = currentIndex >= totalImages - 1 ? 'block' : 'none';
+      return;
+    }
+
+    // Mặc định cho từng trang đơn
+    const img = images[currentIndex];
+    if (img) {
+      img.classList.add('active');
+      img.style.display = 'block';
+      img.style.zIndex = '30';
+      img.style.left = '50%';
+      img.style.transform = 'translate(-50%, -50%) scale(1)';
+    }
+
+    images.forEach((img, index) => {
+      if (index < currentIndex) {
+        img.classList.add('left');
+        img.style.display = 'block';
+        img.style.zIndex = `${5 + index}`;
+      } else if (index > currentIndex) {
+        img.classList.add('right');
+        img.style.display = 'block';
+        img.style.zIndex = `${5 - (index - currentIndex)}`;
+      }
+    });
+
+    caption.textContent = captions[currentIndex] || "";
+    restartBtn.style.display = currentIndex >= totalImages - 1 ? 'block' : 'none';
+  }
+
+  function nextImage() {
+    if (isTransitioning) return;
+
+    if (currentIndex === 11) {
+      currentIndex = 13; // bỏ qua 12 vì đã hiển thị chung
+    } else if (currentIndex < totalImages - 1) {
+      currentIndex++;
+    } else {
+      return;
+    }
+
+    playFlipSound();
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  function prevImage() {
+    if (isTransitioning) return;
+
+    if (currentIndex === 13 && images[11] && images[12]) {
+      currentIndex = 11; // trở về cặp trang đôi
+    } else if (currentIndex > 0) {
+      currentIndex--;
+    } else {
+      return;
+    }
+
+    playFlipSound();
+    isTransitioning = true;
+    updateClasses();
+  }
+
+  function handleClick(e) {
+    const rect = overlay.getBoundingClientRect();
+    const clickX = e.clientX;
+    const centerX = rect.left + rect.width / 2;
+    if (clickX > centerX + 50) nextImage();
+    else if (clickX < centerX - 50) prevImage();
+  }
+
+  function restartGallery() {
+    if (isTransitioning) return;
+    currentIndex = 0;
+    updateClasses();
+  }
+
+  function showOverlay() {
+    currentIndex = 0;
+    isTransitioning = false;
+    overlay.style.display = 'flex';
+    updateClasses();
+  }
+
+  function hideOverlay() {
+    overlay.style.display = 'none';
+    isTransitioning = false;
+  }
+
+  let touchStartX = 0;
+  overlay.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  overlay.addEventListener('touchend', e => {
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(diffX) > 50) {
+      if (diffX < 0) nextImage();
+      else prevImage();
+    }
+  });
+
+  punkgaLink.addEventListener('click', showOverlay);
+  closeBtn.addEventListener('click', hideOverlay);
+  overlay.addEventListener('click', handleClick);
+  restartBtn.addEventListener('click', restartGallery);
+
+  window.addEventListener('keydown', e => {
+    if (overlay.style.display !== 'flex' || isTransitioning) return;
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'Escape') hideOverlay();
+  });
 </script>
-
 </body>
 </html>
