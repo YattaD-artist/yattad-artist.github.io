@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giới thiệu</title>
 
-  <!-- Bộ font mới -->
+  <!-- Bộ font và logo -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-uVqS3qYp2B6x1ZMBqzYCUzvEoZoyl57s0RtDj+q3IVmcnPkhP5nlAFVXq6yUJ0rKmC0ph3EDxbs9kddfQsl98g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
     html, body {
@@ -106,6 +107,45 @@
     .instruction.hidden {
       opacity: 0;
     }
+
+    .social-icons {
+  position: fixed;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 1000;
+}
+
+.social-icons i {
+  font-size: 28px;
+  color: #222;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.social-icons i:hover {
+  color: #e63946;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #222;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.95rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1001;
+}
+
   </style>
 </head>
 
@@ -123,6 +163,15 @@
 
     <a href="index.html">← Quay lại trang chủ</a>
   </div>
+  
+<div class="social-icons">
+  <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+  <a href="https://www.instagram.com/yattad.art/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+  <i class="fab fa-discord" onclick="copyToClipboard('Yattad')"></i>
+  <i class="fas fa-envelope" onclick="copyToClipboard('Yattadwork@gmail.com')"></i>
+</div>
+
+<div class="toast" id="toast">Đã sao chép!</div>
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
@@ -190,6 +239,20 @@
         }
       }
     };
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(`Đã sao chép: ${text}`);
+  });
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.style.opacity = 1;
+  setTimeout(() => {
+    toast.style.opacity = 0;
+  }, 2000);
+}
 
     const updateSprite = () => {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
