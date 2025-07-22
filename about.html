@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giới thiệu</title>
 
-  <!-- Font imports -->
+  <!-- Bộ font mới -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
 
   <style>
@@ -57,6 +57,7 @@
       font-family: 'Amatic SC', cursive;
       color: #111;
       font-weight: bold;
+      letter-spacing: 0.5px;
     }
 
     a {
@@ -125,7 +126,7 @@
   <div class="instruction" id="instruction">
     ⬅️ ⬆️ ⬇️ ➡️ để di chuyển · Giữ phím <kbd>Space</kbd> để chạy
   </div>
-  
+
   <script>
     const character = document.getElementById('character');
     const instruction = document.getElementById('instruction');
@@ -173,8 +174,8 @@
         for (const dir of directions) {
           const count = folders[folder];
           for (let i = 0; i < count; i++) {
-            const frameStr = folder === 'Run' ? ${i} : i.toString().padStart(2, '0');
-            const src = assets/character/${folder}/${folder}${dir}${frameStr}.png;
+            const frameStr = folder === 'Run' ? `${i}` : i.toString().padStart(2, '0');
+            const src = `assets/character/${folder}/${folder}${dir}${frameStr}.png`;
             const img = new Image();
             img.src = src;
             img.onload = img.onerror = () => {
@@ -190,9 +191,9 @@
     const updateSprite = () => {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const baseName = folder + direction;
-      const frameStr = (state === 'run') ? ${moveFrame % 8} :
+      const frameStr = (state === 'run') ? `${moveFrame % 8}` :
                        (state === 'idle' ? idleFrame : moveFrame % 16).toString().padStart(2, '0');
-      character.src = assets/character/${folder}/${baseName}${frameStr}.png;
+      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     };
 
     let lastFrameTime = 0;
