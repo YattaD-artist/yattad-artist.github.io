@@ -29,11 +29,13 @@
 
     .container {
       padding-top: 80px;
-      padding-left: 12ch;
+      padding-left: 5vw;
       padding-right: 5vw;
       max-width: 800px;
+      margin: 0 auto;
       position: relative;
       z-index: 2;
+      text-align: center;
     }
 
     h1 {
@@ -82,6 +84,7 @@
       image-rendering: pixelated;
       pointer-events: none;
       z-index: 5;
+      left: 4vw;
     }
 
     .instruction {
@@ -133,7 +136,7 @@
     const frameSize = 62;
     const textContainer = document.getElementById('text-container');
     let pos = {
-      x: window.innerWidth / 2 - frameSize / 2,
+      x: window.innerWidth * 0.04, // nhân vật ở bên trái
       y: textContainer.getBoundingClientRect().bottom + 20
     };
 
