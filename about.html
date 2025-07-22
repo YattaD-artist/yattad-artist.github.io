@@ -43,7 +43,7 @@
     }
     
 h2 {
-  font-family: 'Amatic SC', cursive;
+  font-family: 'Noto Sans', cursive;
   font-size: clamp(1rem, 3vw, 2rem);
   margin: 12px 0;
   color: #333;
@@ -121,25 +121,14 @@ a:hover {
     }
 
 .social-icons {
-  position: fixed;
-  top: 12px; /* gần sát đỉnh */
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   gap: 24px;
-  z-index: 20;
+  margin: 16px 0; /* tạo khoảng giữa h1 và h2 */
 }
 
-.social-icons a,
-.social-icons button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.social-icons a {
+  text-decoration: none;
 }
 
 .social-icons i {
@@ -186,19 +175,7 @@ a:hover {
 
     <h1>Về tôi</h1>
 
-<h2><strong>Năm sinh: 1998</strong></h2>
-<h2><strong>Giới tính: Nam</strong></h2>
-<h2><strong>Quốc tịch: Việt Nam</strong></h2>
-<h2><strong>Sở thích:</strong> Mĩ Thuật, Biên Kịch, Học hỏi điều mới</h2>
-<h2><strong>Công việc:</strong> Freelancer <strong>Artist</strong></h2>
-<h2><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại <strong>Đại học Kiến Trúc Hà Nội</strong> (HAU)</h2>
-              </header>
-    
- <a href="index.html">← Quay lại trang chủ</a>
-  </div>
-  
-<!-- Hàng icon -->
-<!-- Hàng icon -->
+          <!-- Hàng icon -->
 <div class="social-icons">
   <a href="https://www.facebook.com/Fb.YattaD/" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
     <i class="fab fa-facebook"></i>
@@ -213,6 +190,18 @@ a:hover {
     <i class="fab fa-google"></i>
   </a>
 </div>
+          
+<h2><strong>Năm sinh: 1998</strong></h2>
+<h2><strong>Giới tính: Nam</strong></h2>
+<h2><strong>Quốc tịch: Việt Nam</strong></h2>
+<h2><strong>Sở thích:</strong> Mĩ Thuật, Biên Kịch, Học hỏi điều mới</h2>
+<h2><strong>Công việc:</strong> Freelancer <strong>Artist</strong></h2>
+<h2><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại <strong>Đại học Kiến Trúc Hà Nội</strong> (HAU)</h2>
+              </header>
+    
+ <a href="index.html">← Quay lại trang chủ</a>
+  </div>
+  
 
 <!-- Toast thông báo copy -->
 <div id="toast" class="toast">Đã sao chép!</div>
