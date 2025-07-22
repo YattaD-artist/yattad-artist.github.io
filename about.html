@@ -153,8 +153,8 @@
 
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 24px;
+  right: 24px;
   background: #222;
   color: #fff;
   padding: 10px 16px;
@@ -163,8 +163,14 @@
   font-size: 0.95rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 1001;
+  transform: translateY(20px);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
   </style>
@@ -372,14 +378,17 @@ function showToast(message) {
       requestAnimationFrame(gameLoop);
     });
 
-    function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    const toast = document.getElementById('toast');
-    toast.textContent = `Đã sao chép: ${text}`;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2000);
-  });
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+
+  // Tự ẩn sau 2s
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
 }
+
 
   </script>
 </body>
