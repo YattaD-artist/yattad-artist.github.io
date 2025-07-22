@@ -120,12 +120,6 @@
   z-index: 20;
 }
 
-.social-icons i {
-  font-size: 30px;
-  color: black;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
 .social-icons i:hover {
   color: red;
   transform: scale(1.2);
@@ -136,6 +130,25 @@
   border: none;
   cursor: pointer;
   padding: 0;
+}
+.social-icons .icon-wrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.social-icons i {
+  font-size: 22px;
+  color: black;
+}
+
+.social-icons .icon-wrapper:hover i {
+  transform: scale(1.2);
+  color: #e63946;
 }
 
 .toast {
@@ -175,16 +188,16 @@
 <!-- Hàng icon bên phải (Font Awesome) -->
 <div class="social-icons">
   <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" title="Facebook">
-    <i class="fab fa-facebook-f"></i>
+    <div class="icon-wrapper"><i class="fab fa-facebook-f"></i></div>
   </a>
   <a href="https://www.instagram.com/yattad.art/" target="_blank" title="Instagram">
-    <i class="fab fa-instagram"></i>
+    <div class="icon-wrapper"><i class="fab fa-instagram"></i></div>
   </a>
   <button onclick="copyToClipboard('Yattad')" title="Discord">
-    <i class="fab fa-discord"></i>
+    <div class="icon-wrapper"><i class="fab fa-discord"></i></div>
   </button>
   <button onclick="copyToClipboard('Yattadwork@gmail.com')" title="Gmail">
-    <i class="fas fa-envelope"></i>
+    <div class="icon-wrapper"><i class="fas fa-envelope"></i></div>
   </button>
 </div>
 
