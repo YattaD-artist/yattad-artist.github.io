@@ -4,21 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Truyện Tranh</title>
-
-  <!-- Google Font: VT323 kiểu chữ pixel-style -->
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
-  <!-- Preload hình ảnh đầu tiên -->
   <link rel="preload" as="image" href="comics/PunkgaMerch/00.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/01.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/02.webp">
-
-  <!-- Preload âm thanh -->
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper1.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper2.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper3.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper4.mp3">
-
   <style>
     html, body {
       margin: 0;
@@ -121,6 +114,12 @@
     .deck img.right {
       transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
     }
+    .deck img.double {
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 30;
+      filter: none;
+      pointer-events: auto;
+    }
     .caption {
       position: absolute;
       bottom: 32px;
@@ -177,7 +176,6 @@
     <div class="caption" id="caption"></div>
     <div class="restart-btn" id="restartBtn">← Quay lại trang đầu</div>
   </div>
-
 <script>
   const punkgaLink = document.getElementById('punkga-link');
   const overlay = document.getElementById('overlay');
@@ -190,6 +188,7 @@
   const images = [];
   let currentIndex = 0;
   let isTransitioning = false;
+  let isDoubleSpread = false;
 
   const captions = [
     "Trang Bìa", "Trang 1", "Trang 2", "Trang 3", "Trang 4",
@@ -214,28 +213,43 @@
   for (let i = 0; i < totalImages; i++) {
     const img = document.createElement('img');
     img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
-    if (i > 2) img.loading = 'lazy'; // 🔁 chỉ lazy từ ảnh thứ 3
+    if (i > 2) img.loading = 'lazy';
     deck.appendChild(img);
     images.push(img);
     img.addEventListener('transitionend', () => {
-      if (img.classList.contains('active')) isTransitioning = false;
+      if (img.classList.contains('active') || img.classList.contains('double')) isTransitioning = false;
     });
   }
 
   function updateClasses() {
     images.forEach((img, index) => {
-      img.classList.remove('active', 'left', 'right');
-      if (index === currentIndex) {
-        img.classList.add('active');
-        img.style.zIndex = '30';
-      } else if (index < currentIndex) {
-        img.classList.add('left');
-        img.style.zIndex = `${5 + index}`;
-      } else {
-        img.classList.add('right');
-        img.style.zIndex = `${5 - (index - currentIndex)}`;
-      }
+      img.classList.remove('active', 'left', 'right', 'double');
     });
+
+    if (currentIndex === 12 && !isDoubleSpread) {
+      images[11].classList.add('double');
+      images[12].classList.add('double');
+      isDoubleSpread = true;
+    } else if (isDoubleSpread && currentIndex === 13) {
+      images[11].classList.add('left');
+      images[12].classList.add('left');
+      images[13].classList.add('active');
+      isDoubleSpread = false;
+    } else {
+      images.forEach((img, index) => {
+        if (index === currentIndex) {
+          img.classList.add('active');
+          img.style.zIndex = '30';
+        } else if (index < currentIndex) {
+          img.classList.add('left');
+          img.style.zIndex = `${5 + index}`;
+        } else {
+          img.classList.add('right');
+          img.style.zIndex = `${5 - (index - currentIndex)}`;
+        }
+      });
+    }
+
     caption.textContent = captions[currentIndex] || "";
     restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
   }
@@ -255,7 +269,13 @@
   function nextImage() {
     if (isTransitioning || currentIndex >= totalImages - 1) return;
     playFlipSound();
-    currentIndex++;
+    if (currentIndex === 11) {
+      currentIndex = 12;
+    } else if (currentIndex === 12) {
+      currentIndex = 13;
+    } else {
+      currentIndex++;
+    }
     isTransitioning = true;
     updateClasses();
   }
@@ -263,7 +283,13 @@
   function prevImage() {
     if (isTransitioning || currentIndex <= 0) return;
     playFlipSound();
-    currentIndex--;
+    if (currentIndex === 13 && isDoubleSpread) {
+      currentIndex = 12;
+    } else if (currentIndex === 12 && isDoubleSpread) {
+      currentIndex = 11;
+    } else {
+      currentIndex--;
+    }
     isTransitioning = true;
     updateClasses();
   }
