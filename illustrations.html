@@ -4,12 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tranh Minh Họa</title>
+
+  <!-- Google Fonts (4 loại) -->
+  <link href="https://fonts.googleapis.com/css2?family=Road+Rage&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'VT323', monospace;
+      font-family: 'Be Vietnam Pro', sans-serif;
       background-color: #f8f8ff;
       overflow-x: hidden;
     }
@@ -29,16 +35,21 @@
       padding: 80px 5vw 0;
       z-index: 1;
       position: relative;
+      text-align: center;
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-family: 'Road Rage', cursive;
+      font-size: clamp(3rem, 7.5vw, 5.25rem); /* tăng 50% */
       font-weight: normal;
       margin-bottom: 24px;
       color: #111;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     p {
+      font-family: 'Patrick Hand', cursive;
       font-size: clamp(1.2rem, 2.4vw, 1.8rem);
       margin: 12px 0;
       color: #333;
@@ -47,6 +58,7 @@
     a {
       display: inline-block;
       margin-top: 32px;
+      font-family: 'VT323', monospace;
       font-size: clamp(1.1rem, 2vw, 1.6rem);
       text-decoration: none;
       color: #4e5ba6;
@@ -130,7 +142,6 @@
       const cell = document.createElement('div');
       cell.className = 'grid-item';
 
-      // Để gắn ảnh thật, bỏ comment dòng sau:
       // cell.style.backgroundImage = `url('illustrations/${i.toString().padStart(2, '0')}.webp')`;
 
       cell.addEventListener('click', () => {
