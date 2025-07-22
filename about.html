@@ -116,29 +116,26 @@
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   z-index: 20;
 }
 
-.social-icons a,
+.social-icons i {
+  font-size: 30px;
+  color: black;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icons i:hover {
+  color: red;
+  transform: scale(1.2);
+}
+
 .social-icons button {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  display: block;
-}
-
-.social-icons img {
-  width: 32px;
-  height: 32px;
-  filter: brightness(0);
-  transition: filter 0.2s ease, transform 0.2s ease;
-}
-
-.social-icons img:hover {
-  filter: brightness(0) saturate(100%) sepia(100%) hue-rotate(-10deg) saturate(500%) brightness(1.2);
-  transform: scale(1.1);
 }
 
 .toast {
@@ -175,19 +172,19 @@
     <a href="index.html">← Quay lại trang chủ</a>
   </div>
   
-<!-- Hàng icon bên phải -->
+<!-- Hàng icon bên phải (Font Awesome) -->
 <div class="social-icons">
   <a href="https://www.facebook.com/Fb.YattaD/" target="_blank" title="Facebook">
-    <img src="assets/icons/facebook.png" alt="Facebook">
+    <i class="fab fa-facebook-f"></i>
   </a>
   <a href="https://www.instagram.com/yattad.art/" target="_blank" title="Instagram">
-    <img src="assets/icons/instagram.png" alt="Instagram">
+    <i class="fab fa-instagram"></i>
   </a>
   <button onclick="copyToClipboard('Yattad')" title="Discord">
-    <img src="assets/icons/discord.png" alt="Discord">
+    <i class="fab fa-discord"></i>
   </button>
   <button onclick="copyToClipboard('Yattadwork@gmail.com')" title="Gmail">
-    <img src="assets/icons/google.png" alt="Gmail">
+    <i class="fas fa-envelope"></i>
   </button>
 </div>
 
