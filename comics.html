@@ -228,13 +228,21 @@
 
   <div class="panel">
     <h1>TRUYỆN TRANH</h1>
-    <div class="menu">
-      <a id="punkga-link">PunkgaMerch</a>
-    </div>
+<div class="menu">
+  <a data-story="PunkgaMerch" class="story-link">PunkgaMerch</a>
+  <a data-story="RedRuby" class="story-link unavailable">Red & Ruby</a>
+  <a data-story="StillTrue" class="story-link unavailable">Still become true</a>
+  <a data-story="LeThan" class="story-link unavailable">Lê Thận</a>
+  <a data-story="Raku" class="story-link unavailable">Raku</a>
+  <a data-story="Breakthrough" class="story-link unavailable">Breakthrough</a>
+</div>
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
 
   <div class="overlay" id="overlay">
+    <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:200; display:flex; align-items:center; justify-content:center; font-family:'Patrick Hand', cursive; font-size:2rem; color:#f5efe6; text-align:center; padding:2rem;">
+  <div>Hiện tại chưa thể xem nội dung này</div>
+</div>
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
     <div class="caption" id="caption"></div>
@@ -391,6 +399,25 @@
       if (e.key === 'ArrowLeft') prevImage();
       if (e.key === 'Escape') hideOverlay();
     });
+// Xử lý menu chưa có truyện
+const modal = document.getElementById('modal');
+const storyLinks = document.querySelectorAll('.story-link');
+
+storyLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    const story = link.getAttribute('data-story');
+    if (story === "PunkgaMerch") {
+      showOverlay(); // Truyện đã có
+    } else {
+      modal.style.display = 'flex';
+    }
+  });
+});
+
+modal.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
   </script>
 </body>
 </html>
