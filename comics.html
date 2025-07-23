@@ -68,8 +68,7 @@
     }
 
 .panel {
-  visibility: hidden;
-  opacity: 0;
+  display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
@@ -78,16 +77,7 @@
 }
 
 .panel-inner {
-  background-color: var(--paper);
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 860px;
-  text-align: center;
-  border-radius: 0.5rem;
-  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: fadeSlideIn 0.8s ease-out 0.2s forwards;
+  background-color: transparent;
 }
     
  @keyframes fadeSlideIn {
