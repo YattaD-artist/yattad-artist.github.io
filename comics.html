@@ -70,7 +70,10 @@
 .panel {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: clamp(8vh, 12vh, 16vh); /* Đẩy nhẹ nội dung lên */
+  box-sizing: border-box;
 }
 
 .panel-inner {
@@ -80,8 +83,19 @@
   max-width: 860px;
   text-align: center;
   border-radius: 0.5rem;
+  filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.4));
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeSlideIn 0.8s ease-out 0.2s forwards;
 }
     
+ @keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
     h1 {
       font-family: 'Road Rage', cursive;
       font-size: clamp(4rem, 9vw, 5.5rem);
@@ -229,6 +243,7 @@
     .restart-btn:hover {
       background-color: rgba(255,255,255,0.2);
     }
+    
   </style>
 </head>
 <body>
