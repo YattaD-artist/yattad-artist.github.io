@@ -99,12 +99,10 @@ clip-path: polygon(
   position: absolute;
   inset: 0;
   clip-path: inherit;
-  border: 4px double var(--light);
-  border-radius: 1rem; /* vẫn có thể giữ nếu viền trông mềm hơn */
+  box-shadow: 0 0 0 4px var(--light) inset;
   pointer-events: none;
   z-index: -1;
 }
-
 
     h1 {
       font-family: 'Road Rage', cursive;
