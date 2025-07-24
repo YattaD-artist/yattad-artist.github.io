@@ -96,21 +96,12 @@
       letter-spacing: 0.35px;
     }
 
-.menu {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  position: relative;
-}
 .menu a {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 0.5rem;
-  transform: rotate(45deg);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* tạo diamond */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,22 +115,21 @@
   cursor: pointer;
   user-select: none;
 
-  /* Đặt vị trí ngẫu nhiên */
-  top: 0;
-}
-
-.menu a span {
-  transform: rotate(-45deg); /* Xoay ngược chữ để dễ đọc */
-  display: block;
-  width: 100%;
-  padding: 0 0.5rem;
+  /* hiệu ứng trôi nổi chỉ dịch Y */
+  animation: floatY 4s ease-in-out infinite;
 }
 
 .menu a:hover {
   background-color: var(--accent);
   color: white;
   box-shadow: 0 0 15px var(--accent);
-  transform: rotate(45deg) scale(1.05);
+  transform: scale(1.05);  /* chỉ scale, không rotate */
+}
+
+/* Keyframes chỉ translateY, không ảnh hưởng rotate */
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
 }
 
     .back-link {
