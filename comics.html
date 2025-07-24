@@ -303,7 +303,13 @@
       square.style.animationDuration = `${12 + Math.random() * 10}s`;
       patternContainer.appendChild(square);
     }
-
+    
+document.querySelectorAll('.menu a').forEach(el => {
+    const offsetX = Math.floor(Math.random() * 40 - 20); // Từ -20px đến +20px
+    const offsetY = Math.floor(Math.random() * 30 - 15); // Từ -15px đến +15px
+    el.style.marginTop = `${offsetY}px`;
+    el.style.marginLeft = `${offsetX}px`;
+  });
     // Logic đọc truyện
     const punkgaLink = document.getElementById('punkga-link');
     const overlay = document.getElementById('overlay');
