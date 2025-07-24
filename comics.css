@@ -21,13 +21,14 @@ h1 {
   position: relative;
   font-family: 'Road Rage', cursive;
   font-size: clamp(4rem, 9vw, 5.5rem);
-  color: #1cd49d;
+  color: #e9282c;
   text-align: center;
   margin: 0.5rem 0 1.5rem;
   padding-bottom: 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.35px;
   z-index: 10;
+  text-shadow: 0 0 6px #b1122666, 0 0 12px #e9282c88;
 }
 
 /* ===== Menu chính ===== */
@@ -45,16 +46,9 @@ h1 {
   width: 120px;
   height: 120px;
   transform: rotate(45deg);
-  background: radial-gradient(
-    circle at 30% 30%,
-    #8a62fb,
-    #8a62fb99,
-    #8a62fb33
-  );
-  box-shadow:
-    0 0 8px #8a62fb55,
-    0 0 20px #8a62fb33,
-    inset 0 0 6px #ffffff22;
+  background: radial-gradient(circle at 30% 30%, #e9282c, #b11226aa, #b1122633);
+  box-shadow: 0 0 10px #b1122655, 0 0 20px #e9282c33, inset 0 0 8px #ffdde199;
+  border: 1px solid #ffffff11;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -74,8 +68,8 @@ h1 {
   color: inherit;
 }
 .menu a:hover {
-  background: #e9282c;
-  box-shadow: 0 0 15px #e9282c;
+  background: #ff0033;
+  box-shadow: 0 0 20px #ff0033aa;
 }
 @media (max-width: 600px) {
   .menu {
@@ -123,29 +117,19 @@ h1 {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
   z-index: 1;
+  overflow: hidden;
 }
 .square {
   position: absolute;
-  background: radial-gradient(
-    circle at 30% 30%,
-    #8a62fb,
-    #8a62fb99,   /* ~60% opacity */
-    #8a62fb33    /* ~20% opacity */
-  );
-  border: 1px solid #ffffff10; /* trắng rất mờ */
+  background: radial-gradient(circle at 30% 30%, #b11226, #b11226aa, #b1122633);
+  border: 1px solid #ffffff0f;
   backdrop-filter: blur(2px);
-  box-shadow:
-    0 0 8px #8a62fb55,
-    0 0 20px #8a62fb33,
-    inset 0 0 6px #ffffff22;
+  box-shadow: 0 0 10px #b1122655, 0 0 24px #e9282c44, inset 0 0 8px #ffffff11;
   transform: rotate(45deg);
   animation: floatSquare linear infinite;
   opacity: 0.85;
 }
-
 @keyframes floatSquare {
   0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
   50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
@@ -171,46 +155,29 @@ h1 {
 }
 
 /* ===== Light Mode ===== */
-/* ===== Light Mode ===== */
-/* ===== Light Mode ===== */
-/* ===== Light Mode Custom ===== */
-/* ===== Light Mode Custom ===== */
 body.light-mode {
-  background: #dfe1e5;
-  color: #271845;
+  background: #f9f3f0;
+  color: #400b11;
+}
+body.light-mode h1 {
+  color: #b11226;
+  text-shadow: 0 0 4px #b1122644, 0 0 8px #e9282c33;
 }
 body.light-mode .menu a {
-  background: radial-gradient(
-    circle at 30% 30%,
-    #b39ddb,       /* tím lavender nhẹ hơn */
-    #b39ddb99,
-    #b39ddb33
-  );
-  box-shadow:
-    0 0 6px #b39ddb55,
-    0 0 16px #b39ddb33,
-    inset 0 0 5px #00000011;
-  backdrop-filter: blur(1.5px);
-  opacity: 0.9;
+  background: radial-gradient(circle at 30% 30%, #f36b6b, #e9282c99, #e9282c33);
+  box-shadow: 0 0 6px #e9282c44, 0 0 14px #e9282c22, inset 0 0 6px #ffffff88;
+  border: 1px solid #00000011;
 }
-
+body.light-mode .menu a:hover {
+  background: #b11226;
+  box-shadow: 0 0 12px #b11226;
+}
 body.light-mode .square {
-  background: radial-gradient(
-    circle at 30% 30%,
-    #b39ddb,
-    #b39ddb99,
-    #b39ddb33
-  );
-  box-shadow:
-    0 0 6px #b39ddb55,
-    0 0 16px #b39ddb33,
-    inset 0 0 5px #00000011;
+  background: radial-gradient(circle at 30% 30%, #f36b6b, #e9282c88, #e9282c33);
+  box-shadow: 0 0 10px #e9282c44, 0 0 20px #e9282c22, inset 0 0 6px #ffffff88;
   border: 1px solid #00000008;
-  backdrop-filter: blur(1.5px);
-  opacity: 0.75;
+  opacity: 0.6;
 }
-
-body.light-mode h1,
 body.light-mode .caption,
 body.light-mode .close-btn,
 body.light-mode .theme-toggle,
@@ -218,10 +185,7 @@ body.light-mode .restart-btn {
   color: #271845;
 }
 
-/* ===== ĐỌC TRUYỆN ===== */
-/* ===== ĐỌC TRUYỆN ===== */
-/* ===== ĐỌC TRUYỆN ===== */
-/* ===== Overlay Slide ===== */
+/* ===== Đọc Truyện ===== */
 .overlay {
   position: fixed;
   inset: 0;
@@ -257,14 +221,13 @@ body.light-mode .restart-btn {
 .deck img.right {
   transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
 }
-
 .caption, .close-btn, .restart-btn {
   font-family: 'Patrick Hand', cursive;
   z-index: 20;
 }
 .caption {
   margin-top: 12px;
-padding: 6px 0;
+  padding: 6px 0;
   width: 100%;
   text-align: center;
   font-size: clamp(1.1rem, 2.5vw, 1.8rem);
