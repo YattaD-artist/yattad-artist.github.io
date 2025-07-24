@@ -7,22 +7,26 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
-<!-- Icons Font -->
+  <!-- Icons Font -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- Preload hình ảnh -->
+  <!-- Preload Images -->
   <link rel="preload" as="image" href="comics/PunkgaMerch/00.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/01.webp" fetchpriority="high">
   <link rel="preload" as="image" href="comics/PunkgaMerch/02.webp">
 
-  <!-- Preload âm thanh -->
+  <!-- Preload Sounds -->
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper1.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper2.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper3.mp3">
   <link rel="preload" as="audio" href="assets/sfx/Pictures/Paper4.mp3">
 
   <style>
+    /* ====================
+       CSS Variables
+       ==================== */
     :root {
+      /* Dark mode defaults */
       --bg: #1f1a17;
       --primary: #1cd49d;
       --secondary: #4e967b;
@@ -31,93 +35,59 @@
       --paper: #2a2420;
       --ink: #f5efe6;
     }
+    /* Light mode variable overrides */
+--bg: #f5f2ee;        /* nền sáng, kem ánh trắng */
+--primary: #e32b62;   /* hồng đỏ mạnh mẽ, đối lập với xanh ngọc */
+--secondary: #b66584; /* tím hồng trầm, cân bằng màu phụ xanh rêu */
+--light: #2a2a2a;     /* màu chữ đậm, thay cho màu sáng trước */
+--accent: #32d7d3;    /* xanh cyan sống động, phản đề của đỏ */
+--paper: #fffaf0;     /* gần trắng, như giấy mới */
+--ink: #2c2622;       /* nâu đậm, gợi mực truyền thống */
 
-    
-  body.light-mode {
-    --bg: #fdfbf9;
-    --ink: #1f1a17;
-    --paper: #e9e3dc;
-  }
+    }
 
-  body.light-mode .square {
-    background-color: rgba(0, 0, 0, 0.05) !important;
-  }
-
-  .theme-toggle {
-    position: fixed;
-    top: 18px;
-    left: 22px;
-    font-size: 1.6rem;
-    background: none;
-    border: none;
-    color: var(--primary);
-    z-index: 999;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-
-  .theme-toggle:hover {
-    transform: scale(1.2);
-    color: var(--accent);
-  }
-
-    
+    /* ====================
+       Global Styles
+       ==================== */
     html, body {
       margin: 0;
-      padding: 0;
+      padding: 2rem;
       font-family: 'Noto Sans JP', sans-serif;
       background-color: var(--bg);
-      overflow: hidden;
       color: var(--ink);
-      position: relative;
-      min-height: 100vh;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      min-height: 100vh;
     }
 
+    /* Container for floating pattern */
     .floating-pattern {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
     }
 
-    .square {
-      position: absolute;
-      background-color: rgba(255, 255, 255, 0.04);
-      transform: rotate(45deg);
-      animation: floatSquare linear infinite;
+    /* Panels & Layout */
+    .panel {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      padding-top: clamp(8vh, 12vh, 16vh);
+      box-sizing: border-box;
+    }
+    .panel-inner {
+      width: 100vw;
+      max-width: 100vw;
+      padding: 0 1rem;
+      background: transparent;
     }
 
-    @keyframes floatSquare {
-      0% { transform: translateY(0) translateX(0) rotate(45deg); opacity: 0.6; }
-      50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
-      100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
-    }
-
-    
-.panel {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding-top: clamp(8vh, 12vh, 16vh); /* Đẩy nhẹ nội dung lên */
-  box-sizing: border-box;
-}
-
-.panel-inner {
- background-color: transparent;
-  width: 100vw;
-  max-width: 100vw;
-  margin: 0 auto;
-  padding: 0 1rem; /* Quan trọng: thêm padding ngang để tránh đụng mép */
-  box-sizing: border-box;
-}
-
+    /* Heading */
     h1 {
       font-family: 'Road Rage', cursive;
       font-size: clamp(4rem, 9vw, 5.5rem);
@@ -129,63 +99,50 @@
       letter-spacing: 0.35px;
     }
 
-.menu {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  align-items: center;
-  row-gap: 4rem;
-  column-gap: 4rem;
-  margin-top: 4rem;
-  padding: 0 5vw;
-  position: relative;
-  max-width: 100%;
-  box-sizing: border-box;
-}
+    /* Menu & Items */
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      row-gap: 4rem;
+      column-gap: 4rem;
+      margin-top: 4rem;
+      padding: 0 5vw;
+      position: relative;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .menu a {
+      --rotate: rotate(45deg);
+      width: 120px;
+      height: 120px;
+      background-color: rgba(255, 255, 255, 0.05);
+      transform: var(--rotate);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatY 4s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.3s);
+      z-index: 1;
+    }
+    .menu a span {
+      transform: rotate(-45deg);
+      color: var(--ink);
+      font-family: 'Amatic SC', cursive;
+      font-size: 1.4rem;
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+    .menu a:hover {
+      background-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent);
+      transform: var(--rotate) scale(1.05);
+    }
 
-
-.menu a {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  background-color: rgba(255, 255, 255, 0.05);
-  transform: rotate(45deg);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: floatY 4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.3s); /* mỗi phần tử lệch nhau */
-  z-index: 1;
-}
-
-.menu a span {
-  transform: rotate(-45deg); /* Chữ xoay ngược lại để đứng thẳng */
-  color: var(--ink);
-  font-family: 'Amatic SC', cursive;
-  font-size: 1.4rem;
-  text-align: center;
-  display: block;
-  padding: 0 0.5rem;
-}
-
-/* Hover glow đỏ */
-.menu a:hover {
-  background-color: var(--accent);
-  box-shadow: 0 0 15px var(--accent);
-  transform: rotate(45deg) scale(1.05); /* Giữ xoay, thêm scale */
-}
-
-/* Float effect */
-@keyframes floatY {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50%      { transform: rotate(45deg) translateY(-10px); }
-}
-
-
+    /* Back link */
     .back-link {
       font-family: 'Patrick Hand', cursive;
       display: block;
@@ -195,61 +152,50 @@
       text-decoration: none;
       margin-top: 3rem;
       padding-top: 1rem;
+      transition: color 0.2s;
     }
-
     .back-link:hover {
       color: var(--accent);
     }
 
-    /* Overlay phần đọc truyện */
+    /* Overlay & Deck */
     .overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.75);
+      inset: 0;
+      background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       z-index: 100;
       display: none;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
     }
-
     .deck img {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       max-height: 85vh;
       max-width: 85vw;
       transform: translate(-50%, -50%) scale(0.6);
       transition: transform 0.5s ease, z-index 0.3s ease;
       border-radius: 6px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 12px rgba(0,0,0,0.5);
       filter: contrast(0.8) brightness(0.8);
       pointer-events: none;
     }
-
-    .deck img.active {
+    .deck img.active { /* Active slide */
       transform: translate(-50%, -50%) scale(1);
       z-index: 30;
       filter: none;
       pointer-events: auto;
     }
+    .deck img.left  { transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg); }
+    .deck img.right { transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg); }
 
-    .deck img.left {
-      transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
-    }
-
-    .deck img.right {
-      transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
-    }
-
+    /* Captions & Buttons */
     .caption, .close-btn, .restart-btn {
       font-family: 'Patrick Hand', cursive;
       color: var(--ink);
       z-index: 20;
     }
-
     .caption {
       position: absolute;
       bottom: 32px;
@@ -258,71 +204,71 @@
       font-size: clamp(1.1rem, 2.5vw, 1.8rem);
       letter-spacing: 1px;
     }
-
     .close-btn {
       position: absolute;
-      top: 20px;
-      right: 28px;
+      top: 20px; right: 28px;
       font-size: 2em;
       cursor: pointer;
+      transition: color 0.2s;
     }
-
-    .close-btn:hover {
-      color: var(--accent);
-    }
+    .close-btn:hover { color: var(--accent); }
 
     .restart-btn {
       position: absolute;
-      right: 30px;
-      bottom: 90px;
+      right: 30px; bottom: 90px;
       font-size: clamp(1rem, 2vw, 1.6rem);
-      background-color: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.1);
       padding: 10px 16px;
       border-radius: 6px;
       cursor: pointer;
       display: none;
+      transition: background 0.2s;
+    }
+    .restart-btn:hover { background: rgba(255,255,255,0.2); }
+
+    /* Floating animations */
+    @keyframes floatSquare {
+      0%   { transform: translateY(0) translateX(0) rotate(45deg); opacity: 0.6; }
+      50%  { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+      100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
+    }
+    @keyframes floatY {
+      0%,100% { transform: rotate(45deg) translateY(0); }
+      50%     { transform: rotate(45deg) translateY(-10px); }
     }
 
-    .restart-btn:hover {
-      background-color: rgba(255,255,255,0.2);
+    /* Responsive */
+    @media (max-width: 600px) {
+      .menu { column-gap: 1rem; padding: 0 0.5rem; }
+      .menu a { width: 90px; height: 90px; font-size: 1.2rem; }
     }
-    
-@media (max-width: 600px) {
-  .menu {
-    gap: 1rem;             /* khoảng rộng vừa phải trên di động */
-    padding: 0 0.5rem;
-  }
-  .menu a {
-    width: 90px;
-    height: 90px;
-    font-size: 1.2rem;
-  }
-}
-
-    
   </style>
 </head>
 <body>
+  <!-- Floating pattern background -->
   <div class="floating-pattern" id="floating-pattern"></div>
-  <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
-  <i class="fa-solid fa-circle-half-stroke"></i>
-</button>
-  <body class="dark-mode">
-<div class="panel">
-  <div class="panel-inner">
-    <h1>TRUYỆN TRANH</h1>
-    <div class="menu">
-      <a id="punkga-link"><span>PunkgaMerch</span></a>
-<a data-story="RedRuby" class="story-link unavailable"><span>Red & Ruby</span></a>
-<a data-story="StillTrue" class="story-link unavailable"><span>Still become true</span></a>
-<a data-story="LeThan" class="story-link unavailable"><span>Lê Thận</span></a>
-<a data-story="Raku" class="story-link unavailable"><span>Raku</span></a>
-<a data-story="Breakthrough" class="story-link unavailable"><span>Breakthrough</span></a>
-    </div>
-    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
-  </div>
-</div>
 
+  <!-- Theme toggle button -->
+  <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
+    <i class="fa-solid fa-circle-half-stroke"></i>
+  </button>
+
+  <div class="panel">
+    <div class="panel-inner">
+      <h1>TRUYỆN TRANH</h1>
+      <nav class="menu">
+        <a id="punkga-link" style="--i:0"><span>PunkgaMerch</span></a>
+        <a data-story="RedRuby" class="story-link unavailable" style="--i:1"><span>Red & Ruby</span></a>
+        <a data-story="StillTrue" class="story-link unavailable" style="--i:2"><span>Still become true</span></a>
+        <a data-story="LeThan" class="story-link unavailable" style="--i:3"><span>Lê Thận</span></a>
+        <a data-story="Raku" class="story-link unavailable" style="--i:4"><span>Raku</span></a>
+        <a data-story="Breakthrough" class="story-link unavailable" style="--i:5"><span>Breakthrough</span></a>
+      </nav>
+      <a href="index.html" class="back-link">← Quay lại trang chủ</a>
+    </div>
+  </div>
+
+  <!-- Overlay đọc truyện -->
   <div class="overlay" id="overlay">
     <div class="close-btn" id="closeBtn">✕</div>
     <div class="deck" id="deck"></div>
@@ -331,7 +277,9 @@
   </div>
 
   <script>
-    // Nền hiệu ứng vuông trôi
+    /**
+     * Khởi tạo pattern vuông trôi
+     */
     const patternContainer = document.getElementById('floating-pattern');
     const squareCount = 60;
     const positions = new Set();
@@ -340,30 +288,47 @@
       const square = document.createElement('div');
       square.classList.add('square');
 
+      // Đảm bảo không trùng vị trí
       let left, bottom, key;
       do {
-        left = Math.floor(Math.random() * 95);
-        bottom = Math.floor(Math.random() * 60);
-        key = `${left}-${bottom}`;
+        left = Math.random() * 95;
+        bottom = Math.random() * 60;
+        key = `${left.toFixed(2)}-${bottom.toFixed(2)}`;
       } while (positions.has(key));
       positions.add(key);
 
       const size = 20 + Math.random() * 20;
-      square.style.left = `${left}vw`;
-      square.style.bottom = `${bottom}vh`;
-      square.style.width = `${size}px`;
-      square.style.height = `${size}px`;
-      square.style.animationDuration = `${12 + Math.random() * 10}s`;
+      Object.assign(square.style, {
+        left: `${left}vw`,
+        bottom: `${bottom}vh`,
+        width: `${size}px`,
+        height: `${size}px`,
+        animationDuration: `${12 + Math.random()*10}s`
+      });
       patternContainer.appendChild(square);
     }
-    
-document.querySelectorAll('.menu a').forEach(el => {
-    const offsetX = Math.floor(Math.random() * 40 - 20); // Từ -20px đến +20px
-    const offsetY = Math.floor(Math.random() * 30 - 15); // Từ -15px đến +15px
-    el.style.marginTop = `${offsetY}px`;
-    el.style.marginLeft = `${offsetX}px`;
-  });
-    // Logic đọc truyện
+
+    /**
+     * Xáo trộn menu items với offset ngẫu nhiên
+     */
+    document.querySelectorAll('.menu a').forEach(el => {
+      const offsetX = Math.random()*40 - 20;
+      const offsetY = Math.random()*30 - 15;
+      el.style.marginLeft = `${offsetX}px`;
+      el.style.marginTop = `${offsetY}px`;
+    });
+
+    /**
+     * Chuyển đổi chế độ sáng/tối
+     */
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+    });
+
+    /**
+     * Gallery truyện PunkgaMerch
+     */
     const punkgaLink = document.getElementById('punkga-link');
     const overlay = document.getElementById('overlay');
     const closeBtn = document.getElementById('closeBtn');
@@ -376,26 +341,17 @@ document.querySelectorAll('.menu a').forEach(el => {
     let currentIndex = 0;
     let isTransitioning = false;
 
-    const captions = Array.from({length: totalImages}, (_, i) =>
-      i === 0 ? "Trang Bìa" : `Trang ${i}`
+    const captions = Array.from({ length: totalImages }, (_, i) =>
+      i === 0 ? 'Trang Bìa' : `Trang ${i}`
+    );
+    const flipSounds = Array.from({ length: 4 }, (_, i) =>
+      `assets/sfx/Pictures/Paper${i+1}.mp3`
     );
 
-    const flipSounds = [
-      'assets/sfx/Pictures/Paper1.mp3',
-      'assets/sfx/Pictures/Paper2.mp3',
-      'assets/sfx/Pictures/Paper3.mp3',
-      'assets/sfx/Pictures/Paper4.mp3'
-    ];
-
-    function playFlipSound() {
-      const audio = new Audio(flipSounds[Math.floor(Math.random() * flipSounds.length)]);
-      audio.playbackRate = 1.5;
-      audio.play().catch(() => {});
-    }
-
+    // Load hình và thêm sự kiện transition
     for (let i = 0; i < totalImages; i++) {
       const img = document.createElement('img');
-      img.src = `comics/PunkgaMerch/${i.toString().padStart(2, '0')}.webp`;
+      img.src = `comics/PunkgaMerch/${String(i).padStart(2,'0')}.webp`;
       if (i > 2) img.loading = 'lazy';
       deck.appendChild(img);
       images.push(img);
@@ -405,122 +361,75 @@ document.querySelectorAll('.menu a').forEach(el => {
     }
 
     function updateClasses() {
-      images.forEach((img, index) => {
-        img.classList.remove('active', 'left', 'right');
-        if (index === currentIndex) {
+      images.forEach((img, idx) => {
+        img.classList.remove('active','left','right');
+        img.style.zIndex = '';
+        if (idx === currentIndex) {
           img.classList.add('active');
           img.style.zIndex = '30';
-        } else if (index < currentIndex) {
+        } else if (idx < currentIndex) {
           img.classList.add('left');
-          img.style.zIndex = `${5 + index}`;
+          img.style.zIndex = String(5 + idx);
         } else {
           img.classList.add('right');
-          img.style.zIndex = `${5 - (index - currentIndex)}`;
+          img.style.zIndex = String(5 - (idx - currentIndex));
         }
       });
       caption.textContent = captions[currentIndex];
-      restartBtn.style.display = currentIndex === totalImages - 1 ? 'block' : 'none';
+      restartBtn.style.display = currentIndex === totalImages-1 ? 'block' : 'none';
     }
 
-    function showOverlay() {
-      currentIndex = 0;
-      isTransitioning = false;
-      overlay.style.display = 'flex';
-      updateClasses();
+    function playFlipSound() {
+      const audio = new Audio(flipSounds[Math.floor(Math.random()*flipSounds.length)]);
+      audio.playbackRate = 1.5;
+      audio.play().catch(() => {});
     }
+    function showOverlay() { currentIndex=0; isTransitioning=false; overlay.style.display='flex'; updateClasses(); }
+    function hideOverlay() { overlay.style.display='none'; isTransitioning=false; }
+    function nextImage() { if (!isTransitioning && currentIndex < totalImages-1) { playFlipSound(); currentIndex++; isTransitioning=true; updateClasses(); } }
+    function prevImage() { if (!isTransitioning && currentIndex > 0) { playFlipSound(); currentIndex--; isTransitioning=true; updateClasses(); } }
+    function restartGallery() { if (!isTransitioning) { currentIndex=0; updateClasses(); } }
 
-    function hideOverlay() {
-      overlay.style.display = 'none';
-      isTransitioning = false;
-    }
-
-    function nextImage() {
-      if (isTransitioning || currentIndex >= totalImages - 1) return;
-      playFlipSound();
-      currentIndex++;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    function prevImage() {
-      if (isTransitioning || currentIndex <= 0) return;
-      playFlipSound();
-      currentIndex--;
-      isTransitioning = true;
-      updateClasses();
-    }
-
-    function restartGallery() {
-      if (isTransitioning) return;
-      currentIndex = 0;
-      updateClasses();
-    }
-
-    function handleClick(e) {
-      const rect = overlay.getBoundingClientRect();
-      const clickX = e.clientX;
-      const centerX = rect.left + rect.width / 2;
-      if (clickX > centerX + 50) nextImage();
-      else if (clickX < centerX - 50) prevImage();
-    }
-
-    // Sự kiện
+    // Sự kiện click/touch và phím
     punkgaLink.addEventListener('click', showOverlay);
     closeBtn.addEventListener('click', hideOverlay);
-    overlay.addEventListener('click', handleClick);
-    restartBtn.addEventListener('click', restartGallery);
-
-    overlay.addEventListener('touchstart', e => {
-      touchStartX = e.touches[0].clientX;
+    overlay.addEventListener('click', e => {
+      const rect = overlay.getBoundingClientRect();
+      const center = rect.left + rect.width/2;
+      if (e.clientX > center+50) nextImage();
+      else if (e.clientX < center-50) prevImage();
     });
+    let touchStartX;
+    overlay.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
     overlay.addEventListener('touchend', e => {
       const diffX = e.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(diffX) > 50) {
-        diffX < 0 ? nextImage() : prevImage();
+      Math.abs(diffX)>50 && (diffX<0? nextImage(): prevImage());
+    });
+    window.addEventListener('keydown', e => {
+      if (overlay.style.display==='flex' && !isTransitioning) {
+        e.key==='ArrowRight' && nextImage();
+        e.key==='ArrowLeft' && prevImage();
+        e.key==='Escape' && hideOverlay();
       }
     });
 
-    window.addEventListener('keydown', e => {
-      if (overlay.style.display !== 'flex' || isTransitioning) return;
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'Escape') hideOverlay();
-    });
-    
+    /**
+     * Hover effect: tạm dừng float khi hover gần
+     */
     (function(){
-  const items = document.querySelectorAll('.menu a');
-  const threshold = 60; // px
-
-  document.querySelector('.menu').addEventListener('mousemove', e => {
-    const { clientX: mx, clientY: my } = e;
-    items.forEach(el => {
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width  / 2;
-      const cy = rect.top  + rect.height / 2;
-      const dist = Math.hypot(mx - cx, my - cy);
-      // dừng hoặc chạy lại
-      el.style.animationPlayState = (dist < threshold) ? 'paused' : 'running';
-    });
-  });
-
-  // Khi chuột rời khỏi menu, tiếp tục trôi nổi cho tất cả
-  document.querySelector('.menu').addEventListener('mouseleave', () => {
-    items.forEach(el => {
-      el.style.animationPlayState = 'running';
-    });
-  });
-})();
-    document.querySelectorAll('.menu a').forEach((el, i) => {
-  el.style.setProperty('--i', i);
-});
-
-    
-// Chuyển đổi chế độ sáng / tối
-const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click', () => {
-  document.body.classList.toggle('light-mode');
-});
-
+      const items = [...document.querySelectorAll('.menu a')];
+      const threshold = 60;
+      document.querySelector('.menu').addEventListener('mousemove', e => {
+        items.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const dist = Math.hypot(e.clientX-(rect.left+rect.width/2), e.clientY-(rect.top+rect.height/2));
+          el.style.animationPlayState = dist<threshold ? 'paused' : 'running';
+        });
+      });
+      document.querySelector('.menu').addEventListener('mouseleave', () => {
+        items.forEach(el => el.style.animationPlayState='running');
+      });
+    })();
   </script>
 </body>
 </html>
