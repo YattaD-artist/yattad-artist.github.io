@@ -97,38 +97,50 @@
     }
 
 .menu {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Luôn 4 cột ngang */
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
   margin-bottom: 2rem;
-  width: 100%; /* Quan trọng */
-  box-sizing: border-box;
+  position: relative;
 }
-    
 .menu a {
-  font-family: 'Amatic SC', cursive;
-  font-size: 2rem;
-  text-decoration: none;
-  color: var(--ink);
-  border: 2px dashed var(--ink);
-  text-align: center;
-  padding: 0.6rem 1rem;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.04);
   border-radius: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.4rem;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 0 8px rgba(255,255,255,0.15);
   transition: all 0.3s ease;
   cursor: pointer;
-  display: flex; 
-  align-items: center; /* Thêm vào: căn giữa dọc */
-  justify-content: center;
-  min-width: 0; /* Tránh ép grid item mở rộng ngoài khung */
-  word-break: break-word;
+  user-select: none;
+
+  /* Đặt vị trí ngẫu nhiên */
+  top: 0;
 }
-    .menu a:hover {
-      background-color: var(--accent);
-      color: white;
-      border-style: solid;
-      transform: scale(1.05);
-    }
+
+.menu a span {
+  transform: rotate(-45deg); /* Xoay ngược chữ để dễ đọc */
+  display: block;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+.menu a:hover {
+  background-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 15px var(--accent);
+  transform: rotate(45deg) scale(1.05);
+}
 
     .back-link {
       font-family: 'Patrick Hand', cursive;
