@@ -45,10 +45,9 @@ h1 {
 .menu a {
   width: 120px;
   height: 120px;
-  transform: rotate(45deg);
   background-color: #7D1128;
   border: 2px solid #E2294F;
-  box-shadow: inset 0 0 6px #3C0919, 0 0 4px #C41E3D44;
+  box-shadow: 0 0 8px #C41E3D66, inset 0 0 10px #3C091955;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -58,11 +57,23 @@ h1 {
   animation-delay: calc(var(--i) * 0.3s);
   backdrop-filter: blur(1px);
   opacity: 0.95;
+
+  /* ✨ Shard shape */
+  clip-path: polygon(
+    50% 0%, 
+    85% 15%, 
+    100% 50%, 
+    80% 90%, 
+    50% 100%, 
+    20% 85%, 
+    0% 50%, 
+    15% 20%
+  );
 }
 .menu a span {
-  transform: rotate(-45deg);
+  transform: none; /* Không cần xoay nữa */
   font-family: 'Amatic SC', cursive;
-  font-size: 2rem;
+  font-size: 1.8rem;
   text-align: center;
   padding: 0 0.5rem;
   color: inherit;
@@ -70,8 +81,9 @@ h1 {
 .menu a:hover {
   background-color: #FF2C55;
   border-color: #FF2C55;
-  box-shadow: 0 0 12px #FF2C55aa;
+  box-shadow: 0 0 14px #FF2C55cc, inset 0 0 8px #ffffff44;
 }
+
 @media (max-width: 600px) {
   .menu {
     gap: 1rem;
@@ -123,21 +135,37 @@ h1 {
 }
 .square {
   position: absolute;
-  background-color: #3C0919;
-  border: 2px solid #E2294F;
-  box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
-  transform: rotate(45deg);
-  animation: floatSquare linear infinite;
-  opacity: 0.8;
+  width: 60px;
+  height: 60px;
+  background-color: #3C0919cc;
+  border: 2px solid #E2294F88;
+  box-shadow: 0 0 8px #C41E3D55, inset 0 0 6px #00000033;
+  opacity: 0.75;
+  transform: scale(1) rotate(0deg);
+  animation: floatShard linear infinite;
+  clip-path: polygon(
+    50% 0%, 
+    80% 10%, 
+    100% 40%, 
+    70% 100%, 
+    30% 100%, 
+    0% 60%, 
+    10% 20%
+  );
 }
-@keyframes floatSquare {
-  0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
-  50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
-  100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
-}
-@keyframes floatY {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50% { transform: rotate(45deg) translateY(-10px); }
+@keyframes floatShard {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-50vh) translateX(10px) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(-10px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* ===== Nút đổi theme ===== */
