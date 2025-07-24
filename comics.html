@@ -260,35 +260,32 @@
   </div>
 
   <script>
-// ===== 1. Floating Pattern =====
-(function(){
-  const patternContainer = document.getElementById('floating-pattern');
-  const squareCount = 60;
-  const positions = new Set();
+    
+ // Nền hiệu ứng vuông trôi
+    const patternContainer = document.getElementById('floating-pattern');
+    const squareCount = 60;
+    const positions = new Set();
 
-  for (let i = 0; i < squareCount; i++) {
-    const square = document.createElement('div');
-    square.classList.add('square');
+    for (let i = 0; i < squareCount; i++) {
+      const square = document.createElement('div');
+      square.classList.add('square');
 
-    let left, bottom, key;
-    do {
-      left = Math.floor(Math.random() * 95);
-      bottom = Math.floor(Math.random() * 60);
-      key = `${left}-${bottom}`;
-    } while (positions.has(key));
-    positions.add(key);
+      let left, bottom, key;
+      do {
+        left = Math.floor(Math.random() * 95);
+        bottom = Math.floor(Math.random() * 60);
+        key = `${left}-${bottom}`;
+      } while (positions.has(key));
+      positions.add(key);
 
-    const size = 20 + Math.random() * 20;
-    square.style.left = `${left}vw`;
-    square.style.bottom = `${bottom}vh`;
-    square.style.width = `${size}px`;
-    square.style.height = `${size}px`;
-    square.style.animationDuration = `${12 + Math.random() * 10}s`;
-
-    patternContainer.appendChild(square);
-  }
-})();
-
+      const size = 20 + Math.random() * 20;
+      square.style.left = `${left}vw`;
+      square.style.bottom = `${bottom}vh`;
+      square.style.width = `${size}px`;
+      square.style.height = `${size}px`;
+      square.style.animationDuration = `${12 + Math.random() * 10}s`;
+      patternContainer.appendChild(square);
+    }
 
     // ===== 2. Menu Offset & Hover Pause =====
     (function(){
