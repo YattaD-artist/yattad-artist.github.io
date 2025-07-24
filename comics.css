@@ -9,8 +9,8 @@ html, body {
   align-items: center;
   justify-content: center;
   font-family: 'Noto Sans JP', sans-serif;
-  background-color: #1a1414;
-  color: #f5efe6;
+  background-color: #3C0919;
+  color: #FEF5EF;
 }
 body {
   padding: 2rem;
@@ -21,14 +21,14 @@ h1 {
   position: relative;
   font-family: 'Road Rage', cursive;
   font-size: clamp(4rem, 9vw, 5.5rem);
-  color: #b19777;
+  color: #C41E3D;
   text-align: center;
   margin: 0.5rem 0 1.5rem;
   padding-bottom: 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.35px;
   z-index: 10;
-  text-shadow: 0 0 4px #40202099;
+  text-shadow: 0 0 4px #7D112899;
 }
 
 /* ===== Menu chính ===== */
@@ -46,9 +46,9 @@ h1 {
   width: 120px;
   height: 120px;
   transform: rotate(45deg);
-  background-color: #442a2a;
-  border: 2px solid #7e4b4b;
-  box-shadow: inset 0 0 6px #1e0e0e, 0 0 4px #00000022;
+  background-color: #7D1128;
+  border: 2px solid #E2294F;
+  box-shadow: inset 0 0 6px #3C0919, 0 0 4px #C41E3D44;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -68,9 +68,9 @@ h1 {
   color: inherit;
 }
 .menu a:hover {
-  background-color: #e9282c;
-  border-color: #ff5252;
-  box-shadow: 0 0 12px #e9282caa;
+  background-color: #FF2C55;
+  border-color: #FF2C55;
+  box-shadow: 0 0 12px #FF2C55aa;
 }
 @media (max-width: 600px) {
   .menu {
@@ -105,12 +105,12 @@ h1 {
   padding-top: 1rem;
   font-family: 'Patrick Hand', cursive;
   text-decoration: none;
-  color: #a19386;
+  color: #FEF5EF;
   transition: color 0.2s;
   z-index: 10;
 }
 .back-link:hover {
-  color: #e9282c;
+  color: #FF2C55;
 }
 
 /* ===== Hình vuông trôi nền ===== */
@@ -123,8 +123,8 @@ h1 {
 }
 .square {
   position: absolute;
-  background-color: #2e1a1a;
-  border: 2px solid #5d3b3b;
+  background-color: #3C0919;
+  border: 2px solid #E2294F;
   box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
   transform: rotate(45deg);
   animation: floatSquare linear infinite;
@@ -150,33 +150,33 @@ h1 {
   font-size: 1.8rem;
   cursor: pointer;
   z-index: 1000;
-  color: inherit;
+  color: #FF2C55;
   transition: color 0.3s;
 }
 
 /* ===== Light Mode ===== */
 body.light-mode {
-  background: #f0e6e4;
-  color: #2e1a1a;
+  background: #D6E3F8;
+  color: #2D2D34;
 }
 body.light-mode h1 {
-  color: #7a3b3b;
-  text-shadow: 0 0 2px #b1977788;
+  color: #C41E3D;
+  text-shadow: 0 0 2px #65B89188;
 }
 body.light-mode .menu a {
-  background-color: #c9b2ae;
-  border: 2px solid #a07575;
+  background-color: #FEF5EF;
+  border: 2px solid #65B891;
   box-shadow: inset 0 0 4px #ffffffaa, 0 0 4px #00000022;
   backdrop-filter: blur(1px);
 }
 body.light-mode .menu a:hover {
-  background-color: #e9282c;
-  border-color: #ff5c5c;
-  box-shadow: 0 0 10px #e9282c99;
+  background-color: #C41E3D;
+  border-color: #65B891;
+  box-shadow: 0 0 10px #C41E3D99;
 }
 body.light-mode .square {
-  background-color: #dac0ba;
-  border: 2px solid #9b6d6d;
+  background-color: #FEF5EF;
+  border: 2px solid #65B891;
   box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033;
   opacity: 0.7;
 }
@@ -184,7 +184,7 @@ body.light-mode .caption,
 body.light-mode .close-btn,
 body.light-mode .theme-toggle,
 body.light-mode .restart-btn {
-  color: #2e1a1a;
+  color: #2D2D34;
 }
 
 /* ===== Đọc Truyện ===== */
@@ -226,6 +226,7 @@ body.light-mode .restart-btn {
 .caption, .close-btn, .restart-btn {
   font-family: 'Patrick Hand', cursive;
   z-index: 20;
+  color: #FEF5EF;
 }
 .caption {
   margin-top: 12px;
@@ -234,7 +235,6 @@ body.light-mode .restart-btn {
   text-align: center;
   font-size: clamp(1.1rem, 2.5vw, 1.8rem);
   letter-spacing: 1px;
-  color: inherit;
 }
 .close-btn {
   position: absolute;
@@ -243,10 +243,9 @@ body.light-mode .restart-btn {
   font-size: 2em;
   cursor: pointer;
   transition: color 0.2s;
-  color: inherit;
 }
 .close-btn:hover {
-  color: #e9282c;
+  color: #FF2C55;
 }
 .restart-btn {
   position: absolute;
@@ -258,7 +257,6 @@ body.light-mode .restart-btn {
   border-radius: 6px;
   cursor: pointer;
   display: none;
-  color: inherit;
   transition: background 0.2s;
 }
 .restart-btn:hover {
