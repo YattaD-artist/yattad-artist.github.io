@@ -41,8 +41,16 @@ h1 {
   width: 120px;
   height: 120px;
   transform: rotate(45deg);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+  background: radial-gradient(
+    circle at 30% 30%,
+    #8a62fb,
+    #8a62fb99,
+    #8a62fb33
+  );
+  box-shadow:
+    0 0 8px #8a62fb55,
+    0 0 20px #8a62fb33,
+    inset 0 0 6px #ffffff22;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -50,6 +58,8 @@ h1 {
   cursor: pointer;
   animation: floatY 4s ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.3s);
+  backdrop-filter: blur(2px);
+  opacity: 0.95;
 }
 .menu a span {
   transform: rotate(-45deg);
