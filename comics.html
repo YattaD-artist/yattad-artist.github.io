@@ -109,42 +109,39 @@
   position: relative;
   width: 120px;
   height: 120px;
-  background-color: rgba(255, 255, 255, 0.04);
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: rotate(45deg); /* Khung nghiêng thành hình thoi */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.menu a span {
+  transform: rotate(-45deg); /* Chữ xoay ngược lại để đứng thẳng */
   color: var(--ink);
   font-family: 'Amatic SC', cursive;
   font-size: 1.4rem;
   text-align: center;
-  text-decoration: none;
-  box-shadow: 0 0 8px rgba(255,255,255,0.15);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  user-select: none;
-  animation: floatY 4s ease-in-out infinite;
+  display: block;
+  padding: 0 0.5rem;
 }
 
 /* Hover glow đỏ */
 .menu a:hover {
   background-color: var(--accent);
-  color: white;
   box-shadow: 0 0 15px var(--accent);
-  transform: scale(1.05);
+  transform: rotate(45deg) scale(1.05); /* Giữ xoay, thêm scale */
 }
 
-/* Chữ luôn đứng thẳng dù khung nghiêng */
-.menu a span {
-  transform: rotate(0deg);
-  display: block;
-  padding: 0 0.5rem;
-}
-
-/* Hiệu ứng lơ lửng */
+/* Float effect */
 @keyframes floatY {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%      { transform: rotate(45deg) translateY(-10px); }
 }
 
 
@@ -270,12 +267,12 @@
   <div class="panel-inner">
     <h1>TRUYỆN TRANH</h1>
     <div class="menu">
-      <a id="punkga-link">PunkgaMerch</a>
-      <a data-story="RedRuby" class="story-link unavailable">Red & Ruby</a>
-      <a data-story="StillTrue" class="story-link unavailable">Still become true</a>
-      <a data-story="LeThan" class="story-link unavailable">Lê Thận</a>
-      <a data-story="Raku" class="story-link unavailable">Raku</a>
-      <a data-story="Breakthrough" class="story-link unavailable">Breakthrough</a>
+      <a id="punkga-link"><span>PunkgaMerch</span></a>
+<a data-story="RedRuby" class="story-link unavailable"><span>Red & Ruby</span></a>
+<a data-story="StillTrue" class="story-link unavailable"><span>Still become true</span></a>
+<a data-story="LeThan" class="story-link unavailable"><span>Lê Thận</span></a>
+<a data-story="Raku" class="story-link unavailable"><span>Raku</span></a>
+<a data-story="Breakthrough" class="story-link unavailable"><span>Breakthrough</span></a>
     </div>
     <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
