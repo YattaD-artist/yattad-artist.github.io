@@ -144,6 +144,20 @@
   .back-link:hover {
     color: #e9282c;
   }
+/* Cập nhật phần .theme-toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      z-index: 1000;
+      color: #f5efe6;
+      transition: color 0.3s;
+    }
+    
   .overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.75);
@@ -247,13 +261,16 @@
   body.light-mode .restart-btn:hover {
     background: rgba(0,0,0,0.1);
   }
+    .light-mode .theme-toggle {
+      color: #2c2622;
+    }
 </style>
   
 </head>
 <body>
   <div class="floating-pattern" id="floating-pattern"></div>
   <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
-    <i class="fa-solid fa-circle-half-stroke"></i>
+<i class="fa-solid fa-eye"></i>
   </button>
 
   <div class="panel">
@@ -327,10 +344,12 @@
     })();
 
     // ===== 3. Theme Toggle =====
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', ()=>{
-      document.body.classList.toggle('light-mode');
-    });
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = themeToggle.querySelector('i');
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+  });
 
     // ===== 4. Gallery PunkgaMerch =====
     (function(){
