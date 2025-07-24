@@ -99,18 +99,24 @@
 .menu {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
+  justify-content: space-evenly;
+  align-items: center;
+  row-gap: 4rem;
+  column-gap: 4rem;
+  margin-top: 4rem;
+  padding: 0 5vw;
   position: relative;
+  max-width: 100%;
+  box-sizing: border-box;
 }
+
 
 .menu a {
   position: relative;
   width: 120px;
   height: 120px;
   background-color: rgba(255, 255, 255, 0.05);
-  transform: rotate(45deg); /* Khung nghiêng thành hình thoi */
+  transform: rotate(45deg);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -119,6 +125,8 @@
   align-items: center;
   justify-content: center;
   animation: floatY 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s); /* mỗi phần tử lệch nhau */
+  z-index: 1;
 }
 
 .menu a span {
@@ -465,6 +473,9 @@ document.querySelectorAll('.menu a').forEach(el => {
     });
   });
 })();
+    document.querySelectorAll('.menu a').forEach((el, i) => {
+  el.style.setProperty('--i', i);
+});
 
   </script>
 </body>
