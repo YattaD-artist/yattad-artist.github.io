@@ -77,7 +77,12 @@
 }
 
 .panel-inner {
-  background-color: transparent;
+ background-color: transparent;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem; /* Quan trọng: thêm padding ngang để tránh đụng mép */
+  box-sizing: border-box;
 }
 
     h1 {
@@ -229,6 +234,7 @@
 @media (max-width: 600px) {
   .menu {
     grid-template-columns: repeat(2, 1fr); /* Nhỏ hơn 600px chỉ 2 ô mỗi dòng */
+     gap: 1rem;
   }
 }
     
