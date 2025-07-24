@@ -422,6 +422,31 @@ document.querySelectorAll('.menu a').forEach(el => {
       if (e.key === 'ArrowLeft') prevImage();
       if (e.key === 'Escape') hideOverlay();
     });
+    
+    (function(){
+  const items = document.querySelectorAll('.menu a');
+  const threshold = 15;  // px
+
+  document.querySelector('.menu').addEventListener('mousemove', e => {
+    const { clientX: mx, clientY: my } = e;
+    items.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width  / 2;
+      const cy = rect.top  + rect.height / 2;
+      const dist = Math.hypot(mx - cx, my - cy);
+      // dừng hoặc chạy lại
+      el.style.animationPlayState = (dist < threshold) ? 'paused' : 'running';
+    });
+  });
+
+  // Khi chuột rời khỏi menu, tiếp tục trôi nổi cho tất cả
+  document.querySelector('.menu').addEventListener('mouseleave', () => {
+    items.forEach(el => {
+      el.style.animationPlayState = 'running';
+    });
+  });
+})();
+
   </script>
 </body>
 </html>
