@@ -96,12 +96,21 @@
       letter-spacing: 0.35px;
     }
 
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  position: relative;
+}
+
 .menu a {
   position: relative;
   width: 120px;
   height: 120px;
   background-color: rgba(255, 255, 255, 0.04);
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* tạo diamond */
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,23 +123,30 @@
   transition: all 0.3s ease;
   cursor: pointer;
   user-select: none;
-
-  /* hiệu ứng trôi nổi chỉ dịch Y */
   animation: floatY 4s ease-in-out infinite;
 }
 
+/* Hover glow đỏ */
 .menu a:hover {
   background-color: var(--accent);
   color: white;
   box-shadow: 0 0 15px var(--accent);
-  transform: scale(1.05);  /* chỉ scale, không rotate */
+  transform: scale(1.05);
 }
 
-/* Keyframes chỉ translateY, không ảnh hưởng rotate */
+/* Chữ luôn đứng thẳng dù khung nghiêng */
+.menu a span {
+  transform: rotate(0deg);
+  display: block;
+  padding: 0 0.5rem;
+}
+
+/* Hiệu ứng lơ lửng */
 @keyframes floatY {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-10px); }
 }
+
 
     .back-link {
       font-family: 'Patrick Hand', cursive;
