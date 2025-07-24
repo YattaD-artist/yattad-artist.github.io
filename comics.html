@@ -235,10 +235,16 @@
     
 @media (max-width: 600px) {
   .menu {
-    grid-template-columns: repeat(2, 1fr); /* Nhỏ hơn 600px chỉ 2 ô mỗi dòng */
-     gap: 0.2rem;
+    gap: 1rem;             /* khoảng rộng vừa phải trên di động */
+    padding: 0 0.5rem;
+  }
+  .menu a {
+    width: 90px;
+    height: 90px;
+    font-size: 1.2rem;
   }
 }
+
     
   </style>
 </head>
@@ -425,7 +431,7 @@ document.querySelectorAll('.menu a').forEach(el => {
     
     (function(){
   const items = document.querySelectorAll('.menu a');
-  const threshold = 15;  // px
+  const threshold = 60; // px
 
   document.querySelector('.menu').addEventListener('mousemove', e => {
     const { clientX: mx, clientY: my } = e;
