@@ -28,30 +28,6 @@ h1 {
   letter-spacing: 0.35px;
 }
 
-/* ===== Hình vuông trôi nền ===== */
-.floating-pattern {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-.square {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.04);
-  transform: rotate(45deg);
-  animation: floatSquare linear infinite;
-}
-@keyframes floatSquare {
-  0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
-  50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
-  100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
-}
-@keyframes floatY {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50% { transform: rotate(45deg) translateY(-10px); }
-}
-
 /* ===== Menu chính ===== */
 .menu {
   display: flex;
@@ -126,6 +102,30 @@ h1 {
   color: #e9282c;
 }
 
+/* ===== Hình vuông trôi nền ===== */
+.floating-pattern {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.square {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.04);
+  transform: rotate(45deg);
+  animation: floatSquare linear infinite;
+}
+@keyframes floatSquare {
+  0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+  50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+  100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
+}
+@keyframes floatY {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(-10px); }
+}
+
 /* ===== Nút đổi theme ===== */
 .theme-toggle {
   position: fixed;
@@ -140,6 +140,59 @@ h1 {
   transition: color 0.3s;
 }
 
+/* ===== Light Mode ===== */
+/* ===== Light Mode ===== */
+/* ===== Light Mode ===== */
+/* ===== Light Mode Custom ===== */
+/* ===== Light Mode Custom ===== */
+body.light-mode {
+  background: #dfe1e5;
+  color: #271845;
+}
+
+body.light-mode h1,
+body.light-mode .caption,
+body.light-mode .close-btn,
+body.light-mode .theme-toggle,
+body.light-mode .restart-btn {
+  color: #271845;
+}
+
+body.light-mode .menu a {
+  background: #8a62fb;
+  box-shadow: 0 0 10px rgba(138, 98, 251, 0.4);
+  color: #dfe1e5;
+}
+body.light-mode .menu a:hover,
+body.light-mode .close-btn:hover,
+body.light-mode .back-link:hover {
+  background: #c40b2c;
+  box-shadow: 0 0 15px #c40b2c;
+  color: #fff;
+}
+
+body.light-mode .square {
+  background-color: rgba(154, 167, 241, 0.15);
+}
+
+body.light-mode .back-link {
+  color: #9aa7f1;
+}
+
+body.light-mode .restart-btn {
+  background: rgba(39, 24, 69, 0.05);
+}
+body.light-mode .restart-btn:hover {
+  background: rgba(39, 24, 69, 0.1);
+}
+
+body.light-mode .panel {
+  background: transparent;
+}
+
+/* ===== ĐỌC TRUYỆN ===== */
+/* ===== ĐỌC TRUYỆN ===== */
+/* ===== ĐỌC TRUYỆN ===== */
 /* ===== Overlay Slide ===== */
 .overlay {
   position: fixed;
@@ -217,35 +270,4 @@ h1 {
 }
 .restart-btn:hover {
   background: rgba(255, 255, 255, 0.2);
-}
-
-/* ===== Light Mode ===== */
-body.light-mode {
-  background: #f5f2ee;
-  color: #2c2622;
-}
-body.light-mode h1 { color: #e32b62; }
-body.light-mode .menu a {
-  background: rgba(44, 38, 34, 0.05);
-  box-shadow: 0 0 10px rgba(44, 38, 34, 0.15);
-}
-body.light-mode .menu a:hover {
-  background: #32d7d3;
-  box-shadow: 0 0 15px #32d7d3;
-}
-body.light-mode .square { background-color: rgba(44, 38, 34, 0.04); }
-body.light-mode .back-link { color: #766b60; }
-body.light-mode .back-link:hover { color: #32d7d3; }
-body.light-mode .caption,
-body.light-mode .close-btn,
-body.light-mode .theme-toggle,
-body.light-mode .restart-btn {
-  color: #2c2622;
-}
-body.light-mode .close-btn:hover { color: #32d7d3; }
-body.light-mode .restart-btn {
-  background: rgba(0, 0, 0, 0.05);
-}
-body.light-mode .restart-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
 }
