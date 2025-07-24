@@ -229,8 +229,8 @@ body.light-mode .restart-btn {
   z-index: 20;
 }
 .caption {
-  position: absolute;
-  bottom: 32px;
+  margin-top: 12px;
+padding: 6px 0;
   width: 100%;
   text-align: center;
   font-size: clamp(1.1rem, 2.5vw, 1.8rem);
