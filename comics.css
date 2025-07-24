@@ -112,10 +112,23 @@ h1 {
 }
 .square {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.04);
+  background: radial-gradient(
+    circle at 30% 30%,
+    #8a62fb,
+    #8a62fb99,   /* ~60% opacity */
+    #8a62fb33    /* ~20% opacity */
+  );
+  border: 1px solid #ffffff10; /* trắng rất mờ */
+  backdrop-filter: blur(2px);
+  box-shadow:
+    0 0 8px #8a62fb55,
+    0 0 20px #8a62fb33,
+    inset 0 0 6px #ffffff22;
   transform: rotate(45deg);
   animation: floatSquare linear infinite;
+  opacity: 0.85;
 }
+
 @keyframes floatSquare {
   0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
   50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
