@@ -9,7 +9,7 @@ html, body {
   align-items: center;
   justify-content: center;
   font-family: 'Noto Sans JP', sans-serif;
-  background-color: #1f1a17;
+  background-color: #1a1414;
   color: #f5efe6;
 }
 body {
@@ -21,14 +21,14 @@ h1 {
   position: relative;
   font-family: 'Road Rage', cursive;
   font-size: clamp(4rem, 9vw, 5.5rem);
-  color: #e9282c;
+  color: #b19777;
   text-align: center;
   margin: 0.5rem 0 1.5rem;
   padding-bottom: 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.35px;
   z-index: 10;
-  text-shadow: 0 0 6px #b1122666, 0 0 12px #e9282c88;
+  text-shadow: 0 0 4px #40202099;
 }
 
 /* ===== Menu chính ===== */
@@ -46,9 +46,9 @@ h1 {
   width: 120px;
   height: 120px;
   transform: rotate(45deg);
-  background: radial-gradient(circle at 30% 30%, #e9282c, #b11226aa, #b1122633);
-  box-shadow: 0 0 10px #b1122655, 0 0 20px #e9282c33, inset 0 0 8px #ffdde199;
-  border: 1px solid #ffffff11;
+  background-color: #442a2a;
+  border: 2px solid #7e4b4b;
+  box-shadow: inset 0 0 6px #1e0e0e, 0 0 4px #00000022;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@ h1 {
   cursor: pointer;
   animation: floatY 4s ease-in-out infinite;
   animation-delay: calc(var(--i) * 0.3s);
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(1px);
   opacity: 0.95;
 }
 .menu a span {
@@ -68,8 +68,9 @@ h1 {
   color: inherit;
 }
 .menu a:hover {
-  background: #ff0033;
-  box-shadow: 0 0 20px #ff0033aa;
+  background-color: #e9282c;
+  border-color: #ff5252;
+  box-shadow: 0 0 12px #e9282caa;
 }
 @media (max-width: 600px) {
   .menu {
@@ -122,13 +123,12 @@ h1 {
 }
 .square {
   position: absolute;
-  background: radial-gradient(circle at 30% 30%, #b11226, #b11226aa, #b1122633);
-  border: 1px solid #ffffff0f;
-  backdrop-filter: blur(2px);
-  box-shadow: 0 0 10px #b1122655, 0 0 24px #e9282c44, inset 0 0 8px #ffffff11;
+  background-color: #2e1a1a;
+  border: 2px solid #5d3b3b;
+  box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
   transform: rotate(45deg);
   animation: floatSquare linear infinite;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 @keyframes floatSquare {
   0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
@@ -156,33 +156,35 @@ h1 {
 
 /* ===== Light Mode ===== */
 body.light-mode {
-  background: #f9f3f0;
-  color: #400b11;
+  background: #f0e6e4;
+  color: #2e1a1a;
 }
 body.light-mode h1 {
-  color: #b11226;
-  text-shadow: 0 0 4px #b1122644, 0 0 8px #e9282c33;
+  color: #7a3b3b;
+  text-shadow: 0 0 2px #b1977788;
 }
 body.light-mode .menu a {
-  background: radial-gradient(circle at 30% 30%, #f36b6b, #e9282c99, #e9282c33);
-  box-shadow: 0 0 6px #e9282c44, 0 0 14px #e9282c22, inset 0 0 6px #ffffff88;
-  border: 1px solid #00000011;
+  background-color: #c9b2ae;
+  border: 2px solid #a07575;
+  box-shadow: inset 0 0 4px #ffffffaa, 0 0 4px #00000022;
+  backdrop-filter: blur(1px);
 }
 body.light-mode .menu a:hover {
-  background: #b11226;
-  box-shadow: 0 0 12px #b11226;
+  background-color: #e9282c;
+  border-color: #ff5c5c;
+  box-shadow: 0 0 10px #e9282c99;
 }
 body.light-mode .square {
-  background: radial-gradient(circle at 30% 30%, #f36b6b, #e9282c88, #e9282c33);
-  box-shadow: 0 0 10px #e9282c44, 0 0 20px #e9282c22, inset 0 0 6px #ffffff88;
-  border: 1px solid #00000008;
-  opacity: 0.6;
+  background-color: #dac0ba;
+  border: 2px solid #9b6d6d;
+  box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033;
+  opacity: 0.7;
 }
 body.light-mode .caption,
 body.light-mode .close-btn,
 body.light-mode .theme-toggle,
 body.light-mode .restart-btn {
-  color: #271845;
+  color: #2e1a1a;
 }
 
 /* ===== Đọc Truyện ===== */
