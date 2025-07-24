@@ -99,19 +99,24 @@
   margin-bottom: 2rem;
 }
     
-    .menu a {
-      font-family: 'Amatic SC', cursive;
-      font-size: 2rem;
-      text-decoration: none;
-      color: var(--ink);
-      border: 2px dashed var(--ink);
-      padding: 0.6rem 1rem;
-      text-align: center;
-      border-radius: 0.5rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
+.menu a {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2rem;
+  text-decoration: none;
+  color: var(--ink);
+  border: 2px dashed var(--ink);
+  text-align: center;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex; 
+  align-items: center; /* Thêm vào: căn giữa dọc */
+  justify-content: center;
+  height: 4rem; /* Đảm bảo kích thước tối thiểu cho nút */
+  padding: 0 1rem; /* bỏ padding-top/bottom để tránh lệch */
+}
+
 
     .menu a:hover {
       background-color: var(--accent);
