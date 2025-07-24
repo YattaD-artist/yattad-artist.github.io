@@ -102,6 +102,8 @@
   grid-template-columns: repeat(4, 1fr); /* Luôn 4 cột ngang */
   gap: 1.5rem;
   margin-bottom: 2rem;
+  width: 100%; /* Quan trọng */
+  box-sizing: border-box;
 }
     
 .menu a {
@@ -119,6 +121,8 @@
   display: flex; 
   align-items: center; /* Thêm vào: căn giữa dọc */
   justify-content: center;
+  min-width: 0; /* Tránh ép grid item mở rộng ngoài khung */
+  word-break: break-word;
 }
 
     }
