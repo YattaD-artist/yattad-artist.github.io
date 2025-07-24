@@ -7,6 +7,8 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
+<!-- Icons Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Preload hình ảnh -->
   <link rel="preload" as="image" href="comics/PunkgaMerch/00.webp" fetchpriority="high">
@@ -30,6 +32,36 @@
       --ink: #f5efe6;
     }
 
+    
+  body.light-mode {
+    --bg: #fdfbf9;
+    --ink: #1f1a17;
+    --paper: #e9e3dc;
+  }
+
+  body.light-mode .square {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 18px;
+    left: 22px;
+    font-size: 1.6rem;
+    background: none;
+    border: none;
+    color: var(--primary);
+    z-index: 999;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .theme-toggle:hover {
+    transform: scale(1.2);
+    color: var(--accent);
+  }
+
+    
     html, body {
       margin: 0;
       padding: 0;
@@ -67,6 +99,7 @@
       100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
     }
 
+    
 .panel {
   display: flex;
   justify-content: center;
@@ -271,6 +304,10 @@
 </head>
 <body>
   <div class="floating-pattern" id="floating-pattern"></div>
+  <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
+  <i class="fa-solid fa-circle-half-stroke"></i>
+</button>
+  <body class="dark-mode">
 <div class="panel">
   <div class="panel-inner">
     <h1>TRUYỆN TRANH</h1>
@@ -475,6 +512,13 @@ document.querySelectorAll('.menu a').forEach(el => {
 })();
     document.querySelectorAll('.menu a').forEach((el, i) => {
   el.style.setProperty('--i', i);
+});
+
+    
+// Chuyển đổi chế độ sáng / tối
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
 });
 
   </script>
