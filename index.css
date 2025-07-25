@@ -236,7 +236,7 @@ body.light-mode .theme-toggle {
   image-rendering: pixelated;
   z-index: 20; /* Trên mọi thứ trừ nút toggle */
   pointer-events: none;
-  top: calc(50% - 180px); /* Nằm phía trên h1 */
-  left: 50%;
+  top: 10%; /* Nằm phía trên h1 */
+  left: 10%;
   transform: translateX(-50%);
 }
