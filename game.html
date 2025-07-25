@@ -5,18 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thử Nghiệm</title>
 
-  <!-- Font -->
+  <!-- ===== Font sử dụng ===== -->
   <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet" />
+
+  <!-- ===== Kiểu dáng toàn trang ===== -->
   <style>
-    body, html {
+    /* === Reset và thiết lập chung === */
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+    html, body {
+      width: 100%;
       height: 100%;
       overflow: hidden;
       background: #111;
+      font-family: 'Noto Sans', sans-serif;
     }
 
-    /* ===== Nền động ===== */
+    /* === Nền động: hình vuông trôi toàn trang === */
     .floating-pattern {
       position: fixed;
       inset: 0;
@@ -24,7 +32,6 @@
       z-index: 1;
       overflow: hidden;
     }
-
     .square {
       position: absolute;
       background-color: #2e1a1a;
@@ -34,14 +41,13 @@
       animation: floatSquare linear infinite;
       opacity: 0.8;
     }
-
     @keyframes floatSquare {
-      0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
-      50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+      0%   { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+      50%  { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
       100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
     }
 
-    /* ===== Vùng giới hạn có nền Dat.png ===== */
+    /* === Vùng giới hạn nhân vật: có nền Dat.png === */
     .limit-area {
       position: absolute;
       top: 50%;
@@ -49,14 +55,14 @@
       width: 500px;
       height: 300px;
       transform: translate(-50%, -50%);
-      z-index: 2;
-      overflow: hidden;
       background-image: url('assets/Dat.png');
       background-size: 98px 98px;
       opacity: 0.3;
+      overflow: hidden;
+      z-index: 2;
     }
 
-    /* ===== Nhân vật ===== */
+    /* === Nhân vật xuất hiện bên trong vùng giới hạn === */
     #character {
       width: 62px;
       height: 62px;
@@ -69,7 +75,7 @@
       z-index: 3;
     }
 
-    /* ===== Dòng chữ quay lại trang chủ ===== */
+    /* === Dòng chữ quay lại trang chủ === */
     a.back-link {
       position: fixed;
       bottom: 24px;
@@ -79,22 +85,20 @@
       font-size: clamp(1.1rem, 2vw, 1.6rem);
       text-decoration: none;
       color: #fff;
-      transition: color 0.2s ease, transform 0.2s ease;
       z-index: 10;
+      transition: color 0.2s ease, transform 0.2s ease;
     }
-
     a.back-link:hover {
       color: #dc3849;
       transform: scale(1.1);
     }
 
-    /* ===== Hướng dẫn ===== */
+    /* === Hướng dẫn di chuyển === */
     .instruction {
       position: fixed;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'Noto Sans', sans-serif;
       font-size: clamp(1rem, 2vw, 1.4rem);
       color: rgba(255, 255, 255, 0.5);
       background: rgba(0, 0, 0, 0.4);
@@ -104,7 +108,6 @@
       pointer-events: none;
       transition: opacity 0.4s ease;
     }
-
     .instruction.hidden {
       opacity: 0;
     }
@@ -112,30 +115,30 @@
 </head>
 
 <body>
-
-  <!-- Nền động hình vuông -->
+  <!-- === Nền hiệu ứng hình vuông động === -->
   <div class="floating-pattern" id="floating-pattern"></div>
 
-  <!-- Vùng giới hạn nhân vật -->
+  <!-- === Vùng giới hạn có nền riêng và nhân vật bên trong === -->
   <div class="limit-area">
     <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
   </div>
 
-  <!-- Dòng chữ quay về -->
+  <!-- === Liên kết quay lại === -->
   <a href="index.html" class="back-link">← Quay lại trang chủ</a>
 
-  <!-- Hướng dẫn -->
+  <!-- === Hướng dẫn sử dụng phím === -->
   <div class="instruction" id="instruction">
     ⬅️ ⬆️ ⬇️ ➡️ để di chuyển · Giữ phím <kbd>Space</kbd> để chạy
   </div>
 
+  <!-- === Script: Di chuyển nhân vật và hiệu ứng nền === -->
   <script>
-    // ================== Nhân vật di chuyển trong giới hạn ===================
+    // ========== CẤU HÌNH NHÂN VẬT ==========
     const character = document.getElementById('character');
     const instruction = document.getElementById('instruction');
     const frameSize = 62;
 
-    let pos = { x: 219, y: 119 };
+    let pos = { x: 219, y: 119 }; // Vị trí khởi đầu
     let direction = '';
     let moveFrame = 0;
     let idleFrame = 0;
@@ -145,8 +148,18 @@
     const keysHeld = new Set();
     let instructionHidden = false;
 
-    const speedPerFrame = { walk: 2, run: 4 };
-    const frameRates = { idle: 200, walk: 100, run: 80 };
+    const limit = { width: 500, height: 300 };
+
+    const speedPerFrame = {
+      walk: 2,
+      run: 4
+    };
+
+    const frameRates = {
+      idle: 200,
+      walk: 100,
+      run: 80
+    };
 
     const keyToVector = {
       'ArrowUp':    { dx: 0, dy: -1, dir: 'U' },
@@ -155,6 +168,7 @@
       'ArrowRight': { dx: 1, dy: 0,  dir: 'R' }
     };
 
+    // ========== TẢI TRƯỚC HÌNH ẢNH NHÂN VẬT ==========
     const preloadImages = (callback) => {
       const folders = { Idle: 16, Walk: 16, Run: 8 };
       const directions = ['', 'U', 'L', 'R'];
@@ -179,6 +193,7 @@
       }
     };
 
+    // ========== CẬP NHẬT HÌNH SPRITE ==========
     const updateSprite = () => {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const baseName = folder + direction;
@@ -187,10 +202,9 @@
       character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     };
 
+    // ========== VÒNG LẶP CHẠY GAME ==========
     let lastFrameTime = 0;
     let animTimer = 0;
-
-    const limit = { width: 500, height: 300 };
 
     const gameLoop = (timestamp) => {
       const delta = timestamp - lastFrameTime;
@@ -221,6 +235,7 @@
         state = spacePressed ? 'run' : 'walk';
         const speed = speedPerFrame[state];
 
+        // Giới hạn di chuyển trong vùng limit-area
         pos.x = Math.max(0, Math.min(limit.width - frameSize, pos.x + dx * speed));
         pos.y = Math.max(0, Math.min(limit.height - frameSize, pos.y + dy * speed));
 
@@ -245,6 +260,7 @@
       requestAnimationFrame(gameLoop);
     };
 
+    // ========== LẮNG NGHE PHÍM NHẤN ==========
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') spacePressed = true;
       if (keyToVector[e.key]) {
@@ -261,6 +277,7 @@
       }
     });
 
+    // ========== KHỞI ĐỘNG ==========
     character.style.left = pos.x + 'px';
     character.style.top = pos.y + 'px';
 
@@ -269,7 +286,7 @@
       requestAnimationFrame(gameLoop);
     });
 
-    // ================== Tạo hiệu ứng nền hình vuông ===================
+    // ========== HIỆU ỨNG NỀN: TẠO HÌNH VUÔNG TRÔI ==========
     (function createFloatingSquares() {
       const container = document.getElementById('floating-pattern');
       const count = 60;
