@@ -126,29 +126,6 @@ a:hover {
   transform: scale(1.2);
 }
 
-/* ===== TOAST ===== */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #2e1a1a;
-  color: #f5efe6;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 0.9rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1001;
-  transform: translateY(20px);
-  text-align: left;
-}
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ===== LIGHT MODE ===== */
 body.light-mode {
   background-color: #f0e6e4;
