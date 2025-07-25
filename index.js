@@ -86,4 +86,3 @@ const themeToggle = document.getElementById('themeToggle');
   // Gọi ngay khi trang được tải
   applySavedTheme();
 
-// ========== NHÂN VẬT ==========
