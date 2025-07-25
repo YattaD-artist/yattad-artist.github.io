@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-top: 24px;
+  width: 80vw;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Road Rage', cursive;
+  font-size: clamp(4rem, 11vw, 8rem);
+  font-weight: normal;
+  margin: 0.2em 0 0;
+  color: #222;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin: 24px 0;
+  color: #333;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7ch;
+  margin-top: 24px;
+}
+
+.menu a {
+  font-family: 'Patrick Hand', cursive;
+  text-decoration: none;
+  color: #333;
+  font-size: clamp(1rem, 2.6vw, 1.8rem);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.menu a:hover {
+  transform: scale(1.2);
+  color: #dc3849;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('assets/Dat.png');
+  background-size: 98px 98px;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+#character {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  z-index: 1;
+  pointer-events: none;
+}
