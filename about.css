@@ -17,7 +17,7 @@ html, body {
   padding: 0 3rem;
   margin: 0 auto;
   position: relative;
-  z-index: 2;
+  z-index: 99;
 }
 
 /* ===== TIÊU ĐỀ ===== */
