@@ -42,7 +42,6 @@ h1 {
   margin-top: 4rem;
   padding: 0 5vw;
   z-index: 10;
-  overflow: hidden;
 }
 
 /* ========== ITEM MENU ========== */
@@ -136,29 +135,30 @@ a[data-shard="5"] {
 }
 
 /* ========== FLASH SWEEP EFFECT ========== */
-.menu::after {
+.menu a::after {
   content: '';
   position: absolute;
-  top: -150%;
-  left: -200%;
-  width: 400%;
+  top: -200%;
+  left: -150%;
+  width: 400vw; /* dài toàn màn hình */
   height: 400%;
   background: linear-gradient(
     75deg,
     transparent 0%,
-    rgba(255,255,255,0.9) 45%,
+    rgba(255,255,255,0.8) 45%,
     rgba(255,255,255,0.3) 50%,
     transparent 55%
   );
   transform: rotate(15deg) translateX(-150%);
-  opacity: 0;
   pointer-events: none;
-  z-index: 100;
+  z-index: 2;
   mix-blend-mode: screen;
+  opacity: 0;
 }
 
-.menu.shine::after {
+.menu.shine a::after {
   animation: flashSweep 1.2s ease-in-out forwards;
+  opacity: 1;
 }
 
 @keyframes flashSweep {
