@@ -24,7 +24,7 @@ html, body {
 h1 {
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-size: clamp(3rem, 6vw, 5rem);
-  font-weight: 700;
+  font-weight: 400;
   margin-bottom: 24px;
   color: #b19777;
   text-transform: uppercase;
