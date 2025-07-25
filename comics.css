@@ -135,6 +135,7 @@ a[data-shard="5"] {
 }
 
 /* ========== FLASH SWEEP EFFECT ========== */
+/* ========== FLASH SWEEP EFFECT ========== */
 .menu a::after {
   content: '';
   position: absolute;
@@ -154,31 +155,9 @@ a[data-shard="5"] {
   z-index: 2;
   mix-blend-mode: screen;
   opacity: 0;
-}
-
-.menu a.shine::after {
-  animation: flashSweep 1s ease-in-out;
-}
-
-@keyframes flashSweep {
-  0% {
-    transform: translateX(-150%) rotate(15deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(0%) rotate(15deg);
-    opacity: 1;
-  }
-  90% {
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(150%) rotate(15deg);
-    opacity: 0;
-  }
+  animation: flashSweep 1s ease-in-out infinite;
+  /* random delay: sử dụng var(--i) để khác nhau giữa các shard */
+  animation-delay: calc(7s + var(--i) * 1.2s);
 }
 
 /* ===== Layout chung ===== */
