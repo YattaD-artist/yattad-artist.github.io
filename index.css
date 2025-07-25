@@ -85,6 +85,8 @@ h2 {
   padding: 0 0.5rem;
   z-index: 1;
   position: relative;
+  color: #f5efe6;
+  text-decoration: none; 
 }
 
 /* ========== HOVER ========== */
