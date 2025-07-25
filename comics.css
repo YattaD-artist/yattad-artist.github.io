@@ -19,7 +19,8 @@ body {
 /* ===== Tiêu đề ===== */
 h1 {
   position: relative;
-  font-family: 'Road Rage', cursive;
+  font-family: 'Big Shoulders Stencil Text', sans-serif;
+  font-weight: 400;
   font-size: clamp(4rem, 9vw, 5.5rem);
   color: #b19777;
   text-align: center;
