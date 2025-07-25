@@ -39,16 +39,19 @@
   });
 // ========== Hiệu ứng Lóe ==========
 function triggerShine() {
-  const items = document.querySelectorAll('.menu a');
-  items.forEach(item => {
-    item.classList.add('shine');
-    setTimeout(() => item.classList.remove('shine'), 1000); // xóa sau 1s
-  });
-  const nextDelay = Math.random() * 8000 + 7000; // 7000–15000ms
-  setTimeout(triggerShine, nextDelay);   // Gọi lại sau khoảng ngẫu nhiên từ 7 – 15s
+  const menu = document.querySelector('.menu');
+
+  // Reset animation bằng cách buộc reflow
+  menu.classList.remove('shine');
+  void menu.offsetWidth; // ép browser reflow lại layout
+  menu.classList.add('shine');
+
+  const nextDelay = Math.random() * 8000 + 7000; // 7–15s
+  setTimeout(triggerShine, nextDelay);
 }
-document.addEventListener("DOMContentLoaded", () => {// Khởi động sau khi DOM sẵn sàng
-  setTimeout(triggerShine, 3000); // khởi động sau 3s
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(triggerShine, 3000);
 });
   // Hover tạm dừng
   // Hover tạm dừng
