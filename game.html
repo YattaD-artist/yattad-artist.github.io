@@ -45,17 +45,35 @@
       100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
     }
 
-    .limit-area {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80vmin;
-      height: 60vmin;
-      background-image: url('assets/Dat.png');
-      overflow: hidden;
-      z-index: 99;
-    }
+  .limit-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vmin;
+  height: 80vmin;
+  background-image: url('assets/Dat.png');
+  background-size: 62px 62px;
+  background-repeat: repeat;
+  background-position: 0 0;
+  overflow: hidden;
+  z-index: 99;
+
+  /* Tường bao chính */
+  box-shadow:
+    0 0 0 10px #444,        /* lớp bê tông chính */
+    0 0 0 14px #222 inset,  /* bóng đổ bên trong */
+    0 0 20px #000;          /* bóng ngoài mờ */
+  border: 1px solid #666;   /* viền tăng độ rõ */
+}
+.limit-area::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border: 4px solid #3a3a3a;
+  box-shadow: inset 0 0 8px #000;
+  pointer-events: none;
+}
 
    #character {
   width: 62px;
