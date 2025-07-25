@@ -37,7 +37,20 @@
     el.style.marginLeft = `${Math.random() * 40 - 20}px`;
     el.style.marginTop = `${Math.random() * 30 - 15}px`;
   });
-
+// ========== Hiệu ứng Lóe ==========
+function triggerShine() {
+  const items = document.querySelectorAll('.menu a');
+  items.forEach(item => {
+    item.classList.add('shine');
+    setTimeout(() => item.classList.remove('shine'), 1000); // xóa sau 1s
+  });
+  const nextDelay = Math.random() * 8000 + 7000; // 7000–15000ms
+  setTimeout(triggerShine, nextDelay);   // Gọi lại sau khoảng ngẫu nhiên từ 7 – 15s
+}
+document.addEventListener("DOMContentLoaded", () => {// Khởi động sau khi DOM sẵn sàng
+  setTimeout(triggerShine, 3000); // khởi động sau 3s
+});
+  // Hover tạm dừng
   // Hover tạm dừng
   menu.addEventListener('mousemove', (e) => {
     items.forEach((el) => {
