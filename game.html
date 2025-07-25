@@ -49,11 +49,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%); /* ✅ Dịch tâm */
-      width: 70vw;
-      height: 60vw;
+      transform: translate(-50%, -50%);
+      width: 80vmin;
+      height: 60vmin;
       background-image: url('assets/Dat.png');
-      opacity: 1;
       overflow: hidden;
       z-index: 99;
     }
@@ -125,7 +124,7 @@
     const limitArea = document.getElementById('limit-area');
     const frameSize = 62;
 
-    let pos = { x: 219, y: 119 };
+    let pos = { x: 0, y: 0 };
     let direction = '';
     let moveFrame = 0;
     let idleFrame = 0;
@@ -142,10 +141,15 @@
         width: limitArea.clientWidth,
         height: limitArea.clientHeight
       };
+
+      // Đặt nhân vật ở giữa giới hạn
+      pos.x = (limit.width - frameSize) / 2;
+      pos.y = (limit.height - frameSize) / 2;
+      character.style.left = pos.x + 'px';
+      character.style.top = pos.y + 'px';
     }
 
     window.addEventListener('resize', updateLimit);
-    updateLimit();
 
     const speedPerFrame = {
       walk: 2,
@@ -229,7 +233,6 @@
         state = spacePressed ? 'run' : 'walk';
         const speed = speedPerFrame[state];
 
-        // ✅ Giới hạn theo kích thước thực của vùng limit-area
         pos.x = Math.max(0, Math.min(limit.width - frameSize, pos.x + dx * speed));
         pos.y = Math.max(0, Math.min(limit.height - frameSize, pos.y + dy * speed));
 
@@ -270,14 +273,6 @@
       }
     });
 
-    character.style.left = pos.x + 'px';
-    character.style.top = pos.y + 'px';
-
-    preloadImages(() => {
-      updateSprite();
-      requestAnimationFrame(gameLoop);
-    });
-
     (function createFloatingSquares() {
       const container = document.getElementById('floating-pattern');
       const count = 60;
@@ -304,6 +299,12 @@
         container.appendChild(sq);
       }
     })();
+
+    preloadImages(() => {
+      updateLimit();
+      updateSprite();
+      requestAnimationFrame(gameLoop);
+    });
   </script>
 </body>
 </html>
