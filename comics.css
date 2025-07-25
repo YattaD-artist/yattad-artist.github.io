@@ -154,10 +154,12 @@ a[data-shard="5"] {
   z-index: 2;
   mix-blend-mode: screen;
   opacity: 0;
+  animation: flashSweep 1s ease-in-out;
+  animation-play-state: paused;
 }
 
 .menu a.shine::after {
-  animation: flashSweep 1s ease-in-out forwards;
+  animation-play-state: running;
 }
 
 @keyframes flashSweep {
