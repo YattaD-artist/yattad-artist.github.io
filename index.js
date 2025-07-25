@@ -1,3 +1,30 @@
+// ======== Hiệu ứng nền hình vuông bay =========
+const pattern = document.getElementById('floating-pattern');
+for (let i = 0; i < 25; i++) {
+  const sq = document.createElement('div');
+  sq.className = 'square';
+  sq.style.left = `${Math.random() * 100}vw`;
+  sq.style.top = `${Math.random() * 100}vh`;
+  const size = 20 + Math.random() * 40;
+  sq.style.width = `${size}px`;
+  sq.style.height = `${size}px`;
+  sq.style.animationDuration = `${4 + Math.random() * 6}s`;
+  pattern.appendChild(sq);
+}
+
+// ======== Theme Toggle & Persistence =========
+const themeToggle = document.querySelector('.theme-toggle');
+const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'light' || (!savedTheme && prefersLight)) {
+  document.body.classList.add('light-mode');
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+});
+
+// ======== Điều khiển nhân vật pixel =========
 let state = "idle";
 let direction = "";
 let isMoving = false;
@@ -148,6 +175,7 @@ function scheduleNextAction() {
   }, delay);
 }
 
+// Idle animation loop
 setInterval(() => {
   if (state === "idle") {
     idleFrame = (idleFrame + 1) % 16;
@@ -155,6 +183,7 @@ setInterval(() => {
   }
 }, 200);
 
+// Initial boot
 updateSprite();
 preloadImages(() => {
   scheduleNextAction();
