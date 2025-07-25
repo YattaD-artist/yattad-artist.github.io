@@ -225,18 +225,3 @@ body.light-mode .theme-toggle {
   color: #2e1a1a;
 }
 
-/* =========================================
-   NHÂN VẬT (CHARACTER SPRITE)
-   => ĐƯA VỀ CUỐI ĐỂ TÁCH BIỆT CHỨC NĂNG
-========================================= */
-#character {
-  position: absolute;
-  width: 62px;
-  height: 62px;
-  image-rendering: pixelated;
-  z-index: 20; /* Trên mọi thứ trừ nút toggle */
-  pointer-events: none;
-  top: 10%; /* Nằm phía trên h1 */
-  left: 10%;
-  transform: translateX(-50%);
-}
