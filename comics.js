@@ -37,23 +37,6 @@
     el.style.marginLeft = `${Math.random() * 40 - 20}px`;
     el.style.marginTop = `${Math.random() * 30 - 15}px`;
   });
-// ========== Hiệu ứng Lóe ==========
-function triggerShine() {
-  const menu = document.querySelector('.menu');
-
-  // Reset animation bằng cách buộc reflow
-  menu.classList.remove('shine');
-  void menu.offsetWidth; // ép browser reflow lại layout
-  menu.classList.add('shine');
-
-  const nextDelay = Math.random() * 8000 + 7000; // 7–15s
-  setTimeout(triggerShine, nextDelay);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(triggerShine, 3000);
-});
-  // Hover tạm dừng
   // Hover tạm dừng
   menu.addEventListener('mousemove', (e) => {
     items.forEach((el) => {
