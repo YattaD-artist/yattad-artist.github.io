@@ -157,18 +157,13 @@ a:hover {
 }
 
 /* ===== LIGHT MODE ===== */
-html.light-mode {
-  background-color: #f0e6e4;
-}
-
-body.light-mode {
+html.light-mode body {
   background: #f5efe6;
   color: #2e1a1a;
 }
 
-body.light-mode h1 {
+html.light-mode h1 {
   color: #7a3b3b;
-  text-shadow: 0 0 2px #b1977788;
 }
 
 body.light-mode .theme-toggle,
@@ -186,7 +181,7 @@ body.light-mode .social-icons i:hover {
   color: #e9282c;
 }
 
-body.light-mode .square {
+html.light-mode .square {
   background-color: #dac0ba;
   border: 2px solid #9b6d6d;
   box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033;
