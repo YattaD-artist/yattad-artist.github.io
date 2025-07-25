@@ -39,10 +39,11 @@ h2 {
   font-size: clamp(2rem, 5vw, 4rem);
   margin: 1.5rem 0;
   text-align: center;
-  color: inherit;
   z-index: 5;
   position: relative;
   white-space: pre-line;
+color: #b19777;
+  text-shadow: 0 0 3px #40202088;
 }
 h2 span {
   display: block;
@@ -228,9 +229,10 @@ body.light-mode {
   background: #f0e6e4;
   color: #2e1a1a;
 }
-body.light-mode h1 {
+body.light-mode h1,
+body.light-mode h2 {
   color: #7a3b3b;
-  text-shadow: 0 0 2px #b1977788;
+  text-shadow: 0 0 2px #b1977744;
 }
 body.light-mode .menu a {
   background-color: #c9b2ae;
