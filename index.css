@@ -1,35 +1,26 @@
-/* ===== Reset & Layout ===== */
+/* =========================================
+   RESET & LAYOUT CƠ BẢN
+========================================= */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  overflow: hidden;
   box-sizing: border-box;
+  overflow: hidden;
   font-family: 'Noto Sans', sans-serif;
   background-color: #1a1414;
   color: #f5efe6;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  position: relative;
 }
 
-/* ===== Light/Dark Mode Toggle ===== */
-.theme-toggle {
-  position: fixed;
-  top: 1.5rem;
-  left: 1.5rem;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  z-index: 1000;
-  color: inherit;
-  transition: color 0.3s;
-}
-
-/* ===== Floating Squares Background ===== */
+/* =========================================
+   NỀN HÌNH VUÔNG LƠ LỬNG (FLOATING BACKGROUND)
+========================================= */
 .floating-pattern {
   position: fixed;
   inset: 0;
@@ -47,23 +38,43 @@ html, body {
   opacity: 0.8;
 }
 @keyframes floatSquare {
-  0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
-  50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+  0%   { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+  50%  { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
   100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
 }
 
-/* ===== Main Container ===== */
+/* =========================================
+   NÚT CHUYỂN ĐỔI GIAO DIỆN (DARK / LIGHT MODE)
+========================================= */
+.theme-toggle {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 1000;
+  color: inherit;
+  transition: color 0.3s;
+}
+
+/* =========================================
+   CONTAINER CHÍNH
+========================================= */
 .container {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   text-align: center;
-  padding-top: 4rem;
+  padding-top: 6rem;
   width: 80vw;
   max-width: 960px;
   margin: 0 auto;
 }
 
-/* ===== Heading ===== */
+/* =========================================
+   TIÊU ĐỀ CHÍNH
+========================================= */
 h1 {
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-weight: 400;
@@ -75,17 +86,25 @@ h1 {
   text-shadow: 0 0 4px #40202099;
   margin: 0.5rem 0 1.5rem;
   padding-bottom: 0.25rem;
+  position: relative;
+  z-index: 5;
 }
 
-/* ===== Subheading ===== */
+/* =========================================
+   PHỤ ĐỀ / TIÊU ĐỀ PHỤ
+========================================= */
 h2 {
   font-family: 'Amatic SC', cursive;
   font-size: clamp(2rem, 5vw, 4rem);
   margin: 1.5rem 0;
   color: inherit;
+  z-index: 5;
+  position: relative;
 }
 
-/* ===== Menu ===== */
+/* =========================================
+   MENU CHÍNH
+========================================= */
 .menu {
   position: relative;
   display: flex;
@@ -94,9 +113,10 @@ h2 {
   gap: 4rem;
   margin-top: 3rem;
   z-index: 10;
+  padding: 0 2vw;
 }
 
-/* ===== Menu Items ===== */
+/* ========== ITEM MENU ========== */
 .menu a {
   position: relative;
   overflow: hidden;
@@ -113,8 +133,10 @@ h2 {
   cursor: pointer;
   backdrop-filter: blur(1px);
   opacity: 0.95;
+  animation: floatY 4s ease-in-out infinite;
 }
 
+/* ========== TEXT BÊN TRONG ITEM ========== */
 .menu a span {
   transform: rotate(-45deg);
   font-family: 'Amatic SC', cursive;
@@ -126,24 +148,22 @@ h2 {
   position: relative;
 }
 
-/* ===== Hover Effect ===== */
+/* ========== HOVER MENU ========== */
 .menu a:hover {
   background-color: #e9282c;
   border-color: #ff5252;
   box-shadow: 0 0 12px #e9282caa;
 }
 
-/* ===== Character (Optional Game Sprite) ===== */
-#character {
-  position: absolute;
-  width: 62px;
-  height: 62px;
-  image-rendering: pixelated;
-  z-index: 1;
-  pointer-events: none;
+/* ========== HIỆU ỨNG FLOAT CHUNG (cho menu) ========== */
+@keyframes floatY {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%      { transform: rotate(45deg) translateY(-10px); }
 }
 
-/* ===== Light Mode ===== */
+/* =========================================
+   GIAO DIỆN CHẾ ĐỘ SÁNG (LIGHT MODE)
+========================================= */
 body.light-mode {
   background-color: #f0e6e4;
   color: #2e1a1a;
@@ -156,6 +176,7 @@ body.light-mode .menu a {
   background-color: #c9b2ae;
   border: 2px solid #a07575;
   box-shadow: inset 0 0 4px #ffffffaa, 0 0 4px #00000022;
+  backdrop-filter: blur(1px);
 }
 body.light-mode .menu a:hover {
   background-color: #e9282c;
@@ -170,4 +191,20 @@ body.light-mode .square {
 }
 body.light-mode .theme-toggle {
   color: #2e1a1a;
+}
+
+/* =========================================
+   NHÂN VẬT (CHARACTER SPRITE)
+   => ĐƯA VỀ CUỐI ĐỂ TÁCH BIỆT CHỨC NĂNG
+========================================= */
+#character {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  z-index: 20; /* Trên mọi thứ trừ nút toggle */
+  pointer-events: none;
+  top: calc(50% - 180px); /* Nằm phía trên h1 */
+  left: 50%;
+  transform: translateX(-50%);
 }
