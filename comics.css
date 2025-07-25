@@ -42,15 +42,14 @@ h1 {
   padding: 0 5vw;
   z-index: 10;
 }
-.menu a { 
+.menu a {
   width: 120px;
   height: 120px;
-  background-color: #7D1128;
-  border: 2px solid #C41E3D;
-  box-shadow:
-    inset -5px -5px 6px #3C0919,
-    inset 3px 3px 4px #E2294F55,
-    0 0 6px #C41E3D44;
+  transform: rotate(45deg);
+  background-color: #442a2a;
+  border: 2px solid #7e4b4b;
+  box-shadow: inset 0 0 6px #1e0e0e, 0 0 4px #00000022;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,47 +58,20 @@ h1 {
   animation-delay: calc(var(--i) * 0.3s);
   backdrop-filter: blur(1px);
   opacity: 0.95;
-  transition: all 0.3s ease;
-  transform-origin: center;
 }
-
 .menu a span {
-  transform: none;
+  transform: rotate(-45deg);
   font-family: 'Amatic SC', cursive;
   font-size: 2rem;
   text-align: center;
   padding: 0 0.5rem;
   color: inherit;
 }
-
 .menu a:hover {
-  background-color: #FF2C55;
-  border-color: #FF2C55;
-  box-shadow:
-    inset 2px 2px 6px #ffffff44,
-    0 0 10px #FF2C55aa;
+  background-color: #e9282c;
+  border-color: #ff5252;
+  box-shadow: 0 0 12px #e9282caa;
 }
-
-/* ===== Shard menu ===== */
-a[data-shard="0"] {
-  transform: rotate(44deg) scale(1.05, 1) skew(3deg, -2deg);
-}
-a[data-shard="1"] {
-  transform: rotate(45deg) scale(1.05, 0.95) skew(-5deg, 3deg);
-}
-a[data-shard="2"] {
-  transform: rotate(48deg) scale(1, 0.9) skew(6deg, -4deg);
-}
-a[data-shard="3"] {
-  transform: rotate(42deg) scale(0.95, 1.1) skew(-6deg, 5deg);
-}
-a[data-shard="4"] {
-  transform: rotate(46deg) scale(1.1, 1) skew(4deg, -3deg);
-}
-a[data-shard="5"] {
-  transform: rotate(43deg) scale(1.02, 1.02) skew(-2deg, 2deg);
-}
-
 @media (max-width: 600px) {
   .menu {
     gap: 1rem;
@@ -149,47 +121,23 @@ a[data-shard="5"] {
   z-index: 1;
   overflow: hidden;
 }
-.square { 
+.square {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: #3C0919;
-  border: 2px solid #C41E3D;
-  box-shadow:
-    inset -3px -3px 6px #1a0a0a,
-    inset 2px 2px 4px #E2294F55,
-    0 0 5px #C41E3D33;
-  animation: floatShard 18s linear infinite;
+  background-color: #2e1a1a;
+  border: 2px solid #5d3b3b;
+  box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
+  transform: rotate(45deg);
+  animation: floatSquare linear infinite;
   opacity: 0.8;
-  transform-origin: center;
 }
-
-.square:nth-child(3n) {
-  transform: rotate(45deg) skew(3deg, -6deg) scale(1, 1.1);
+@keyframes floatSquare {
+  0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+  50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+  100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
 }
-.square:nth-child(4n) {
-  transform: rotate(40deg) skew(-8deg, 4deg) scale(1.1, 0.95);
-}
-.square:nth-child(5n) {
-  transform: rotate(50deg) skew(2deg, 6deg) scale(0.95, 1.05);
-}
-
 @keyframes floatY {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-@keyframes floatShard {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  100% {
-    transform: translateY(-100vh) rotate(360deg);
-  }
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(-10px); }
 }
 
 /* ===== Nút đổi theme ===== */
