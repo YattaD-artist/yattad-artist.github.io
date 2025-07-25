@@ -172,11 +172,12 @@ body.light-mode h1 {
   text-shadow: 0 0 2px #b1977788;
 }
 
+body.light-mode .theme-toggle,
+body.light-mode .social-icons i,
+body.light-mode .toast,
+body.light-mode h1,
 body.light-mode h2,
 body.light-mode p,
-body.light-mode .toast,
-body.light-mode .social-icons i,
-body.light-mode .theme-toggle,
 body.light-mode a {
   color: #2e1a1a;
 }
