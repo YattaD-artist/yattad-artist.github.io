@@ -2,15 +2,12 @@
 html, body {
   margin: 0;
   padding: 0;
-   height: 100%;
-  margin: 0;
-  padding: 0;
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
   font-family: 'Noto Sans JP', sans-serif;
   background-color: #1a1414;
   color: #f5efe6;
-  position: relative;
   z-index: 0;
 }
 
