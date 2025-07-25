@@ -1,10 +1,12 @@
-// ======= theme.js =======
-(function handleTheme() {
+// theme.js
+(function setupThemeToggle() {
   const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = themeToggle?.querySelector('i');
+  if (!themeToggle) return;
+
+  const themeIcon = themeToggle.querySelector('i');
 
   function updateThemeIcon() {
-    if (!themeIcon) return;
+    // Giữ nguyên icon, bạn có thể mở rộng nếu muốn thay đổi về sau
     themeIcon.className = document.body.classList.contains('light-mode')
       ? 'fa-solid fa-eye'
       : 'fa-solid fa-eye';
@@ -20,16 +22,12 @@
     updateThemeIcon();
   }
 
-  // Gọi khi trang được tải
-  applySavedTheme();
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    updateThemeIcon();
+  });
 
-  // Gán sự kiện nếu có nút toggle
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('light-mode');
-      const isLight = document.body.classList.contains('light-mode');
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      updateThemeIcon();
-    });
-  }
+  applySavedTheme();
 })();
