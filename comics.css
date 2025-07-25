@@ -154,8 +154,8 @@ a[data-shard="5"] {
   z-index: 2;
   mix-blend-mode: screen;
   opacity: 0;
-  animation: flashSweep 10s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0s); /* hoặc dùng 0s nếu muốn toàn bộ quét cùng lúc */
+  animation: flashSweep 7s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.5s); /* hoặc dùng 0s nếu muốn toàn bộ quét cùng lúc */
 }
 
 /* ========== FLASH SWEEP KEYFRAMES ========== */
