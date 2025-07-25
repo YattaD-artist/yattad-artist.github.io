@@ -44,6 +44,10 @@ h2 {
   position: relative;
   white-space: pre-line;
 }
+h2 span {
+  display: block;
+}
+
 /* ===== MENU CHÍNH ===== */
 .menu {
   position: relative;
