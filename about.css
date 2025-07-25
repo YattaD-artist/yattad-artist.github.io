@@ -1,53 +1,46 @@
-.background {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background-image: url('assets/Dat.png');
-  background-size: 98px 98px;
-  opacity: 0.3;
-  z-index: 0;
-  pointer-events: none;
-}
-
 .container {
   position: relative;
   z-index: 2;
-  text-align: center;
+  text-align: left;
   padding-top: 24px;
   width: 80vw;
   margin: 0 auto;
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
 h1 {
-  font-family: 'Road Rage', cursive;
-  font-size: clamp(3rem, 7vw, 6rem);
-  font-weight: normal;
+  font-family: 'Big Shoulders Stencil Text', cursive;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
   margin-bottom: 24px;
   color: #111;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: left;
 }
 
 h2 {
-  font-family: 'Noto Sans', cursive;
-  font-size: clamp(1rem, 3vw, 2rem);
+  font-family: 'Amatic SC', cursive;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
   margin: 12px 0;
   color: #333;
-  font-weight: normal;
+  text-align: left;
 }
 
 p {
   font-family: 'Patrick Hand', cursive;
-  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
   margin: 12px 0;
   color: #333;
+  text-align: left;
 }
 
 a {
   display: inline-block;
-  margin-top: 32px;
+  margin-top: 24px;
   font-family: 'Patrick Hand', cursive;
-  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
   text-decoration: none;
   color: #000;
   transition: color 0.2s ease, transform 0.2s ease;
@@ -75,10 +68,10 @@ a:hover {
 .instruction {
   position: fixed;
   bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Noto Sans', sans-serif;
-  font-size: clamp(1rem, 2vw, 1.4rem);
+  left: 24px;
+  transform: none;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: clamp(0.85rem, 1.6vw, 1.2rem);
   color: rgba(50, 50, 50, 0.4);
   background: rgba(255, 255, 255, 0.3);
   padding: 6px 12px;
@@ -86,6 +79,7 @@ a:hover {
   z-index: 10;
   pointer-events: none;
   transition: opacity 0.4s ease;
+  text-align: left;
 }
 
 .instruction.hidden {
@@ -94,8 +88,8 @@ a:hover {
 
 .social-icons {
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  justify-content: flex-start;
+  gap: 16px;
   margin: 16px 0;
 }
 
@@ -104,7 +98,7 @@ a:hover {
 }
 
 .social-icons i {
-  font-size: 28px;
+  font-size: 24px;
   color: #000;
   transition: color 0.2s ease, transform 0.2s ease;
 }
@@ -122,13 +116,14 @@ a:hover {
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 0.95rem;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.9rem;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 1001;
   transform: translateY(20px);
+  text-align: left;
 }
 
 .toast.show {
