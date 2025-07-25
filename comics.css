@@ -139,47 +139,47 @@ a[data-shard="5"] {
   content: '';
   position: absolute;
   top: -200%;
-  left: -100%;
-  width: 300%;
+  left: -150%;
+  width: 400%;
   height: 400%;
   background: linear-gradient(
     75deg,
     transparent 0%,
-    rgba(255,255,255,0.9) 45%,
+    rgba(255,255,255,0.8) 45%,
     rgba(255,255,255,0.2) 50%,
     transparent 55%
   );
-  transform: rotate(15deg);
+  transform: rotate(15deg) translateX(-150%);
   pointer-events: none;
-  z-index: 2;
+  z-index: 5;
   mix-blend-mode: screen;
   opacity: 0;
+  transition: none;
 }
-
 .menu a.shine::after {
-  animation: flashSweep 1s ease-in-out;
+  animation: flashSweep 1s ease-in-out forwards;
 }
-
 @keyframes flashSweep {
   0% {
-    transform: translateX(-150%) rotate(15deg);
+    transform: rotate(15deg) translateX(-150%);
     opacity: 0;
   }
   10% {
     opacity: 1;
   }
   50% {
-    transform: translateX(0%) rotate(15deg);
+    transform: rotate(15deg) translateX(0%);
     opacity: 1;
   }
   90% {
     opacity: 0;
   }
   100% {
-    transform: translateX(150%) rotate(15deg);
+    transform: rotate(15deg) translateX(150%);
     opacity: 0;
   }
 }
+
 
 /* ===== Layout chung ===== */
 .panel {
