@@ -1,4 +1,8 @@
 /* ===== Layout chính ===== */
+html {
+  background-color: #1a1414;
+}
+
 .container {
   position: relative;
   z-index: 2;
