@@ -152,8 +152,10 @@ html.light-mode {
   background-color: #f0e6e4;
   }
 body.light-mode {
+  background: #f5efe6; /* <- Đúng theo yêu cầu */
   color: #2e1a1a;
 }
+
 body.light-mode h1 {
   color: #7a3b3b;
   text-shadow: 0 0 2px #b1977788;
