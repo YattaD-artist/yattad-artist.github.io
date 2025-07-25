@@ -52,14 +52,14 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 500px;
-      height: 300px;
+      width: 70vw;
+      height: 60vw;
       transform: translate(-50%, -50%);
       background-image: url('assets/Dat.png');
       background-size: 98px 98px;
-      opacity: 0.3;
+      opacity: 1;
       overflow: hidden;
-      z-index: 2;
+      z-index: 99;
     }
 
     /* === Nhân vật xuất hiện bên trong vùng giới hạn === */
@@ -72,7 +72,7 @@
       top: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      z-index: 3;
+      z-index: 100;
     }
 
     /* === Dòng chữ quay lại trang chủ === */
@@ -84,15 +84,13 @@
       font-family: 'Patrick Hand', cursive;
       font-size: clamp(1.1rem, 2vw, 1.6rem);
       text-decoration: none;
-      color: #fff;
-      z-index: 10;
-      transition: color 0.2s ease, transform 0.2s ease;
+      color: #a19386;
+  transition: color 0.2s;
+  z-index: 10;
     }
     a.back-link:hover {
-      color: #dc3849;
-      transform: scale(1.1);
-    }
-
+  color: #e9282c;
+}
     /* === Hướng dẫn di chuyển === */
     .instruction {
       position: fixed;
