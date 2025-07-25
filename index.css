@@ -260,17 +260,13 @@ body.light-mode .restart-btn {
 }
 
 /* ===== NHÂN VẬT ===== */
-.panel-inner {
-  position: relative;
-}
 #character {
-  position: absolute;
   display: block;
   margin: 5rem auto 0 auto;
   width: 62px;
   height: 62px;
+  position: relative;
   image-rendering: pixelated;
   z-index: 100;
   pointer-events: none;
 }
-
