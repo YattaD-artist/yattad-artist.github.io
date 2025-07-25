@@ -13,7 +13,7 @@ html, body {
   background-color: #1a1414;
   color: #f5efe6;
     position: relative;
-  z-index: 2;
+  z-index: 99;
   margin: 0 auto;
 }
 
@@ -28,6 +28,7 @@ h1 {
   letter-spacing: 1px;
   text-align: left;
   text-shadow: 0 0 4px #40202099;
+  left: 1.5rem;
 }
 
 h2 {
@@ -37,6 +38,7 @@ h2 {
   margin: 12px 0;
   color: #f5efe6;
   text-align: left;
+  left: 3rem;
 }
 
 p {
@@ -45,6 +47,7 @@ p {
   margin: 12px 0;
   color: #f5efe6;
   text-align: left;
+  left: 3rem;
 }
 
 /* ===== LIÊN KẾT ===== */
@@ -56,6 +59,7 @@ a {
   text-decoration: none;
   color: #a19386;
   transition: color 0.2s ease, transform 0.2s ease;
+  left: 3rem;
 }
 
 a.back-link {
