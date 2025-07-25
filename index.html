@@ -6,14 +6,17 @@
   <title>YattaD</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Road+Rage&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans+JP&family=Patrick+Hand&family=Big+Shoulders+Stencil+Text:wght@400&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="index.css" />
 </head>
 <body>
 
-  <!-- Nền pixel -->
-  <div class="background"></div>
+  <!-- Nút chuyển theme -->
+  <button class="theme-toggle" onclick="document.body.classList.toggle('light-mode')">🌓</button>
+
+  <!-- Nền động với các hình vuông -->
+  <div class="floating-pattern" id="floating-pattern"></div>
 
   <!-- Nội dung chính -->
   <div class="container" id="text-container">
@@ -23,10 +26,10 @@
     </header>
 
     <nav class="menu">
-      <a href="about.html">Giới thiệu</a>
-      <a href="illustrations.html">Minh Họa</a>
-      <a href="concepts.html">Thiết kế</a>
-      <a href="comics.html">Truyện Tranh</a>
+      <a href="about.html"><span>Giới thiệu</span></a>
+      <a href="illustrations.html"><span>Minh Họa</span></a>
+      <a href="concepts.html"><span>Thiết kế</span></a>
+      <a href="comics.html"><span>Truyện Tranh</span></a>
     </nav>
   </div>
 
@@ -34,5 +37,20 @@
   <img id="character" src="assets/character/idle/Idle00.png" alt="Vydra" />
 
   <script src="index.js"></script>
+  <script>
+    // Tạo hình vuông bay động
+    const pattern = document.getElementById('floating-pattern');
+    for (let i = 0; i < 25; i++) {
+      const sq = document.createElement('div');
+      sq.className = 'square';
+      sq.style.left = `${Math.random() * 100}vw`;
+      sq.style.top = `${Math.random() * 100}vh`;
+      const size = 20 + Math.random() * 40;
+      sq.style.width = `${size}px`;
+      sq.style.height = `${size}px`;
+      sq.style.animationDuration = `${4 + Math.random() * 6}s`;
+      pattern.appendChild(sq);
+    }
+  </script>
 </body>
 </html>
