@@ -157,6 +157,10 @@ a:hover {
 }
 
 /* ===== LIGHT MODE ===== */
+html.light-mode {
+  background-color: #f0e6e4;
+}
+
 html.light-mode body {
   background: #f5efe6;
   color: #2e1a1a;
@@ -164,20 +168,21 @@ html.light-mode body {
 
 html.light-mode h1 {
   color: #7a3b3b;
+  text-shadow: 0 0 2px #b1977788;
 }
 
-body.light-mode .theme-toggle,
-body.light-mode .social-icons i,
-body.light-mode .toast,
-body.light-mode h1,
-body.light-mode h2,
-body.light-mode p,
-body.light-mode a {
+html.light-mode .theme-toggle,
+html.light-mode .social-icons i,
+html.light-mode .toast,
+html.light-mode h1,
+html.light-mode h2,
+html.light-mode p,
+html.light-mode a {
   color: #2e1a1a;
 }
 
-body.light-mode a:hover,
-body.light-mode .social-icons i:hover {
+html.light-mode a:hover,
+html.light-mode .social-icons i:hover {
   color: #e9282c;
 }
 
