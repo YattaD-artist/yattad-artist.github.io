@@ -259,80 +259,13 @@ body.light-mode .restart-btn {
   color: #2e1a1a;
 }
 
-/* ===== Đọc Truyện ===== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-.deck img {
+/* ===== NHÂN VẬT ===== */
+#character {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  max-height: 85vh;
-  max-width: 85vw;
-  transform: translate(-50%, -50%) scale(0.6);
-  transition: transform 0.5s ease, z-index 0.3s ease;
-  border-radius: 6px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
-  filter: contrast(0.8) brightness(0.8);
+  margin-top: 0.5rem;
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  z-index: 1;
   pointer-events: none;
-}
-.deck img.active {
-  transform: translate(-50%, -50%) scale(1);
-  z-index: 30;
-  filter: none;
-  pointer-events: auto;
-}
-.deck img.left {
-  transform: translate(calc(-150% + 30px), -50%) scale(0.6) rotate(-5deg);
-}
-.deck img.right {
-  transform: translate(calc(50% + 30px), -50%) scale(0.6) rotate(5deg);
-}
-.caption, .close-btn, .restart-btn {
-  font-family: 'Patrick Hand', cursive;
-  z-index: 20;
-}
-.caption {
-  margin-top: 12px;
-  padding: 6px 0;
-  width: 100%;
-  text-align: center;
-  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
-  letter-spacing: 1px;
-  color: inherit;
-}
-.close-btn {
-  position: absolute;
-  top: 20px;
-  right: 28px;
-  font-size: 2em;
-  cursor: pointer;
-  transition: color 0.2s;
-  color: inherit;
-}
-.close-btn:hover {
-  color: #e9282c;
-}
-.restart-btn {
-  position: absolute;
-  right: 30px;
-  bottom: 90px;
-  font-size: clamp(1rem, 2vw, 1.6rem);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: none;
-  color: inherit;
-  transition: background 0.2s;
-}
-.restart-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
 }
