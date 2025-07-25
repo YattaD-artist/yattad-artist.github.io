@@ -10,7 +10,6 @@
 
   <!-- ===== Kiểu dáng toàn trang ===== -->
   <style>
-    /* === Reset và thiết lập chung === */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -24,7 +23,6 @@
       font-family: 'Noto Sans', sans-serif;
     }
 
-    /* === Nền động: hình vuông trôi toàn trang === */
     .floating-pattern {
       position: fixed;
       inset: 0;
@@ -47,11 +45,11 @@
       100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
     }
 
-    /* === Vùng giới hạn nhân vật: có nền Dat.png === */
     .limit-area {
       position: absolute;
       top: 50%;
       left: 50%;
+      transform: translate(-50%, -50%); /* ✅ Dịch tâm */
       width: 70vw;
       height: 60vw;
       background-image: url('assets/Dat.png');
@@ -60,7 +58,6 @@
       z-index: 99;
     }
 
-    /* === Nhân vật xuất hiện bên trong vùng giới hạn === */
     #character {
       width: 62px;
       height: 62px;
@@ -73,7 +70,6 @@
       z-index: 100;
     }
 
-    /* === Dòng chữ quay lại trang chủ === */
     a.back-link {
       position: fixed;
       bottom: 24px;
@@ -83,13 +79,13 @@
       font-size: clamp(1.1rem, 2vw, 1.6rem);
       text-decoration: none;
       color: #a19386;
-  transition: color 0.2s;
-  z-index: 100;
+      transition: color 0.2s;
+      z-index: 100;
     }
     a.back-link:hover {
-  color: #e9282c;
-}
-    /* === Hướng dẫn di chuyển === */
+      color: #e9282c;
+    }
+
     .instruction {
       position: fixed;
       bottom: 12px;
@@ -111,30 +107,25 @@
 </head>
 
 <body>
-  <!-- === Nền hiệu ứng hình vuông động === -->
   <div class="floating-pattern" id="floating-pattern"></div>
 
-  <!-- === Vùng giới hạn có nền riêng và nhân vật bên trong === -->
-  <div class="limit-area">
+  <div class="limit-area" id="limit-area">
     <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
   </div>
 
-  <!-- === Liên kết quay lại === -->
   <a href="index.html" class="back-link">← Quay lại trang chủ</a>
 
-  <!-- === Hướng dẫn sử dụng phím === -->
   <div class="instruction" id="instruction">
     ⬅️ ⬆️ ⬇️ ➡️ để di chuyển · Giữ phím <kbd>Space</kbd> để chạy
   </div>
 
-  <!-- === Script: Di chuyển nhân vật và hiệu ứng nền === -->
   <script>
-    // ========== CẤU HÌNH NHÂN VẬT ==========
     const character = document.getElementById('character');
     const instruction = document.getElementById('instruction');
+    const limitArea = document.getElementById('limit-area');
     const frameSize = 62;
 
-    let pos = { x: 219, y: 119 }; // Vị trí khởi đầu
+    let pos = { x: 219, y: 119 };
     let direction = '';
     let moveFrame = 0;
     let idleFrame = 0;
@@ -144,7 +135,17 @@
     const keysHeld = new Set();
     let instructionHidden = false;
 
-    const limit = { width: 500, height: 300 };
+    let limit = { width: 0, height: 0 };
+
+    function updateLimit() {
+      limit = {
+        width: limitArea.clientWidth,
+        height: limitArea.clientHeight
+      };
+    }
+
+    window.addEventListener('resize', updateLimit);
+    updateLimit();
 
     const speedPerFrame = {
       walk: 2,
@@ -164,7 +165,6 @@
       'ArrowRight': { dx: 1, dy: 0,  dir: 'R' }
     };
 
-    // ========== TẢI TRƯỚC HÌNH ẢNH NHÂN VẬT ==========
     const preloadImages = (callback) => {
       const folders = { Idle: 16, Walk: 16, Run: 8 };
       const directions = ['', 'U', 'L', 'R'];
@@ -189,7 +189,6 @@
       }
     };
 
-    // ========== CẬP NHẬT HÌNH SPRITE ==========
     const updateSprite = () => {
       const folder = state.charAt(0).toUpperCase() + state.slice(1);
       const baseName = folder + direction;
@@ -198,7 +197,6 @@
       character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
     };
 
-    // ========== VÒNG LẶP CHẠY GAME ==========
     let lastFrameTime = 0;
     let animTimer = 0;
 
@@ -231,7 +229,7 @@
         state = spacePressed ? 'run' : 'walk';
         const speed = speedPerFrame[state];
 
-        // Giới hạn di chuyển trong vùng limit-area
+        // ✅ Giới hạn theo kích thước thực của vùng limit-area
         pos.x = Math.max(0, Math.min(limit.width - frameSize, pos.x + dx * speed));
         pos.y = Math.max(0, Math.min(limit.height - frameSize, pos.y + dy * speed));
 
@@ -256,7 +254,6 @@
       requestAnimationFrame(gameLoop);
     };
 
-    // ========== LẮNG NGHE PHÍM NHẤN ==========
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space') spacePressed = true;
       if (keyToVector[e.key]) {
@@ -273,7 +270,6 @@
       }
     });
 
-    // ========== KHỞI ĐỘNG ==========
     character.style.left = pos.x + 'px';
     character.style.top = pos.y + 'px';
 
@@ -282,7 +278,6 @@
       requestAnimationFrame(gameLoop);
     });
 
-    // ========== HIỆU ỨNG NỀN: TẠO HÌNH VUÔNG TRÔI ==========
     (function createFloatingSquares() {
       const container = document.getElementById('floating-pattern');
       const count = 60;
