@@ -102,13 +102,6 @@ const dirVectors = {
 const character = document.getElementById("character");
 const textContainer = document.getElementById("text-container");
 
-let posX = window.innerWidth / 2;
-let posY = window.innerHeight / 2 + 100;
-character.style.left = `${posX}px`;
-character.style.top = `${posY}px`;
-character.style.width = `${frameSize}px`;
-character.style.height = `${frameSize}px`;
-
 function preloadImages(callback) {
   const folders = ["Idle", "Walk", "Run"];
   const counts = { "Idle": 16, "Walk": 16, "Run": 8 };
