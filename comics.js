@@ -37,6 +37,7 @@
     el.style.marginLeft = `${Math.random() * 40 - 20}px`;
     el.style.marginTop = `${Math.random() * 30 - 15}px`;
   });
+
   // Hover tạm dừng
   menu.addEventListener('mousemove', (e) => {
     items.forEach((el) => {
