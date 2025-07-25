@@ -135,12 +135,12 @@ a[data-shard="5"] {
 }
 
 /* ========== FLASH SWEEP EFFECT ========== */
-.menu::after {
+.menu a::after {
   content: '';
   position: absolute;
   top: -200%;
-  left: -150%;
-  width: 400%;
+  left: -100%;
+  width: 300%;
   height: 400%;
   background: linear-gradient(
     75deg,
@@ -150,20 +150,17 @@ a[data-shard="5"] {
     transparent 55%
   );
   transform: rotate(15deg);
-  opacity: 0;
   pointer-events: none;
-  z-index: 20;
+  z-index: 2;
   mix-blend-mode: screen;
-  clip-path: polygon(
-    0 0, 100% 0, 100% 100%, 0 100%
-  ); /* sẽ bị mask lại bằng layer bên dưới */
+  opacity: 0;
 }
 
-.menu.shine::after {
-  animation: menuSweep 1s ease-in-out;
+.menu a.shine::after {
+  animation: flashSweep 1s ease-in-out;
 }
 
-@keyframes menuSweep {
+@keyframes flashSweep {
   0% {
     transform: translateX(-150%) rotate(15deg);
     opacity: 0;
