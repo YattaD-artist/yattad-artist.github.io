@@ -33,8 +33,6 @@ h1 {
 }
 
 /* ===== MENU CHÍNH ===== */
-
-/* ========== MENU CONTAINER ========== */
 .menu {
   position: relative;
   display: flex;
@@ -61,8 +59,6 @@ h1 {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  animation: floatY 4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.3s);
   backdrop-filter: blur(1px);
   opacity: 0.95;
 }
@@ -86,14 +82,56 @@ h1 {
   box-shadow: 0 0 12px #e9282caa;
 }
 
-/* ========== FLOATING ANIMATION ========== */
-@keyframes floatY {
-  0%, 100% {
-    transform: translateY(0) rotate(45deg);
-  }
-  50% {
-    transform: translateY(-6px) rotate(45deg);
-  }
+/* ========== FLOATING ANIMATION KEYFRAMES ========== */
+@keyframes floatY0 {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(-6px) rotate(45deg); }
+}
+@keyframes floatY1 {
+  0%, 100% { transform: translateX(0) rotate(45deg); }
+  50% { transform: translateX(6px) rotate(45deg); }
+}
+@keyframes floatY2 {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(-4px, -4px) rotate(45deg); }
+}
+@keyframes floatY3 {
+  0%, 100% { transform: rotate(45deg) scale(1); }
+  50% { transform: rotate(45deg) scale(1.05); }
+}
+@keyframes floatY4 {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(8px) rotate(45deg); }
+}
+@keyframes floatY5 {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(-8px) scale(1.03); }
+}
+
+/* ========== GÁN ANIMATION THEO SHARD ========== */
+a[data-shard="0"] {
+  animation: floatY0 4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+}
+a[data-shard="1"] {
+  animation: floatY1 5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+a[data-shard="2"] {
+  animation: floatY2 6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.25s);
+}
+a[data-shard="3"] {
+  animation: floatY3 4.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.35s);
+}
+a[data-shard="4"] {
+  animation: floatY4 3.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+a[data-shard="5"] {
+  animation: floatY5 5.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.15s);
 }
 
 /* ===== Layout chung ===== */
