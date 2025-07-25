@@ -154,12 +154,10 @@ a[data-shard="5"] {
   z-index: 2;
   mix-blend-mode: screen;
   opacity: 0;
-  animation: flashSweep 1s ease-in-out;
-  animation-play-state: paused;
 }
 
 .menu a.shine::after {
-  animation-play-state: running;
+  animation: flashSweep 1s ease-in-out;
 }
 
 @keyframes flashSweep {
@@ -182,7 +180,6 @@ a[data-shard="5"] {
     opacity: 0;
   }
 }
-
 
 /* ===== Layout chung ===== */
 .panel {
