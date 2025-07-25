@@ -4,11 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thử Nghiệm</title>
-
-  <!-- ===== Font sử dụng ===== -->
   <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet" />
-
-  <!-- ===== Kiểu dáng toàn trang ===== -->
   <style>
     * {
       box-sizing: border-box;
@@ -45,45 +41,42 @@
       100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
     }
 
-  .limit-area {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100vmin;
-  height: 80vmin;
-  background-image: url('assets/Dat.png');
-  background-size: 62px 62px;
-  background-repeat: repeat;
-  background-position: 0 0;
-  overflow: hidden;
-  z-index: 99;
+    .limit-area {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100vmin;
+      height: 80vmin;
+      background-image: url('assets/Dat.png');
+      background-size: 62px 62px;
+      background-repeat: repeat;
+      background-position: 0 0;
+      overflow: hidden;
+      z-index: 99;
+      box-shadow:
+        0 0 0 10px #444,
+        0 0 0 14px #222 inset,
+        0 0 20px #000;
+      border: 1px solid #666;
+    }
+    .limit-area::before {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border: 4px solid #3a3a3a;
+      box-shadow: inset 0 0 8px #000;
+      pointer-events: none;
+    }
 
-  /* Tường bao chính */
-  box-shadow:
-    0 0 0 10px #444,        /* lớp bê tông chính */
-    0 0 0 14px #222 inset,  /* bóng đổ bên trong */
-    0 0 20px #000;          /* bóng ngoài mờ */
-  border: 1px solid #666;   /* viền tăng độ rõ */
-}
-.limit-area::before {
-  content: "";
-  position: absolute;
-  inset: -16px;
-  border: 4px solid #3a3a3a;
-  box-shadow: inset 0 0 8px #000;
-  pointer-events: none;
-}
-
-   #character {
-  width: 62px;
-  height: 62px;
-  image-rendering: pixelated;
-  position: absolute;
-  pointer-events: none;
-  z-index: 100;
-  /* Loại bỏ translate vì ta sẽ căn thủ công bằng JS */
-}
+    #character {
+      width: 62px;
+      height: 62px;
+      image-rendering: pixelated;
+      position: absolute;
+      pointer-events: none;
+      z-index: 100;
+    }
 
     a.back-link {
       position: fixed;
@@ -153,31 +146,22 @@
     let limit = { width: 0, height: 0 };
 
     function updateLimit() {
-  limit = {
-    width: limitArea.clientWidth,
-    height: limitArea.clientHeight
-  };
+      limit.width = limitArea.clientWidth;
+      limit.height = limitArea.clientHeight;
 
-  // Đặt nhân vật vào giữa giới hạn
-  pos.x = (limit.width - frameSize) / 2;
-  pos.y = (limit.height - frameSize) / 2;
+      // Giữ nhân vật ở trung tâm khi khởi tạo
+      pos.x = (limit.width - frameSize) / 2;
+      pos.y = (limit.height - frameSize) / 2;
+      updateCharacterPosition();
+    }
 
-  character.style.left = pos.x + 'px';
-  character.style.top = pos.y + 'px';
-}
+    function updateCharacterPosition() {
+      character.style.left = pos.x + 'px';
+      character.style.top = pos.y + 'px';
+    }
 
-    window.addEventListener('resize', updateLimit);
-
-    const speedPerFrame = {
-      walk: 2,
-      run: 4
-    };
-
-    const frameRates = {
-      idle: 200,
-      walk: 100,
-      run: 80
-    };
+    const speedPerFrame = { walk: 2, run: 4 };
+    const frameRates = { idle: 200, walk: 100, run: 80 };
 
     const keyToVector = {
       'ArrowUp':    { dx: 0, dy: -1, dir: 'U' },
@@ -253,8 +237,7 @@
         pos.x = Math.max(0, Math.min(limit.width - frameSize, pos.x + dx * speed));
         pos.y = Math.max(0, Math.min(limit.height - frameSize, pos.y + dy * speed));
 
-        character.style.left = pos.x + 'px';
-        character.style.top = pos.y + 'px';
+        updateCharacterPosition();
 
         if (animTimer >= frameRates[state]) {
           moveFrame++;
@@ -317,6 +300,7 @@
       }
     })();
 
+    window.addEventListener('resize', updateLimit);
 
     preloadImages(() => {
       updateLimit();
