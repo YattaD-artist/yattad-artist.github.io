@@ -261,11 +261,12 @@ body.light-mode .restart-btn {
 
 /* ===== NHÂN VẬT ===== */
 #character {
-  position: absolute;
-  margin-top: 0.5rem;
+  display: block;
+  margin: 3rem auto 0 auto;
   width: 62px;
   height: 62px;
   image-rendering: pixelated;
-  z-index: 1;
+  z-index: 5;
   pointer-events: none;
 }
+
