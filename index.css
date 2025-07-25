@@ -42,8 +42,8 @@ h2 {
   color: inherit;
   z-index: 5;
   position: relative;
+  white-space: pre-line;
 }
-
 /* ===== MENU CHÍNH ===== */
 .menu {
   position: relative;
