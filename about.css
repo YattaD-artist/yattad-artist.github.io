@@ -19,6 +19,7 @@ html, body {
 
 /* ===== TIÊU ĐỀ ===== */
 h1 {
+  position: relative;
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 700;
@@ -32,6 +33,7 @@ h1 {
 }
 
 h2 {
+    position: relative;
   font-family: 'Amatic SC', cursive;
   font-weight: 700;
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
@@ -42,6 +44,7 @@ h2 {
 }
 
 p {
+    position: relative;
   font-family: 'Patrick Hand', cursive;
   font-size: clamp(1rem, 2vw, 1.4rem);
   margin: 12px 0;
@@ -52,6 +55,7 @@ p {
 
 /* ===== LIÊN KẾT ===== */
 a {
+    position: relative;
   display: inline-block;
   margin-top: 24px;
   font-family: 'Patrick Hand', cursive;
