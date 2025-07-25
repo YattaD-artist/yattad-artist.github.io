@@ -73,6 +73,7 @@ h2 {
   cursor: pointer;
   backdrop-filter: blur(1px);
   opacity: 0.95;
+  text-decoration: none; 
 }
 
 /* ========== TEXT BÊN TRONG ITEM ========== */
@@ -82,8 +83,6 @@ h2 {
   font-size: 2rem;
   text-align: center;
   padding: 0 0.5rem;
-color: #f5efe6;          /* ⚠️ Gán rõ ràng */
-  text-decoration: none; 
   z-index: 1;
   position: relative;
 }
