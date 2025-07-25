@@ -57,17 +57,15 @@
       z-index: 99;
     }
 
-    #character {
-      width: 62px;
-      height: 62px;
-      image-rendering: pixelated;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      z-index: 100;
-    }
+   #character {
+  width: 62px;
+  height: 62px;
+  image-rendering: pixelated;
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  /* Loại bỏ translate vì ta sẽ căn thủ công bằng JS */
+}
 
     a.back-link {
       position: fixed;
@@ -137,17 +135,18 @@
     let limit = { width: 0, height: 0 };
 
     function updateLimit() {
-      limit = {
-        width: limitArea.clientWidth,
-        height: limitArea.clientHeight
-      };
+  limit = {
+    width: limitArea.clientWidth,
+    height: limitArea.clientHeight
+  };
 
-      // Đặt nhân vật ở giữa giới hạn
-      pos.x = (limit.width - frameSize) / 2;
-      pos.y = (limit.height - frameSize) / 2;
-      character.style.left = pos.x + 'px';
-      character.style.top = pos.y + 'px';
-    }
+  // Đặt nhân vật vào giữa giới hạn
+  pos.x = (limit.width - frameSize) / 2;
+  pos.y = (limit.height - frameSize) / 2;
+
+  character.style.left = pos.x + 'px';
+  character.style.top = pos.y + 'px';
+}
 
     window.addEventListener('resize', updateLimit);
 
@@ -299,6 +298,7 @@
         container.appendChild(sq);
       }
     })();
+
 
     preloadImages(() => {
       updateLimit();
