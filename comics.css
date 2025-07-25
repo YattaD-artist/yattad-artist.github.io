@@ -155,7 +155,7 @@ a[data-shard="5"] {
   mix-blend-mode: screen;
   opacity: 0;
   animation: flashSweep 10s ease-in-out infinite;
-  animation-delay: calc(10+var(--i) * 1.2s); /* hoặc dùng 0s nếu muốn toàn bộ quét cùng lúc */
+  animation-delay: calc(10+var(--i) * 2s);
 }
 
 /* ========== FLASH SWEEP KEYFRAMES ========== */
