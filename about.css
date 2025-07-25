@@ -1,0 +1,137 @@
+.background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-image: url('assets/Dat.png');
+  background-size: 98px 98px;
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding-top: 24px;
+  width: 80vw;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Road Rage', cursive;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: normal;
+  margin-bottom: 24px;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+h2 {
+  font-family: 'Noto Sans', cursive;
+  font-size: clamp(1rem, 3vw, 2rem);
+  margin: 12px 0;
+  color: #333;
+  font-weight: normal;
+}
+
+p {
+  font-family: 'Patrick Hand', cursive;
+  font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+  margin: 12px 0;
+  color: #333;
+}
+
+a {
+  display: inline-block;
+  margin-top: 32px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  text-decoration: none;
+  color: #000;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+a.back-link {
+  color: #111;
+}
+
+a:hover {
+  color: #dc3849;
+  transform: scale(1.1);
+}
+
+#character {
+  width: 62px;
+  height: 62px;
+  position: absolute;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 5;
+  left: 4vw;
+}
+
+.instruction {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Noto Sans', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  color: rgba(50, 50, 50, 0.4);
+  background: rgba(255, 255, 255, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.instruction.hidden {
+  opacity: 0;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+.social-icons a {
+  text-decoration: none;
+}
+
+.social-icons i {
+  font-size: 28px;
+  color: #000;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icons i:hover {
+  color: #dc3849;
+  transform: scale(1.2);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #222;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.95rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1001;
+  transform: translateY(20px);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
