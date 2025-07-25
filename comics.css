@@ -139,13 +139,13 @@ a[data-shard="5"] {
   content: '';
   position: absolute;
   top: -200%;
-  left: -100%;
-  width: 300%;
+  left: -150%;
+  width: 400%;
   height: 400%;
   background: linear-gradient(
     75deg,
     transparent 0%,
-    rgba(255,255,255,0.8) 45%,
+    rgba(255,255,255,0.9) 45%,
     rgba(255,255,255,0.2) 50%,
     transparent 55%
   );
@@ -157,7 +157,7 @@ a[data-shard="5"] {
 }
 
 .menu a.shine::after {
-  animation: flashSweep 1s ease-in-out;
+  animation: flashSweep 1s ease-in-out forwards;
 }
 
 @keyframes flashSweep {
@@ -180,6 +180,7 @@ a[data-shard="5"] {
     opacity: 0;
   }
 }
+
 
 /* ===== Layout chung ===== */
 .panel {
