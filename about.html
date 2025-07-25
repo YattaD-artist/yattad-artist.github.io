@@ -5,199 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Giới thiệu</title>
 
-  <!-- Bộ font và logo -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Noto+Sans&family=Patrick+Hand&family=Road+Rage:wght@400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css">
-  
-  <style>
-
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background-image: url('assets/Dat.png');
-      background-size: 98px 98px;
-      opacity: 0.3;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-   .container {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-      padding-top: 24px;
-      width: 80vw;
-      margin: 0 auto;
-    }
-
-    h1 {
-      font-family: 'Road Rage', cursive;
-      font-size: clamp(3rem, 7vw, 6rem);
-      font-weight: normal;
-      margin-bottom: 24px;
-      color: #111;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-h2 {
-  font-family: 'Noto Sans', cursive;
-  font-size: clamp(1rem, 3vw, 2rem);
-  margin: 12px 0;
-  color: #333;
-  font-weight: normal;
-}
-
-    p {
-      font-family: 'Patrick Hand', cursive;
-      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
-      margin: 12px 0;
-      color: #333;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 32px;
-      font-family: 'Patrick Hand', cursive;
-      font-size: clamp(1.1rem, 2vw, 1.6rem);
-      text-decoration: none;
-      color: #000;
-      transition: color 0.2s ease, transform 0.2s ease;
-    }
-
-   a.back-link {
-  display: inline-block;
-  margin-top: 32px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: clamp(1.1rem, 2vw, 1.6rem);
-  text-decoration: none;
-  color: #111;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-a:hover {
-  color: #dc3849;
-  transform: scale(1.1);
-}
-
-
-    #character {
-      width: 62px;
-      height: 62px;
-      position: absolute;
-      image-rendering: pixelated;
-      pointer-events: none;
-      z-index: 5;
-      left: 4vw;
-    }
-
-    .instruction {
-      position: fixed;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Noto Sans', sans-serif;
-      font-size: clamp(1rem, 2vw, 1.4rem);
-      color: rgba(50, 50, 50, 0.4);
-      background: rgba(255, 255, 255, 0.3);
-      padding: 6px 12px;
-      border-radius: 8px;
-      z-index: 10;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-    }
-
-    .instruction.hidden {
-      opacity: 0;
-    }
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin: 16px 0; /* tạo khoảng giữa h1 và h2 */
-}
-
-.social-icons a {
-  text-decoration: none;
-}
-
-.social-icons i {
-  font-size: 28px;
-  color: #000;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.social-icons i:hover {
-  color: #dc3849;
-  transform: scale(1.2);
-}
-
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: #222;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-family: 'Noto Sans', sans-serif;
-  font-size: 0.95rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1001;
-  transform: translateY(20px);
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-  </style>
+  <link rel="stylesheet" href="about.css" />
 </head>
 
 <body>
   <div class="background"></div>
 
   <div class="container" id="text-container">
-        <header>
+    <header>
+      <h1>Về tôi</h1>
 
-    <h1>Về tôi</h1>
+      <!-- Icon mạng xã hội -->
+      <div class="social-icons">
+        <a href="https://www.facebook.com/Fb.YattaD/" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/yattad.art/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="javascript:void(0);" onclick="copyToClipboard('Yattad')" aria-label="Discord">
+          <i class="fab fa-discord"></i>
+        </a>
+        <a href="javascript:void(0);" onclick="copyToClipboard('Yattadwork@gmail.com')" aria-label="Gmail">
+          <i class="fab fa-google"></i>
+        </a>
+      </div>
 
-          <!-- Hàng icon -->
-<div class="social-icons">
-  <a href="https://www.facebook.com/Fb.YattaD/" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-    <i class="fab fa-facebook"></i>
-  </a>
-  <a href="https://www.instagram.com/yattad.art/" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
-    <i class="fab fa-instagram"></i>
-  </a>
-  <a href="javascript:void(0);" onclick="copyToClipboard('Yattad')" aria-label="Discord">
-    <i class="fab fa-discord"></i>
-  </a>
-  <a href="javascript:void(0);" onclick="copyToClipboard('Yattadwork@gmail.com')" aria-label="Gmail">
-    <i class="fab fa-google"></i>
-  </a>
-</div>
-       <h2><strong>Họ và Tên:</strong> Ngô Xuân Đạt</h2>   
-<h2><strong>Năm sinh:</strong> 1998</h2>
-<h2><strong>Giới tính:</strong> Nam</h2>
-<h2><strong>Quốc tịch:</strong> Việt Nam</h2>
-<h2><strong>Sở thích:</strong> Mĩ Thuật, Biên Kịch, Học hỏi điều mới</h2>
-<h2><strong>Công việc:</strong> Freelancer <strong>Artist</strong></h2>
-<h2><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại <strong>Đại học Kiến Trúc Hà Nội</strong></h2>
-              </header>
-    
- <a href="index.html">← Quay lại trang chủ</a>
+      <h2><strong>Họ và Tên:</strong> Ngô Xuân Đạt</h2>   
+      <h2><strong>Năm sinh:</strong> 1998</h2>
+      <h2><strong>Giới tính:</strong> Nam</h2>
+      <h2><strong>Quốc tịch:</strong> Việt Nam</h2>
+      <h2><strong>Sở thích:</strong> Mĩ Thuật, Biên Kịch, Học hỏi điều mới</h2>
+      <h2><strong>Công việc:</strong> Freelancer <strong>Artist</strong></h2>
+      <h2><strong>Học vấn:</strong> Tốt nghiệp khoa Quy hoạch tại <strong>Đại học Kiến Trúc Hà Nội</strong></h2>
+    </header>
+
+    <a href="index.html" class="back-link">← Quay lại trang chủ</a>
   </div>
-  
 
-<!-- Toast thông báo copy -->
-<div id="toast" class="toast">Đã sao chép!</div>
+  <div id="toast" class="toast">Đã sao chép!</div>
 
   <img id="character" src="assets/character/Idle/Idle00.png" alt="Vydra" />
 
@@ -205,180 +55,6 @@ a:hover {
     ⬅️ ⬆️ ⬇️ ➡️ để di chuyển · Giữ phím <kbd>Space</kbd> để chạy
   </div>
 
-  <script>
-    const character = document.getElementById('character');
-    const instruction = document.getElementById('instruction');
-    const frameSize = 62;
-    const textContainer = document.getElementById('text-container');
-    let pos = {
-      x: window.innerWidth * 0.04, // nhân vật ở bên trái
-      y: textContainer.getBoundingClientRect().bottom + 20
-    };
-
-    let direction = '';
-    let moveFrame = 0;
-    let idleFrame = 0;
-    let state = 'idle';
-    let spacePressed = false;
-    let lastDirection = '';
-    const keysHeld = new Set();
-    let instructionHidden = false;
-
-    const speedPerFrame = {
-      walk: 2,
-      run: 4
-    };
-
-    const frameRates = {
-      idle: 200,
-      walk: 100,
-      run: 80
-    };
-
-    const keyToVector = {
-      'ArrowUp':    { dx: 0, dy: -1, dir: 'U' },
-      'ArrowDown':  { dx: 0, dy: 1,  dir: '' },
-      'ArrowLeft':  { dx: -1, dy: 0, dir: 'L' },
-      'ArrowRight': { dx: 1, dy: 0,  dir: 'R' }
-    };
-
-    const preloadImages = (callback) => {
-      const folders = { Idle: 16, Walk: 16, Run: 8 };
-      const directions = ['', 'U', 'L', 'R'];
-      let loaded = 0;
-      let total = 0;
-
-      for (const folder in folders) {
-        for (const dir of directions) {
-          const count = folders[folder];
-          for (let i = 0; i < count; i++) {
-            const frameStr = folder === 'Run' ? `${i}` : i.toString().padStart(2, '0');
-            const src = `assets/character/${folder}/${folder}${dir}${frameStr}.png`;
-            const img = new Image();
-            img.src = src;
-            img.onload = img.onerror = () => {
-              loaded++;
-              if (loaded === total) callback();
-            };
-            total++;
-          }
-        }
-      }
-    };
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    showToast(`Đã sao chép: ${text}`);
-  });
-}
-
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.style.opacity = 1;
-  setTimeout(() => {
-    toast.style.opacity = 0;
-  }, 2000);
-}
-
-    const updateSprite = () => {
-      const folder = state.charAt(0).toUpperCase() + state.slice(1);
-      const baseName = folder + direction;
-      const frameStr = (state === 'run') ? `${moveFrame % 8}` :
-                       (state === 'idle' ? idleFrame : moveFrame % 16).toString().padStart(2, '0');
-      character.src = `assets/character/${folder}/${baseName}${frameStr}.png`;
-    };
-
-    let lastFrameTime = 0;
-    let animTimer = 0;
-
-    const gameLoop = (timestamp) => {
-      const delta = timestamp - lastFrameTime;
-      lastFrameTime = timestamp;
-      animTimer += delta;
-
-      let moved = false;
-      let dx = 0, dy = 0;
-
-      for (let key of keysHeld) {
-        if (keyToVector[key]) {
-          const vec = keyToVector[key];
-          dx = vec.dx;
-          dy = vec.dy;
-          direction = vec.dir;
-          lastDirection = direction;
-          moved = true;
-          break;
-        }
-      }
-
-      if (moved) {
-        if (!instructionHidden) {
-          instruction.classList.add('hidden');
-          instructionHidden = true;
-        }
-
-        state = spacePressed ? 'run' : 'walk';
-        const speed = speedPerFrame[state];
-        pos.x += dx * speed;
-        pos.y += dy * speed;
-        character.style.left = pos.x + 'px';
-        character.style.top = pos.y + 'px';
-
-        const frameInterval = frameRates[state];
-        if (animTimer >= frameInterval) {
-          moveFrame++;
-          updateSprite();
-          animTimer = 0;
-        }
-      } else {
-        state = 'idle';
-        direction = lastDirection;
-        if (animTimer >= frameRates.idle) {
-          idleFrame = (idleFrame + 1) % 16;
-          updateSprite();
-          animTimer = 0;
-        }
-      }
-
-      requestAnimationFrame(gameLoop);
-    };
-
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') spacePressed = true;
-      if (keyToVector[e.key]) {
-        keysHeld.add(e.key);
-        e.preventDefault();
-      }
-    });
-
-    window.addEventListener('keyup', (e) => {
-      if (e.code === 'Space') spacePressed = false;
-      if (keyToVector[e.key]) {
-        keysHeld.delete(e.key);
-        e.preventDefault();
-      }
-    });
-
-    character.style.left = pos.x + 'px';
-    character.style.top = pos.y + 'px';
-
-    preloadImages(() => {
-      updateSprite();
-      requestAnimationFrame(gameLoop);
-    });
-
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-
-  // Tự ẩn sau 2s
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 2000);
-}
-
-
-  </script>
+  <script src="about.js"></script>
 </body>
 </html>
