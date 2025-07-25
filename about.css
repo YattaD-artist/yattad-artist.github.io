@@ -1,7 +1,7 @@
 /* ===== Layout chính ===== */
 html, body {
   margin: 0;
-  padding: 0;
+  padding: 3rem;
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
@@ -19,7 +19,6 @@ html, body {
 
 /* ===== TIÊU ĐỀ ===== */
 h1 {
-  position: relative;
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 700;
@@ -29,33 +28,27 @@ h1 {
   letter-spacing: 1px;
   text-align: left;
   text-shadow: 0 0 4px #40202099;
-  left: 1.5rem;
 }
 
 h2 {
-    position: relative;
   font-family: 'Amatic SC', cursive;
   font-weight: 700;
   font-size: clamp(1.2rem, 2.5vw, 1.8rem);
   margin: 12px 0;
   color: #f5efe6;
   text-align: left;
-  left: 3rem;
 }
 
 p {
-    position: relative;
   font-family: 'Patrick Hand', cursive;
   font-size: clamp(1rem, 2vw, 1.4rem);
   margin: 12px 0;
   color: #f5efe6;
   text-align: left;
-  left: 3rem;
 }
 
 /* ===== LIÊN KẾT ===== */
 a {
-    position: relative;
   display: inline-block;
   margin-top: 24px;
   font-family: 'Patrick Hand', cursive;
@@ -63,7 +56,6 @@ a {
   text-decoration: none;
   color: #a19386;
   transition: color 0.2s ease, transform 0.2s ease;
-  left: 3rem;
 }
 
 a.back-link {
