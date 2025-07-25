@@ -262,6 +262,7 @@ body.light-mode .restart-btn {
 /* ===== NHÂN VẬT ===== */
 
 #character {
+  position: absolute;
   display: block;
   margin: 5rem auto 0 auto;
   width: 62px;
