@@ -1,4 +1,4 @@
-// app.js
+// concepts.js
 const express = require('express');
 const multer  = require('multer');
 const fs = require('fs');
@@ -7,30 +7,30 @@ const path = require('path');
 const app = express();
 const UPLOAD_DIR = path.join(__dirname, 'Concepts');
 
-// đảm bảo thư mục tồn tại
-if (!fs.existsSync(UPLOAD_DIR)){
+// Tạo thư mục nếu chưa có
+if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR);
 }
 
-// cấu hình multer
+// Cấu hình lưu file
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
-    // lưu tên theo grid index: ví dụ index_05.webp
-    cb(null, file.originalname);
+    cb(null, file.originalname); // giữ nguyên tên file khi upload
   }
 });
 const upload = multer({ storage });
 
-app.use(express.static('public'));       // serve front-end trong /public
-app.use('/Concepts', express.static(UPLOAD_DIR));  // serve ảnh upload
+// Phục vụ file tĩnh
+app.use(express.static(__dirname));
+app.use('/Concepts', express.static(UPLOAD_DIR));
 
-// endpoint upload
+// API tải ảnh lên
 app.post('/upload', upload.single('image'), (req, res) => {
   res.json({ success: true, filename: req.file.filename });
 });
 
-// endpoint trả về danh sách ảnh
+// API trả về danh sách ảnh đã upload
 app.get('/images', (req, res) => {
   fs.readdir(UPLOAD_DIR, (err, files) => {
     if (err) return res.status(500).json({ error: err });
@@ -38,5 +38,7 @@ app.get('/images', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server chạy tại http://localhost:${PORT}`));
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Đã chạy tại http://localhost:${PORT}`);
+});
