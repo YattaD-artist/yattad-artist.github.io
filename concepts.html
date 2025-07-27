@@ -271,25 +271,7 @@
     if (e.key === 'Escape') hideLightbox();
   });
 
-  // ========== Tải ảnh đã upload ==========
-  async function loadUploadedImages() {
-    try {
-      const res = await fetch('/images');
-      const files = await res.json();
-      files.forEach(name => {
-        const el = document.querySelector(`.grid-item[data-caption="${name}"]`);
-        if (el) {
-          el.style.backgroundImage = `url('/Concepts/${name}')`;
-        }
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  loadUploadedImages();
-
-  // ========== Đổi theme ==========
+    // ========== Đổi theme ==========
   const themeToggle = document.getElementById('themeToggle');
   const themeIcon = themeToggle.querySelector('i');
 
@@ -318,6 +300,24 @@
 
   applySavedTheme();
 
+  // ========== Tải ảnh đã upload ==========
+  async function loadUploadedImages() {
+    try {
+      const res = await fetch('/images');
+      const files = await res.json();
+      files.forEach(name => {
+        const el = document.querySelector(`.grid-item[data-caption="${name}"]`);
+        if (el) {
+          el.style.backgroundImage = `url('/Concepts/${name}')`;
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  loadUploadedImages();
+
   // ========== Unlock mật khẩu ==========
   const unlockBtn = document.getElementById('unlockBtn');
   const pwdModal = document.getElementById('pwdModal');
@@ -345,49 +345,61 @@
   });
 
   // ========== Thêm nút Upload ==========
+async function loadUploadedImages() {
+    const res = await fetch('/images');
+    const files = await res.json();
+    files.forEach((name, i) => {
+      if (gridCells[i]) {
+        gridCells[i].dataset.caption = name;
+        gridCells[i].style.backgroundImage = `url('/Concepts/${name}')`;
+        gridCells[i].addEventListener('click', () => showLightbox(name));
+      }
+    });
+  }
+
+  function showLightbox(name) {
+    lightboxImg.src = `/Concepts/${name}`;
+    lightbox.style.display = 'flex';
+  }
+
+  loadUploadedImages();
+
+  
+   // ========== Upload nút ==========
   function addUploadButtons() {
-    document.querySelectorAll('.grid-item').forEach((cell, idx) => {
+    gridCells.forEach((cell, idx) => {
       if (cell.querySelector('.upload-btn')) return;
       const btn = document.createElement('button');
       btn.className = 'upload-btn';
       btn.textContent = 'Upload';
-      btn.style.position = 'absolute';
-      btn.style.bottom = '8px';
-      btn.style.right = '8px';
-      btn.style.zIndex = '5';
+      Object.assign(btn.style, {
+        position: 'absolute', bottom: '8px', right: '8px', zIndex: 5
+      });
       btn.addEventListener('click', e => {
         e.stopPropagation();
-        openFileDialog(idx);
+        openFileDialog(cell);
       });
       cell.appendChild(btn);
     });
   }
 
   // ========== Mở hộp thoại chọn ảnh và upload ==========
-  function openFileDialog(idx) {
+  function openFileDialog(cell) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = async () => {
       const file = input.files[0];
       if (!file) return;
-      const filename = String(idx).padStart(2, '0') + file.name.slice(file.name.lastIndexOf('.'));
       const form = new FormData();
-      form.append('image', file, filename);
+      form.append('image', file, file.name);
       const res = await fetch('/upload', { method: 'POST', body: form });
       const json = await res.json();
       if (json.success) {
-        const cell = document.querySelector(`.grid-item[data-caption="${filename}"]`);
-        if (cell) {
-          cell.style.backgroundImage = `url('/Concepts/${filename}')`;
-        } else {
-          const oldName = String(idx).padStart(2, '0') + '.webp';
-          const el = document.querySelector(`.grid-item[data-caption="${oldName}"]`);
-          if (el) {
-            el.dataset.caption = filename;
-            el.style.backgroundImage = `url('/Concepts/${filename}')`;
-          }
-        }
+        const filename = json.filename;
+        cell.dataset.caption = filename;
+        cell.style.backgroundImage = `url('/Concepts/${filename}')`;
+        cell.onclick = () => showLightbox(filename);
       }
     };
     input.click();
