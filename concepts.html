@@ -194,6 +194,22 @@
   <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
     <i class="fa-solid fa-eye"></i>
   </button>
+<!-- Nút star để unlock upload -->
+  <button class="theme-toggle" id="unlockBtn" title="Mở khóa upload">
+    <i class="fa-sharp fa-solid fa-star"></i>
+  </button>
+
+  <!-- Popup mật khẩu -->
+  <div id="pwdModal" style="display:none;
+        position:fixed;top:0;left:0;width:100%;height:100%;
+        background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:2000;">
+    <div style="background:#fff;padding:2rem;border-radius:8px;text-align:center;">
+      <p>Nhập mật khẩu:</p>
+      <input type="password" id="pwdInput" />
+      <button id="pwdOk">OK</button>
+      <button id="pwdCancel">Hủy</button>
+    </div>
+  </div>
 
   <!-- Nền vuông động -->
   <div class="floating-pattern" id="floating-pattern"></div>
@@ -254,6 +270,26 @@
       if (e.key === 'Escape') hideLightbox();
     });
 
+    // sau phần tạo grid-item
+async function loadUploadedImages() {
+  try {
+    const res = await fetch('/images');
+    const files = await res.json(); // ["00.webp","05.png",...]
+    files.forEach(name => {
+      // nếu trong grid có phần tử data-caption trùng tên
+      const el = document.querySelector(`.grid-item[data-caption="${name}"]`);
+      if (el) {
+        el.style.backgroundImage = `url('/Concepts/${name}')`;
+      }
+    });
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+// gọi sau tạo grid
+loadUploadedImages();
+
     // Theme switch
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = themeToggle.querySelector('i');
@@ -282,6 +318,83 @@
     });
 
     applySavedTheme();
+
+    const unlockBtn = document.getElementById('unlockBtn');
+const pwdModal = document.getElementById('pwdModal');
+const pwdInput = document.getElementById('pwdInput');
+const pwdOk = document.getElementById('pwdOk');
+const pwdCancel = document.getElementById('pwdCancel');
+let unlocked = false;
+
+unlockBtn.addEventListener('click', () => {
+  pwdModal.style.display = 'flex';
+});
+
+pwdCancel.addEventListener('click', () => {
+  pwdModal.style.display = 'none';
+  pwdInput.value = '';
+});
+
+pwdOk.addEventListener('click', () => {
+  if (pwdInput.value === '123456') {
+    unlocked = true;
+    addUploadButtons();
+  }
+  pwdModal.style.display = 'none';
+  pwdInput.value = '';
+});
+
+// thêm nút upload vào mỗi ô
+function addUploadButtons() {
+  document.querySelectorAll('.grid-item').forEach((cell, idx) => {
+    if (cell.querySelector('.upload-btn')) return; // tránh tạo lại
+    const btn = document.createElement('button');
+    btn.className = 'upload-btn';
+    btn.textContent = 'Upload';
+    btn.style.position = 'absolute';
+    btn.style.bottom = '8px';
+    btn.style.right = '8px';
+    btn.style.zIndex = '5';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openFileDialog(idx);
+    });
+    cell.appendChild(btn);
+  });
+}
+
+// mở file dialog và gửi lên server
+function openFileDialog(idx) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    // đặt filename trùng data-caption
+    const filename = String(idx).padStart(2,'0') + file.name.slice(file.name.lastIndexOf('.'));
+    const form = new FormData();
+    form.append('image', file, filename);
+    const res = await fetch('/upload', { method: 'POST', body: form });
+    const json = await res.json();
+    if (json.success) {
+      // ngay lập tức show ảnh mới
+      const cell = document.querySelector(`.grid-item[data-caption="${filename}"]`);
+      if (cell) cell.style.backgroundImage = `url('/Concepts/${filename}')`;
+      else {
+        // cập nhật data-caption
+        const oldName = String(idx).padStart(2,'0') + '.webp';
+        const el = document.querySelector(`.grid-item[data-caption="${oldName}"]`);
+        if (el) {
+          el.dataset.caption = filename;
+          el.style.backgroundImage = `url('/Concepts/${filename}')`;
+        }
+      }
+    }
+  };
+  input.click();
+}
+
   </script>
 </body>
 </html>
