@@ -10,199 +10,41 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Noto Sans JP', sans-serif;
-      background-color: #1a1414;
-      color: #f5efe6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      z-index: 1000;
-      color: inherit;
-      transition: color 0.3s;
-    }
-
-    .floating-pattern {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .square {
-      position: absolute;
-      background-color: #2e1a1a;
-      border: 2px solid #5d3b3b;
-      box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
-      transform: rotate(45deg);
-      animation: floatSquare linear infinite;
-      opacity: 0.8;
-    }
-
-    @keyframes floatSquare {
-      0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
-      50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
-      100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
-    }
-
-    main {
-      text-align: center;
-      position: relative;
-      z-index: 1;
-      padding: 4rem 5vw 0;
-    }
-
-    h1 {
-      font-family: 'Big Shoulders Stencil Text', sans-serif;
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 400;
-      margin-bottom: 0.5rem;
-      color: #b19777;
-      text-shadow: 0 0 4px #40202099;
-    }
-
-    h2 {
-      font-family: 'Smooch Sans', cursive;
-      font-size: clamp(2rem, 5vw, 4rem);
-      margin: 1rem 0 2rem;
-      color: #b19777;
-      text-shadow: 0 0 3px #40202088;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 12px;
-      font-family: 'Patrick Hand', cursive;
-      font-size: 1.2rem;
-      text-decoration: none;
-      color: #a19386;
-      transition: color 0.2s ease;
-    }
-
-    a:hover {
-      color: #e9282c;
-    }
-
-    .grid {
-      margin-top: 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      padding: 0 2vw 64px;
-    }
-
-    .grid-item {
-      position: relative;
-      aspect-ratio: 1 / 1;
-      background-color: #2a1a1a;
-      border: 1px solid #5e3e3e;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .grid-item:hover {
-      transform: scale(1.05);
-    }
-
-    .grid-item:hover::after {
-      content: attr(data-caption);
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Noto Sans JP', sans-serif;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 6px 10px;
-      font-size: 0.9rem;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .lightbox {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: 8px;
-      box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
-    }
-
-    /* ===== LIGHT MODE ===== */
-    body.light-mode {
-      background-color: #f0e6e4;
-      color: #2e1a1a;
-    }
-
-    body.light-mode h1,
-    body.light-mode h2 {
-      color: #7a3b3b;
-      text-shadow: 0 0 2px #b1977744;
-    }
-
-    body.light-mode .square {
-      background-color: #dac0ba;
-      border: 2px solid #9b6d6d;
-      box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033;
-      opacity: 0.7;
-    }
-
-    body.light-mode .grid-item {
-      background-color: #c9b2ae;
-      border-color: #a07575;
-    }
-
-    body.light-mode .grid-item:hover::after {
-      background-color: rgba(50, 30, 30, 0.9);
-      color: #f5efe6;
-    }
-
-    body.light-mode a,
-    body.light-mode .theme-toggle {
-      color: #2e1a1a;
-    }
+    html, body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; background-color: #1a1414; color: #f5efe6; min-height: 100vh; overflow-x: hidden; }
+    #top-controls { position: fixed; top: 1.5rem; left: 1.5rem; display: flex; gap: 12px; z-index: 1000; }
+    #top-controls button { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: inherit; transition: color 0.3s; }
+    .floating-pattern { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .square { position: absolute; background-color: #2e1a1a; border: 2px solid #5d3b3b; box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033; transform: rotate(45deg); animation: floatSquare linear infinite; opacity: 0.8; }
+    @keyframes floatSquare { 0% { transform: translateY(0) rotate(45deg); opacity: 0.6; } 50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); } 100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; } }
+    main { text-align: center; position: relative; z-index: 1; padding: 4rem 5vw 0; }
+    h1 { font-family: 'Big Shoulders Stencil Text', sans-serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 400; margin-bottom: 0.5rem; color: #b19777; text-shadow: 0 0 4px #40202099; }
+    h2 { font-family: 'Smooch Sans', cursive; font-size: clamp(2rem, 5vw, 4rem); margin: 1rem 0 2rem; color: #b19777; text-shadow: 0 0 3px #40202088; }
+    a { display: inline-block; margin-top: 12px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; text-decoration: none; color: #a19386; transition: color 0.2s ease; }
+    a:hover { color: #e9282c; }
+    .grid { margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 0 2vw 64px; }
+    .grid-item { position: relative; aspect-ratio: 1/1; background-color: #2a1a1a; border: 1px solid #5e3e3e; cursor: pointer; transition: transform 0.2s ease; background-size: cover; background-position: center; }
+    .grid-item:hover { transform: scale(1.05); }
+    .grid-item:hover::after { content: attr(data-caption); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: 'Noto Sans JP', sans-serif; background-color: rgba(0,0,0,0.85); color: #fff; padding: 6px 10px; font-size: 0.9rem; border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 10; }
+    .lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 16px rgba(0,0,0,0.6); }
+    body.light-mode { background-color: #f0e6e4; color: #2e1a1a; }
+    body.light-mode h1, body.light-mode h2 { color: #7a3b3b; text-shadow: 0 0 2px #b1977744; }
+    body.light-mode .square { background-color: #dac0ba; border: 2px solid #9b6d6d; box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033; opacity: 0.7; }
+    body.light-mode .grid-item { background-color: #c9b2ae; border-color: #a07575; }
+    body.light-mode .grid-item:hover::after { background-color: rgba(50,30,30,0.9); color: #f5efe6; }
+    body.light-mode a { color: #2e1a1a; }
   </style>
 </head>
 
 <body>
-  <!-- Nút đổi theme -->
-  <button class="theme-toggle" id="themeToggle" title="Đổi chế độ sáng / tối">
-    <i class="fa-solid fa-eye"></i>
-  </button>
-<!-- Nút star để unlock upload -->
-  <button class="theme-toggle" id="unlockBtn" title="Mở khóa upload">
-    <i class="fa-sharp fa-solid fa-star"></i>
-  </button>
+  <!-- Controls: Theme + Upload -->
+  <div id="top-controls">
+    <button id="themeToggle" title="Đổi chế độ sáng/tối"><i class="fa-solid fa-eye"></i></button>
+    <button id="unlockBtn" title="Mở khóa upload"><i class="fa-sharp fa-solid fa-star"></i></button>
+  </div>
 
   <!-- Popup mật khẩu -->
-  <div id="pwdModal" style="display:none;
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:2000;">
+  <div id="pwdModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:2000;">
     <div style="background:#fff;padding:2rem;border-radius:8px;text-align:center;">
       <p>Nhập mật khẩu:</p>
       <input type="password" id="pwdInput" />
@@ -221,190 +63,120 @@
     <div class="grid" id="grid"></div>
   </main>
 
+  <!-- Lightbox -->
   <div class="lightbox" id="lightbox" onclick="hideLightbox()">
-    <img id="lightbox-img" src="" alt="Hình lớn">
+    <img id="lightbox-img" src="" alt="Hình lớn" />
   </div>
 
-<!-- ✅ CHỈ DÁN PHẦN SCRIPT CUỐI (nếu bạn đã có phần HTML ở trên): -->
+  <script>
+    // Vuông trôi
+    (function createFloatingSquares() {
+      const container = document.getElementById('floating-pattern');
+      for (let i = 0; i < 60; i++) {
+        const sq = document.createElement('div');
+        sq.className = 'square';
+        sq.style.left = `${Math.random()*100}vw`;
+        sq.style.top = `${Math.random()*100}vh`;
+        const size = 20 + Math.random()*40;
+        sq.style.width = `${size}px`;
+        sq.style.height = `${size}px`;
+        sq.style.animationDuration = `${4 + Math.random()*6}s`;
+        container.appendChild(sq);
+      }
+    })();
 
-<script>
-  // ========== Vuông trôi ==========
-  (function createFloatingSquares() {
-    const container = document.getElementById('floating-pattern');
-    const count = 60;
-    for (let i = 0; i < count; i++) {
-      const sq = document.createElement('div');
-      sq.className = 'square';
-      sq.style.left = `${Math.random() * 100}vw`;
-      sq.style.top = `${Math.random() * 100}vh`;
-      const size = 20 + Math.random() * 40;
-      sq.style.width = `${size}px`;
-      sq.style.height = `${size}px`;
-      sq.style.animationDuration = `${4 + Math.random() * 6}s`;
-      container.appendChild(sq);
+    // Khởi tạo grid
+    const grid = document.getElementById('grid');
+    const totalCells = 70;
+    const gridCells = [];
+    for (let i = 0; i < totalCells; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-item';
+      grid.appendChild(cell);
+      gridCells.push(cell);
     }
-  })();
 
-  // ========== Lightbox ==========
-  const grid = document.getElementById('grid');
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
-  const totalCells = 70;
+    // Load ảnh đã upload
+    async function loadUploadedImages() {
+      try {
+        const res = await fetch('/images');
+        const files = await res.json();
+        files.forEach((name, idx) => {
+          if (gridCells[idx]) {
+            const cell = gridCells[idx];
+            cell.dataset.caption = name;
+            cell.style.backgroundImage = `url('/Concepts/${name}')`;
+            cell.onclick = () => showLightbox(name);
+          }
+        });
+      } catch (e) { console.error(e); }
+    }
+    loadUploadedImages();
 
-  for (let i = 0; i < totalCells; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'grid-item';
-    const filename = `${i.toString().padStart(2, '0')}.webp`;
-    cell.setAttribute('data-caption', filename);
-    cell.addEventListener('click', () => {
-      lightboxImg.src = `Concepts/${cell.getAttribute('data-caption')}`;
+    // Lightbox helper
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    function showLightbox(name) {
+      lightboxImg.src = `/Concepts/${name}`;
       lightbox.style.display = 'flex';
-    });
-    grid.appendChild(cell);
-  }
-
-  function hideLightbox() {
-    lightbox.style.display = 'none';
-  }
-
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideLightbox();
-  });
-
-    // ========== Đổi theme ==========
-  const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = themeToggle.querySelector('i');
-
-  function updateThemeIcon() {
-    themeIcon.className = document.body.classList.contains('light-mode')
-      ? 'fa-solid fa-eye'
-      : 'fa-solid fa-eye';
-  }
-
-  function applySavedTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-      document.body.classList.add('light-mode');
-    } else {
-      document.body.classList.remove('light-mode');
     }
-    updateThemeIcon();
-  }
+    function hideLightbox() { lightbox.style.display = 'none'; }
+    window.addEventListener('keydown', e => { if (e.key==='Escape') hideLightbox(); });
 
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
-    const isLight = document.body.classList.contains('light-mode');
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    updateThemeIcon();
-  });
+    // Theme switch
+    const themeToggle = document.getElementById('themeToggle');
+    function applyTheme() {
+      const light = localStorage.getItem('theme')==='light';
+      document.body.classList.toggle('light-mode', light);
+    }
+    themeToggle.addEventListener('click', () => {
+      const light = !document.body.classList.contains('light-mode');
+      document.body.classList.toggle('light-mode', light);
+      localStorage.setItem('theme', light?'light':'dark');
+    });
+    applyTheme();
 
-  applySavedTheme();
+    // Unlock upload
+    const unlockBtn = document.getElementById('unlockBtn');
+    const pwdModal = document.getElementById('pwdModal');
+    const pwdInput = document.getElementById('pwdInput');
+    const pwdOk = document.getElementById('pwdOk');
+    const pwdCancel = document.getElementById('pwdCancel');
+    unlockBtn.addEventListener('click', () => { pwdModal.style.display='flex'; });
+    pwdCancel.addEventListener('click', () => { pwdModal.style.display='none'; pwdInput.value=''; });
+    pwdOk.addEventListener('click', () => {
+      if (pwdInput.value==='123456') addUploadButtons();
+      pwdModal.style.display='none'; pwdInput.value='';
+    });
 
-  // ========== Tải ảnh đã upload ==========
-  async function loadUploadedImages() {
-    try {
-      const res = await fetch('/images');
-      const files = await res.json();
-      files.forEach(name => {
-        const el = document.querySelector(`.grid-item[data-caption="${name}"]`);
-        if (el) {
-          el.style.backgroundImage = `url('/Concepts/${name}')`;
+    // Add upload buttons
+    function addUploadButtons() {
+      gridCells.forEach(cell => {
+        if (cell.querySelector('.upload-btn')) return;
+        const btn = document.createElement('button');
+        btn.textContent='Upload'; btn.className='upload-btn';
+        Object.assign(btn.style,{position:'absolute',bottom:'8px',right:'8px',zIndex:5});
+        btn.addEventListener('click', e => { e.stopPropagation(); openFileDialog(cell); });
+        cell.appendChild(btn);
+      });
+    }
+
+    // Open file dialog and upload
+    function openFileDialog(cell) {
+      const input = document.createElement('input'); input.type='file'; input.accept='image/*';
+      input.onchange = async () => {
+        const file = input.files[0]; if (!file) return;
+        const form = new FormData(); form.append('image', file, file.name);
+        const res = await fetch('/upload',{method:'POST',body:form});
+        const data = await res.json();
+        if (data.success) {
+          cell.dataset.caption=data.filename;
+          cell.style.backgroundImage=`url('/Concepts/${data.filename}')`;
+          cell.onclick=()=>showLightbox(data.filename);
         }
-      });
-    } catch (err) {
-      console.error(err);
+      };
+      input.click();
     }
-  }
-
-  loadUploadedImages();
-
-  // ========== Unlock mật khẩu ==========
-  const unlockBtn = document.getElementById('unlockBtn');
-  const pwdModal = document.getElementById('pwdModal');
-  const pwdInput = document.getElementById('pwdInput');
-  const pwdOk = document.getElementById('pwdOk');
-  const pwdCancel = document.getElementById('pwdCancel');
-  let unlocked = false;
-
-  unlockBtn.addEventListener('click', () => {
-    pwdModal.style.display = 'flex';
-  });
-
-  pwdCancel.addEventListener('click', () => {
-    pwdModal.style.display = 'none';
-    pwdInput.value = '';
-  });
-
-  pwdOk.addEventListener('click', () => {
-    if (pwdInput.value === '123456') {
-      unlocked = true;
-      addUploadButtons();
-    }
-    pwdModal.style.display = 'none';
-    pwdInput.value = '';
-  });
-
-  // ========== Thêm nút Upload ==========
-async function loadUploadedImages() {
-    const res = await fetch('/images');
-    const files = await res.json();
-    files.forEach((name, i) => {
-      if (gridCells[i]) {
-        gridCells[i].dataset.caption = name;
-        gridCells[i].style.backgroundImage = `url('/Concepts/${name}')`;
-        gridCells[i].addEventListener('click', () => showLightbox(name));
-      }
-    });
-  }
-
-  function showLightbox(name) {
-    lightboxImg.src = `/Concepts/${name}`;
-    lightbox.style.display = 'flex';
-  }
-
-  loadUploadedImages();
-
-  
-   // ========== Upload nút ==========
-  function addUploadButtons() {
-    gridCells.forEach((cell, idx) => {
-      if (cell.querySelector('.upload-btn')) return;
-      const btn = document.createElement('button');
-      btn.className = 'upload-btn';
-      btn.textContent = 'Upload';
-      Object.assign(btn.style, {
-        position: 'absolute', bottom: '8px', right: '8px', zIndex: 5
-      });
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        openFileDialog(cell);
-      });
-      cell.appendChild(btn);
-    });
-  }
-
-  // ========== Mở hộp thoại chọn ảnh và upload ==========
-  function openFileDialog(cell) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-      const form = new FormData();
-      form.append('image', file, file.name);
-      const res = await fetch('/upload', { method: 'POST', body: form });
-      const json = await res.json();
-      if (json.success) {
-        const filename = json.filename;
-        cell.dataset.caption = filename;
-        cell.style.backgroundImage = `url('/Concepts/${filename}')`;
-        cell.onclick = () => showLightbox(filename);
-      }
-    };
-    input.click();
-  }
-</script>
-
+  </script>
 </body>
 </html>
