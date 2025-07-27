@@ -15,9 +15,13 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+    // req.body.index do client gửi lên
+    const idx = req.body.index;
+    const name = `${idx}_${file.originalname}`;
+    cb(null, name);
   }
 });
+
 const upload = multer({ storage });
 
 // Phục vụ file tĩnh
@@ -30,12 +34,12 @@ app.post('/upload', upload.single('image'), (req, res) => {
 });
 
 // API danh sách hình
-app.get('/images', (req, res) => {
-  fs.readdir(UPLOAD_DIR, (err, files) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(files);
-  });
+// API upload
+app.post('/upload', upload.single('image'), (req, res) => {
+  // trả về filename và index
+  res.json({ success: true, filename: req.file.filename, index: req.body.index });
 });
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
