@@ -10,28 +10,175 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
-    html, body { margin: 0; padding: 0; font-family: 'Noto Sans JP', sans-serif; background-color: #1a1414; color: #f5efe6; min-height: 100vh; overflow-x: hidden; }
-    #top-controls { position: fixed; top: 1.5rem; left: 1.5rem; display: flex; gap: 12px; z-index: 1000; }
-    #top-controls button { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: inherit; transition: color 0.3s; }
-    .floating-pattern { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .square { position: absolute; background-color: #2e1a1a; border: 2px solid #5d3b3b; box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033; transform: rotate(45deg); animation: floatSquare linear infinite; opacity: 0.8; }
-    @keyframes floatSquare { 0% { transform: translateY(0) rotate(45deg); opacity: 0.6; } 50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); } 100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; } }
-    main { text-align: center; position: relative; z-index: 1; padding: 4rem 5vw 0; }
-    h1 { font-family: 'Big Shoulders Stencil Text', sans-serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 400; margin-bottom: 0.5rem; color: #b19777; text-shadow: 0 0 4px #40202099; }
-    h2 { font-family: 'Smooch Sans', cursive; font-size: clamp(2rem, 5vw, 4rem); margin: 1rem 0 2rem; color: #b19777; text-shadow: 0 0 3px #40202088; }
-    a { display: inline-block; margin-top: 12px; font-family: 'Patrick Hand', cursive; font-size: 1.2rem; text-decoration: none; color: #a19386; transition: color 0.2s ease; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: #1a1414;
+      color: #f5efe6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #top-controls {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      display: flex;
+      gap: 12px;
+      z-index: 1000;
+    }
+
+    #top-controls button {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: inherit;
+      transition: color 0.3s;
+    }
+
+    .floating-pattern {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .square {
+      position: absolute;
+      background-color: #2e1a1a;
+      border: 2px solid #5d3b3b;
+      box-shadow: inset 0 0 6px #00000055, 0 0 4px #00000033;
+      transform: rotate(45deg);
+      animation: floatSquare linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes floatSquare {
+      0% { transform: translateY(0) rotate(45deg); opacity: 0.6; }
+      50% { transform: translateY(-50vh) translateX(10px) rotate(45deg); }
+      100% { transform: translateY(-100vh) translateX(-10px) rotate(45deg); opacity: 0; }
+    }
+
+    main {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 4rem 5vw 0;
+    }
+
+    h1 {
+      font-family: 'Big Shoulders Stencil Text', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: #b19777;
+      text-shadow: 0 0 4px #40202099;
+    }
+
+    h2 {
+      font-family: 'Smooch Sans', cursive;
+      font-size: clamp(2rem, 5vw, 4rem);
+      margin: 1rem 0 2rem;
+      color: #b19777;
+      text-shadow: 0 0 3px #40202088;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 12px;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 1.2rem;
+      text-decoration: none;
+      color: #a19386;
+      transition: color 0.2s ease;
+    }
+
     a:hover { color: #e9282c; }
-    .grid { margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding: 0 2vw 64px; }
-    .grid-item { position: relative; aspect-ratio: 1/1; background-color: #2a1a1a; border: 1px solid #5e3e3e; cursor: pointer; transition: transform 0.2s ease; background-size: cover; background-position: center; }
+
+    .grid {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 0 2vw 64px;
+    }
+
+    .grid-item {
+      position: relative;
+      aspect-ratio: 1/1;
+      background-color: #2a1a1a;
+      border: 1px solid #5e3e3e;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
     .grid-item:hover { transform: scale(1.05); }
-    .grid-item:hover::after { content: attr(data-caption); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); font-family: 'Noto Sans JP', sans-serif; background-color: rgba(0,0,0,0.85); color: #fff; padding: 6px 10px; font-size: 0.9rem; border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 10; }
-    .lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 999; }
-    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 0 16px rgba(0,0,0,0.6); }
-    body.light-mode { background-color: #f0e6e4; color: #2e1a1a; }
-    body.light-mode h1, body.light-mode h2 { color: #7a3b3b; text-shadow: 0 0 2px #b1977744; }
-    body.light-mode .square { background-color: #dac0ba; border: 2px solid #9b6d6d; box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033; opacity: 0.7; }
-    body.light-mode .grid-item { background-color: #c9b2ae; border-color: #a07575; }
-    body.light-mode .grid-item:hover::after { background-color: rgba(50,30,30,0.9); color: #f5efe6; }
+
+    .grid-item:hover::after {
+      content: attr(data-caption);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: rgba(0,0,0,0.85);
+      color: #fff;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 8px;
+      box-shadow: 0 0 16px rgba(0,0,0,0.6);
+    }
+
+    body.light-mode {
+      background-color: #f0e6e4;
+      color: #2e1a1a;
+    }
+
+    body.light-mode h1,
+    body.light-mode h2 { color: #7a3b3b; text-shadow: 0 0 2px #b1977744; }
+
+    body.light-mode .square {
+      background-color: #dac0ba;
+      border: 2px solid #9b6d6d;
+      box-shadow: inset 0 0 5px #ffffffaa, 0 0 3px #00000033;
+      opacity: 0.7;
+    }
+
+    body.light-mode .grid-item {
+      background-color: #c9b2ae;
+      border-color: #a07575;
+    }
+
+    body.light-mode .grid-item:hover::after {
+      background-color: rgba(50,30,30,0.9);
+      color: #f5efe6;
+    }
+
     body.light-mode a { color: #2e1a1a; }
   </style>
 </head>
@@ -101,9 +248,10 @@
       try {
         const res = await fetch('/images');
         const files = await res.json();
-        files.forEach((name, idx) => {
-          if (gridCells[idx]) {
-            const cell = gridCells[idx];
+        files.forEach((name) => {
+          const [idx] = name.split('_');
+          const cell = gridCells[idx];
+          if (cell) {
             cell.dataset.caption = name;
             cell.style.backgroundImage = `url('/Concepts/${name}')`;
             cell.onclick = () => showLightbox(name);
@@ -151,22 +299,22 @@
 
     // Add upload buttons
     function addUploadButtons() {
-      gridCells.forEach(cell => {
+      gridCells.forEach((cell, idx) => {
         if (cell.querySelector('.upload-btn')) return;
         const btn = document.createElement('button');
         btn.textContent='Upload'; btn.className='upload-btn';
         Object.assign(btn.style,{position:'absolute',bottom:'8px',right:'8px',zIndex:5});
-        btn.addEventListener('click', e => { e.stopPropagation(); openFileDialog(cell); });
+        btn.addEventListener('click', e => { e.stopPropagation(); openFileDialog(cell, idx); });
         cell.appendChild(btn);
       });
     }
 
     // Open file dialog and upload
-    function openFileDialog(cell) {
+    function openFileDialog(cell, idx) {
       const input = document.createElement('input'); input.type='file'; input.accept='image/*';
       input.onchange = async () => {
         const file = input.files[0]; if (!file) return;
-        const form = new FormData(); form.append('image', file, file.name);
+        const form = new FormData(); form.append('index', idx); form.append('image', file, file.name);
         const res = await fetch('/upload',{method:'POST',body:form});
         const data = await res.json();
         if (data.success) {
